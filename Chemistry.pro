@@ -25,10 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Parser/formula.cpp \
         main.cpp \
         widget.cpp
 
 HEADERS += \
+        Parser/formula.h \
+        Parser/parsererror.h \
         widget.h
 
 # Default rules for deployment.

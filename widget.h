@@ -15,20 +15,6 @@ class Widget : public QWidget
 {
     Q_OBJECT
 public:
-    class Formula
-    {
-    public:
-        Formula(Formula *parent = nullptr) : parent(parent) {}
-        ~Formula() {
-            for(Formula *child : childs) {
-                delete child;
-            }
-        }
-
-        Formula *parent = nullptr;
-        QList<Formula*> childs;
-    };
-
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
