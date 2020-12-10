@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Class/frac.cpp \
         Parser/formula.cpp \
         main.cpp \
         widget.cpp

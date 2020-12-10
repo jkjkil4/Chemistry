@@ -3,8 +3,8 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
-    j::SetPointSize(editFormula, 11);
-    j::SetPointSize(editRel, 11);
+    //j::SetPointSize(editFormula, 11);
+    //j::SetPointSize(editRel, 11);
     tabWidget->addTab(editFormula, "化学式");
     tabWidget->addTab(editRel, "反应物与生成物");
     connect(btnAnalysis, SIGNAL(clicked()), this, SLOT(onAnalysis()));
