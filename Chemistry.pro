@@ -30,6 +30,7 @@ SOURCES += \
         widget.cpp
 
 HEADERS += \
+        Class/frac.h \
         Parser/formula.h \
         Parser/parsererror.h \
         widget.h

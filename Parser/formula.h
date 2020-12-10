@@ -10,15 +10,18 @@ class Formula
 {
 public:
     enum Type { Group, Element };
+    Formula(int count);
     virtual ~Formula() = default;
+
+    int count;
 };
 
-class Formula_Group
+class Formula_Group : public Formula
 {
 public:
     Formula_Group(const QString &str, int count = 1);
+    ~Formula_Group() override;
 
-    int count;
     QList<Formula*> childs;
 
 private:
@@ -29,10 +32,12 @@ private:
     };
 };
 
-class Formula_Element
+class Formula_Element : public Formula
 {
 public:
-    Formula_Element(const QString &str, int count, );
+    Formula_Element(const QString &str, int count, int elec);
+
+    int elec;
 };
 
 #endif // FORMULA_H

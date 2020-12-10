@@ -1,10 +1,14 @@
 #include "formula.h"
 
+
+Formula::Formula(int count) : count(count) {}
+
+
 #define IsBlockLetter(ch) (ch >= 'A' && ch <= 'Z')
 #define IsLetter(ch) (ch >= 'a' && ch <= 'z')
 
 Formula_Group::Formula_Group(const QString &str, int count)
-    : count(count)
+    : Formula(count)
 {
     QString tmpElement, tmpElec, tmpDigit;
     ParserState state = Element_Head;
@@ -44,4 +48,17 @@ Formula_Group::Formula_Group(const QString &str, int count)
             break;
         }
     }
+}
+
+Formula_Group::~Formula_Group() {
+    for(Formula *child : childs) {
+        delete child;
+    }
+}
+
+
+Formula_Element::Formula_Element(const QString &str, int count, int elec)
+    : Formula(count), elec(elec)
+{
+
 }
