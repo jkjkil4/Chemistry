@@ -28,6 +28,7 @@ public:
     static int Lcm(const QVector<int>& vValues, int n = -1);   //得到许多数的最小公倍数
 
     void reduct();
+    Frac paramSep(const QString &param, bool *ok = nullptr);    //参变分离，假设该式等于0来处理
 
     QString format(bool autoSpace = true, bool useColor = true);
 

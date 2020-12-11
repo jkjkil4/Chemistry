@@ -57,6 +57,23 @@ void Frac::reduct() {
     }
 }
 
+Frac Frac::paramSep(const QString &param, bool *ok) {
+    checkZero();
+    if(!mapPoly.contains(param)) {
+        if(ok) *ok = false;
+        return Frac();
+    }
+
+    Frac res = *this;
+    res.b = 1;
+    res.mapPoly.remove(param);
+    res.div(-mapPoly[param]);
+    res.reduct();
+
+    if(ok) *ok = true;
+    return res;
+}
+
 QString Frac::format(bool autoSpace, bool useColor) {
     QString res;
 
@@ -71,7 +88,7 @@ QString Frac::format(bool autoSpace, bool useColor) {
 
     bool hasPrev = false;
     for(auto iter = mapPoly.begin(); iter != mapPoly.end(); ++iter) {
-        QString key = iter.key();
+        const QString& key = iter.key();
         int value = iter.value();
 
         if(value == 0)
