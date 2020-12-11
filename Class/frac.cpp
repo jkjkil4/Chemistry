@@ -12,49 +12,41 @@ void Frac::checkZero() {
         b = 1;
 }
 
-QVector<int> Frac::DigitFactor(int value) {
-    QVector<int> vFactors;
-    int absValue = abs(value);
-    if(absValue == 1 || absValue == 0)
-        return vFactors;
-
-    for(int i = 2; i <= absValue; i++)
-        if(absValue % i == 0)
-            vFactors << i;
-    return vFactors;
+int Frac::Gcd(int a, int b) {
+    int absA = qMax(qAbs(a), qAbs(b));
+    int absB = qMin(qAbs(a), qAbs(b));
+    return absB == 0 ? absA : Gcd(b, a % b);
 }
-#include <QDebug>
-QVector<int> Frac::findCommonFactor() {
-    QVector<int> vCommonFactors;
 
-    checkZero();
-    if(mapPoly.isEmpty() || b == 1)    //对可以直接返回无公因数的情况进行判断
-        return vCommonFactors;
+int Frac::Gcd(const QVector<int> &vValues, int n) {
+    if(n == -1)
+        n = vValues.size();
+    return (n == 1 ? vValues[0] : Gcd(vValues[n - 1], Gcd(vValues, n - 1)));
+}
 
-    //得到分母的所有因数
-    vCommonFactors = DigitFactor(b);
+int Frac::Lcm(int a, int b) {
+    if(a == 0 || b == 0)
+        return 0;
+    return qAbs(a / Gcd(a, b) * b);
+}
 
-    //遍历分子的每个项，对公因数进行判断
-    for(int value : mapPoly) {
-        QVector<int> tmpCommonFactor = vCommonFactors;
-        vCommonFactors.clear();
-        QVector<int> vFactors = DigitFactor(value);
-        for(int factor : vFactors)
-            if(tmpCommonFactor.contains(factor))
-                vCommonFactors << factor;
-        if(vCommonFactors.isEmpty())
-            break;
-    }
-
-    return vCommonFactors;
+int Frac::Lcm(const QVector<int> &vValues, int n) {
+    if(n == -1)
+        n = vValues.size();
+    if(vValues[n - 1] == 0)
+        return 0;
+    return (n == 1 ? vValues[0] : Lcm(vValues[n - 1], Lcm(vValues, n - 1)));
 }
 
 void Frac::reduct() {
+    checkZero();
     while(true) {
-        QVector<int> vCommonFactors = findCommonFactor();
-        if(vCommonFactors.isEmpty())
+        QVector<int> vValues { b };
+        for(int value : mapPoly)
+            vValues << value;
+        int divNum = Gcd(vValues);
+        if(divNum == 1 || divNum == 0)
             break;
-        int divNum = *vCommonFactors.rbegin();
         for(int &value : mapPoly)
             value /= divNum;
         b /= divNum;

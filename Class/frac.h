@@ -18,8 +18,11 @@ public:
 
     void checkZero();
 
-    static QVector<int> DigitFactor(int value);     //找指定数值的所有因数，不包括1
-    QVector<int> findCommonFactor();    //找分母和分子的公因数，不包括1，结果为升序
+    static int Gcd(int a, int b);   //得到两个数的最大公因数
+    static int Gcd(const QVector<int>& vValues, int n = -1);   //得到许多数的最大公因数
+
+    static int Lcm(int a, int b);   //得到两个数的最小公倍数
+    static int Lcm(const QVector<int>& vValues, int n = -1);   //得到许多数的最小公倍数
 
     void reduct();
 
