@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     qDebug().noquote() << frac.format();
     frac.reduct();
     qDebug().noquote() << "约分:                     " << frac.format();
-    frac.sum(Frac().sub(1, "x").div(2));
+    frac.sub(Frac(1, "x").div(2));
     qDebug().noquote() << "-x/2:                    " << frac.format();
     Frac frac2 = frac.paramSep("x");
     qDebug().noquote() << "原式=0，化为\"x=\"的形式:      x =" << frac2.format();
