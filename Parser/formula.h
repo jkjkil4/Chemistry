@@ -1,8 +1,7 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
-#include <QString>
-#include <QList>
+#include <QVariant>
 
 #include "parsererror.h"
 
@@ -23,13 +22,6 @@ public:
     ~Formula_Group() override;
 
     QList<Formula*> childs;
-
-private:
-    enum ParserState {
-        Element_Head, Element_Body,
-        Elec_Left, Elec_Body, Elec_Right,
-        Bracket_Left, Bracket_Right
-    };
 };
 
 class Formula_Element : public Formula
