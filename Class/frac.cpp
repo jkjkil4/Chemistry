@@ -75,13 +75,17 @@ QString Frac::format(bool autoSpace, bool useColor) {
 
     bool hasPrev = false;
     for(auto iter = mapPoly.begin(); iter != mapPoly.end(); ++iter) {
-            if(hasPrev) {
-                res += autoSpace ? " + " : "+";
-            } else hasPrev = true;
         QString key = iter.key();
         int value = iter.value();
-        if(value != 1 || key.isEmpty())
-            res += QString::number(value);
+
+        if(value == 0)
+            continue;
+        if(hasPrev) {
+            res += value < 0 ? (autoSpace ? " - " : "-") : (autoSpace ? " + " : "+");
+        } else hasPrev = true;
+
+        if(qAbs(value) != 1 || key.isEmpty())
+            res += QString::number(qAbs(value));
         if(!key.isEmpty())
             res += (useColor ? "\033[33m[\033[0m" : "[") + key + (useColor ? "\033[33m]\033[0m" : "]");
     }

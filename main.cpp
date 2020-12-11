@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 //    qDebug().noquote() << frac.format();
 
     Frac frac;
-    frac.sum(21).sum(7, "a").sum(14, "b").div(7);
+    frac.sum(21).sum(7, "a").sum(14, "b").div(7).sub(4, "c");
     qDebug().noquote() << frac.format();
     frac.reduct();
     qDebug().noquote() << frac.format();
