@@ -13,6 +13,9 @@ public:
         QString what;
     };
 
+    Frac() = default;
+    Frac(int value, const QString &key = "");
+
     QMap<QString, int> mapPoly;
     int b = 1;
 
@@ -33,13 +36,8 @@ public:
     Frac& multi(int digit);
     Frac& div(int digit);
 
-//    Frac& sum(const Frac &other);
-//    Frac& sub(const Frac &other);
-
-    friend inline Frac operator+(Frac frac, int digit) {
-        frac.sum(digit);
-        return frac;
-    }
+    Frac& sum(const Frac &other);
+    Frac& sub(const Frac &other);
 };
 
 

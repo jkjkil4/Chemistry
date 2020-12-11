@@ -1,5 +1,9 @@
 #include "frac.h"
 
+Frac::Frac(int value, const QString &key) {
+    mapPoly[key] = value;
+}
+
 void Frac::checkZero() {
     QStringList lNeedRemoveMono;
     for(auto iter = mapPoly.begin(); iter != mapPoly.end(); ++iter)
@@ -114,19 +118,39 @@ Frac& Frac::multi(int digit) {
     return *this;
 }
 Frac& Frac::div(int digit) {
-    if(digit == 0)
-        throw Error("cannot div 0");
-    b *= digit;
+    if(!mapPoly.isEmpty()) {
+        if(digit == 0)
+            throw Error("cannot div 0");
+        b *= digit;
+    }
     return *this;
 }
 
-//Frac& Frac::sum(const Frac &other) {
-//    for(QMap<QString, int>::const_iterator iter = other.mapPoly.begin(); iter != other.mapPoly.end(); ++iter)
-//        mapPoly[iter.key()] += iter.value();
-//    return *this;
-//}
-//Frac& Frac::sub(const Frac &other) {
-//    for(QMap<QString, int>::const_iterator iter = other.mapPoly.begin(); iter != other.mapPoly.end(); ++iter)
-//        mapPoly[iter.key()] -= iter.value();
-//    return *this;
-//}
+Frac& Frac::sum(const Frac &other) {
+    if(!other.mapPoly.isEmpty()) {
+        int CommonMulti = Lcm(b, other.b);
+        int selfMulti = CommonMulti / b;
+        int otherMulti = CommonMulti / other.b;
+        b = CommonMulti;
+
+        for(int &mono : mapPoly)
+            mono *= selfMulti;
+        for(QMap<QString, int>::const_iterator iter = other.mapPoly.begin(); iter != other.mapPoly.end(); ++iter)
+            mapPoly[iter.key()] += iter.value() * otherMulti;
+    }
+    return *this;
+}
+Frac& Frac::sub(const Frac &other) {
+    if(!other.mapPoly.isEmpty()) {
+        int CommonMulti = Lcm(b, other.b);
+        int selfMulti = CommonMulti / b;
+        int otherMulti = CommonMulti / other.b;
+        b = CommonMulti;
+
+        for(int &mono : mapPoly)
+            mono *= selfMulti;
+        for(QMap<QString, int>::const_iterator iter = other.mapPoly.begin(); iter != other.mapPoly.end(); ++iter)
+            mapPoly[iter.key()] -= iter.value() * otherMulti;
+    }
+    return *this;
+}
