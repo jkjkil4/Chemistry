@@ -19,7 +19,7 @@ public:
     QMap<QString, int> mapPoly;
     int b = 1;
 
-    void checkZero();
+//    void checkZero();
 
     static int Gcd(int a, int b);   //得到两个数的最大公因数
     static int Gcd(const QVector<int>& vValues, int n = -1);   //得到许多数的最大公因数

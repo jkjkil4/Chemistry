@@ -1,20 +1,21 @@
 #include "frac.h"
 
 Frac::Frac(int value, const QString &key) {
-    mapPoly[key] = value;
+    if(value != 0)
+        mapPoly[key] = value;
 }
 
-void Frac::checkZero() {
-    QStringList lNeedRemoveMono;
-    for(auto iter = mapPoly.begin(); iter != mapPoly.end(); ++iter)
-        if(iter.value() == 0)
-            lNeedRemoveMono << iter.key();
-    for(QString& mono : lNeedRemoveMono)
-        mapPoly.remove(mono);
+//void Frac::checkZero() {
+//    QStringList lNeedRemoveMono;
+//    for(auto iter = mapPoly.begin(); iter != mapPoly.end(); ++iter)
+//        if(iter.value() == 0)
+//            lNeedRemoveMono << iter.key();
+//    for(QString& mono : lNeedRemoveMono)
+//        mapPoly.remove(mono);
 
-    if(mapPoly.isEmpty())
-        b = 1;
-}
+//    if(mapPoly.isEmpty())
+//        b = 1;
+//}
 
 int Frac::Gcd(int a, int b) {
     int absA = qMax(qAbs(a), qAbs(b));
@@ -43,7 +44,11 @@ int Frac::Lcm(const QVector<int> &vValues, int n) {
 }
 
 void Frac::reduct() {
-    checkZero();
+//    checkZero();
+    if(mapPoly.isEmpty()) {
+        b = 1;
+        return;
+    }
     while(true) {
         QVector<int> vValues { b };
         for(int value : mapPoly)
@@ -58,7 +63,7 @@ void Frac::reduct() {
 }
 
 Frac Frac::paramSep(const QString &param, bool *ok) {
-    checkZero();
+//    checkZero();
     if(!mapPoly.contains(param)) {
         if(ok) *ok = false;
         return Frac();
@@ -91,8 +96,6 @@ QString Frac::format(bool autoSpace, bool useColor) {
         const QString& key = iter.key();
         int value = iter.value();
 
-        if(value == 0)
-            continue;
         if(hasPrev) {
             res += value < 0 ? (autoSpace ? " - " : "-") : (autoSpace ? " + " : "+");
         } else hasPrev = true;
@@ -113,14 +116,18 @@ QString Frac::format(bool autoSpace, bool useColor) {
 Frac& Frac::sum(int digit, const QString &key) {
     if(digit != 0) {
         digit *= b;
-        mapPoly[key] += digit;
+        if((mapPoly[key] += digit ) == 0)
+            mapPoly.remove(key);
+        reduct();
     }
     return *this;
 }
 Frac& Frac::sub(int digit, const QString &key) {
     if(digit != 0) {
         digit *= b;
-        mapPoly[key] -= digit;
+        if((mapPoly[key] -= digit) == 0)
+            mapPoly.remove(key);
+        reduct();
     }
     return *this;
 }
@@ -131,6 +138,7 @@ Frac& Frac::multi(int digit) {
     } else {
         for(int &mono : mapPoly)
             mono *= digit;
+        reduct();
     }
     return *this;
 }
@@ -139,6 +147,7 @@ Frac& Frac::div(int digit) {
         if(digit == 0)
             throw Error("cannot div 0");
         b *= digit;
+        reduct();
     }
     return *this;
 }
@@ -153,7 +162,9 @@ Frac& Frac::sum(const Frac &other) {
         for(int &mono : mapPoly)
             mono *= selfMulti;
         for(QMap<QString, int>::const_iterator iter = other.mapPoly.begin(); iter != other.mapPoly.end(); ++iter)
-            mapPoly[iter.key()] += iter.value() * otherMulti;
+            if((mapPoly[iter.key()] += iter.value() * otherMulti) == 0)
+                mapPoly.remove(iter.key());
+        reduct();
     }
     return *this;
 }
@@ -167,7 +178,9 @@ Frac& Frac::sub(const Frac &other) {
         for(int &mono : mapPoly)
             mono *= selfMulti;
         for(QMap<QString, int>::const_iterator iter = other.mapPoly.begin(); iter != other.mapPoly.end(); ++iter)
-            mapPoly[iter.key()] -= iter.value() * otherMulti;
+            if((mapPoly[iter.key()] -= iter.value() * otherMulti) == 0)
+                mapPoly.remove(iter.key());
+        reduct();
     }
     return *this;
 }
