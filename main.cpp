@@ -21,6 +21,13 @@ int main(int argc, char *argv[])
 //    Frac frac2 = frac.paramSep("x");
 //    qDebug().noquote() << "原式=0，化为\"x=\"的形式:      x =" << frac2.format();
 
+    Frac frac(2, "x");
+    frac.sum(4, "y").div(3);
+    qDebug().noquote() << frac.format();
+    frac.substitute("x", Frac(3, "y").sum(4).div(2));
+    qDebug().noquote() << frac.format();
+
+
     Widget w;
     w.show();
 

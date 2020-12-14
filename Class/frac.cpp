@@ -79,6 +79,34 @@ Frac Frac::paramSep(const QString &param, bool *ok) {
     return res;
 }
 
+Frac& Frac::substitute(const QString &param, int digit) {
+    auto iter = mapPoly.find(param);
+    if(iter != mapPoly.end()) {
+        int value = iter.value();
+        if((mapPoly[""] += value * digit) == 0)
+            mapPoly.remove("");
+        mapPoly.erase(iter);
+        reduct();
+    }
+    return *this;
+}
+
+Frac& Frac::substitute(const QString &param, const Frac &other) {
+    auto iter = mapPoly.find(param);
+    if(iter != mapPoly.end()) {
+        int mul = iter.value();
+        mapPoly.erase(iter);
+        b *= other.b;
+        for(int &mono : mapPoly)
+            mono *= other.b;
+        for(auto otherIter = other.mapPoly.begin(); otherIter != other.mapPoly.end(); ++otherIter)
+            if((mapPoly[otherIter.key()] += otherIter.value() * mul) == 0)
+                mapPoly.remove(otherIter.key());
+        reduct();
+    }
+    return *this;
+}
+
 QString Frac::format(bool autoSpace, bool useColor) {
     QString res;
 
@@ -98,7 +126,10 @@ QString Frac::format(bool autoSpace, bool useColor) {
 
         if(hasPrev) {
             res += value < 0 ? (autoSpace ? " - " : "-") : (autoSpace ? " + " : "+");
-        } else hasPrev = true;
+        } else {
+            if(value < 0) res += '-';
+            hasPrev = true;
+        }
 
         if(qAbs(value) != 1 || key.isEmpty())
             res += QString::number(qAbs(value));

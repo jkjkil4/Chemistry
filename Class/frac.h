@@ -30,6 +30,9 @@ public:
     void reduct();
     Frac paramSep(const QString &param, bool *ok = nullptr);    //参变分离，假设该式等于0来处理
 
+    Frac& substitute(const QString &param, int digit);      //代入数字
+    Frac& substitute(const QString &param, const Frac &other);     //代入式子
+
     QString format(bool autoSpace = true, bool useColor = true);
 
     Frac& sum(int digit, const QString &key = "");
