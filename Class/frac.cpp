@@ -50,7 +50,7 @@ int Frac::Lcm(const QVector<int> &vValues, int n) {
 
 QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok) {
     //对于可以直接判断无解的情况，就结束该函数
-    if(lUnkNumbers.isEmpty() || lFracs.isEmpty() || lFracs.size() < lUnkNumbers.size()) {
+    if(lUnkNumbers.isEmpty() || lFracs.size() < lUnkNumbers.size()) {
         if(ok) *ok = false;
         return QList<Frac>();
     }
@@ -76,7 +76,7 @@ QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
             if(ok) *ok = false;
             return lRes;
         }
-        Frac paramFrac = (*iter).paramSep(unkNumber);   //参变分离
+        Frac paramFrac = (*iter).paramSep(unkNumber);   //参变分离(我不确定是不是这么说)
         lRes << paramFrac;      //将其加入到结果list中
         lFracs.erase(iter);     //从lFracs中移除该iter
 
