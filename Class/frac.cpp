@@ -49,6 +49,7 @@ int Frac::Lcm(const QVector<int> &vValues, int n) {
 #endif
 
 QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok) {
+    //对于可以直接判断无解的情况，就结束该函数
     if(lUnkNumbers.isEmpty() || lFracs.isEmpty() || lFracs.size() < lUnkNumbers.size()) {
         if(ok) *ok = false;
         return QList<Frac>();
@@ -70,13 +71,13 @@ QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
                 break;
             }
         }
-        //如果无法从现有的式子中找到该未知数，就return
+        //如果无法从现有的式子中找到该未知数，就结束该函数
         if(iter == lFracs.end()) {
             if(ok) *ok = false;
             return lRes;
         }
         Frac paramFrac = (*iter).paramSep(unkNumber);   //参变分离
-        lRes << paramFrac;  //将其加入到结果list中
+        lRes << paramFrac;      //将其加入到结果list中
         lFracs.erase(iter);     //从lFracs中移除该iter
 
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
@@ -99,22 +100,25 @@ QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
     }
 #endif
 
-    for(Frac &frac : lFracs) {
+    for(Frac &frac : lFracs) {  //判断是否无解(若有任何一个多余项不为0，就无解)
         if(!frac.mapPoly.isEmpty()) {
             if(ok) *ok = false;
             return QList<Frac>();
         }
     }
 
-    {
-        Frac &prev = *lRes.rbegin();
+    {//往回代入，求出所有的未知数
         auto iterUnkNum = lUnkNumbers.rbegin();
-        for(auto iter = lRes.rbegin() + 1; iter != lRes.rend(); ++iter) {
-            Frac &cur = *iter;
-            cur.substitute(*iterUnkNum, prev);
+        for(auto iterGet = lRes.rbegin(); iterGet != lRes.rend(); ++iterGet) {
+            Frac &cur = *iterGet;
+            for(auto iterSet = iterGet + 1; iterSet != lRes.rend(); ++iterSet)
+                (*iterSet).substitute(*iterUnkNum, cur);
             ++iterUnkNum;
         }
     }
+
+    for(Frac &frac : lRes)  //将分母的负号移至分子
+        frac.moveNegativeToTop();
 
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
     qDebug().noquote() << "\n\033[35m结果:\033[0m";
@@ -195,6 +199,15 @@ Frac& Frac::substitute(const QString &param, const Frac &other) {
     return *this;
 }
 
+Frac& Frac::moveNegativeToTop() {
+    if(b < 0) {
+        b = -b;
+        for(int &mono : mapPoly)
+            mono = -mono;
+    }
+    return *this;
+}
+
 QString Frac::format(bool autoSpace, bool useColor) const {
     QString res;
 
@@ -226,8 +239,10 @@ QString Frac::format(bool autoSpace, bool useColor) const {
     }
     if(size != 1)
         res += ")";
-    res += autoSpace ? " / " : "/";
-    res += QString::number(b);
+    if(b != 1) {
+        res += autoSpace ? " / " : "/";
+        res += QString::number(b);
+    }
 
     return res;
 }

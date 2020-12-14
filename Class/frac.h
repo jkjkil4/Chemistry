@@ -35,6 +35,8 @@ public:
     Frac& substitute(const QString &param, int digit);              //代入数字
     Frac& substitute(const QString &param, const Frac &other);      //代入式子
 
+    Frac& moveNegativeToTop();
+
     QString format(bool autoSpace = true, bool useColor = true) const;
 
     Frac& sum(int digit, const QString &key = "");

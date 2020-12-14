@@ -21,11 +21,19 @@ int main(int argc, char *argv[])
 //    Frac frac2 = frac.paramSep("x");
 //    qDebug().noquote() << "原式=0，化为\"x=\"的形式:      x =" << frac2.format();
 
-    QList<Frac> lFracs = {
-        Frac(2, "a").sum(1, "b").sub(1),
-        Frac(1, "a").sum(1, "b").sum(1, "c").sub(3),
-        Frac(1, "a").sub(1, "b").sub(2),
-        Frac(3, "a").sum(1, "b").sub(1, "c").sum(1)
+//    QList<Frac> lFracs = {      // a = 1, b = -1, c = 3
+//        Frac(2, "a").sum(1, "b").sub(1),                // 2a + b = 1
+//        Frac(1, "a").sum(1, "b").sum(1, "c").sub(3),    // a + b + c = 3
+//        Frac(1, "a").sub(1, "b").sub(2),                // a - b = 2
+//        Frac(3, "a").sum(1, "b").sub(1, "c").sum(1)     // 3a + b - c = -1
+//    };
+//    QStringList lUnkNumbers = { "a", "b", "c" };
+//    Frac::solvingEquations(lFracs, lUnkNumbers);
+
+    QList<Frac> lFracs = {  // a = 3, b = 2/3, c = 1
+        Frac(1, "a").sum(1, "b").sub(Frac(11).div(3)),  // a + b = 11/3
+        Frac(1, "a").sum(3, "b").sub(2, "c").sub(3),    // a + 3b - 2c = 3
+        Frac(3, "b").sub(2, "c")                        // b - 2c = 0
     };
     QStringList lUnkNumbers = { "a", "b", "c" };
     Frac::solvingEquations(lFracs, lUnkNumbers);
