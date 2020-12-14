@@ -43,6 +43,94 @@ int Frac::Lcm(const QVector<int> &vValues, int n) {
     return (n == 1 ? vValues[0] : Lcm(vValues[n - 1], Lcm(vValues, n - 1)));
 }
 
+#define DEBUG_FRAC_SOLVINGRQUATIONS
+#ifdef DEBUG_FRAC_SOLVINGRQUATIONS
+#include <QDebug>
+#endif
+
+QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok) {
+    if(lUnkNumbers.isEmpty() || lFracs.isEmpty() || lFracs.size() < lUnkNumbers.size()) {
+        if(ok) *ok = false;
+        return QList<Frac>();
+    }
+
+#ifdef DEBUG_FRAC_SOLVINGRQUATIONS
+    qDebug().noquote() << "\033[35m初始:\033[0m";
+    for(Frac &frac : lFracs)
+        qDebug().noquote() << frac.format() << "= 0";
+#endif
+
+    QList<Frac> lRes;
+    for(const QString &unkNumber : lUnkNumbers) {
+        auto iter = lFracs.end();
+        //查找第一个该未知数出现的式子
+        for(auto listIter = lFracs.begin(); listIter != lFracs.end(); ++listIter) {
+            if((*listIter).mapPoly.contains(unkNumber)) {
+                iter = listIter;
+                break;
+            }
+        }
+        //如果无法从现有的式子中找到该未知数，就return
+        if(iter == lFracs.end()) {
+            if(ok) *ok = false;
+            return lRes;
+        }
+        Frac paramFrac = (*iter).paramSep(unkNumber);   //参变分离
+        lRes << paramFrac;  //将其加入到结果list中
+        lFracs.erase(iter);     //从lFracs中移除该iter
+
+#ifdef DEBUG_FRAC_SOLVINGRQUATIONS
+        qDebug().noquote() << "\n\033[35m将\033[0m " + unkNumber + " = " + paramFrac.format() + " \033[35m代入得:\033[0m";
+#endif
+
+        for(Frac &otherFrac : lFracs) {   //将参变分离的结果代入到其他式子中
+#ifdef DEBUG_FRAC_SOLVINGRQUATIONS
+            qDebug().noquote() << otherFrac.substitute(unkNumber, paramFrac).format() << "= 0";
+#else
+            otherFrac.substitute(unkNumber, paramFrac);
+#endif
+        }
+    }
+
+#ifdef DEBUG_FRAC_SOLVINGRQUATIONS
+    qDebug() << "\n\033[35m多余项:\033[0m";
+    for(Frac &frac : lFracs) {
+        qDebug().noquote() << frac.format() << "= 0";
+    }
+#endif
+
+    for(Frac &frac : lFracs) {
+        if(!frac.mapPoly.isEmpty()) {
+            if(ok) *ok = false;
+            return QList<Frac>();
+        }
+    }
+
+    {
+        Frac &prev = *lRes.rbegin();
+        auto iterUnkNum = lUnkNumbers.rbegin();
+        for(auto iter = lRes.rbegin() + 1; iter != lRes.rend(); ++iter) {
+            Frac &cur = *iter;
+            cur.substitute(*iterUnkNum, prev);
+            ++iterUnkNum;
+        }
+    }
+
+#ifdef DEBUG_FRAC_SOLVINGRQUATIONS
+    qDebug().noquote() << "\n\033[35m结果:\033[0m";
+    {
+        auto iterUnkNum = lUnkNumbers.begin();
+        for(auto iter = lRes.begin(); iter != lRes.end(); ++iter) {
+            qDebug().noquote() << *iterUnkNum << "=" << (*iter).format();
+            ++iterUnkNum;
+        }
+    }
+#endif
+
+    if(ok) *ok = true;
+    return lRes;
+}
+
 void Frac::reduct() {
 //    checkZero();
     if(mapPoly.isEmpty()) {
@@ -107,7 +195,7 @@ Frac& Frac::substitute(const QString &param, const Frac &other) {
     return *this;
 }
 
-QString Frac::format(bool autoSpace, bool useColor) {
+QString Frac::format(bool autoSpace, bool useColor) const {
     QString res;
 
     int size = mapPoly.size();

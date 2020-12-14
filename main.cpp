@@ -21,11 +21,14 @@ int main(int argc, char *argv[])
 //    Frac frac2 = frac.paramSep("x");
 //    qDebug().noquote() << "原式=0，化为\"x=\"的形式:      x =" << frac2.format();
 
-    Frac frac(2, "x");
-    frac.sum(4, "y").div(3);
-    qDebug().noquote() << frac.format();
-    frac.substitute("x", Frac(3, "y").sum(4).div(2));
-    qDebug().noquote() << frac.format();
+    QList<Frac> lFracs = {
+        Frac(2, "a").sum(1, "b").sub(1),
+        Frac(1, "a").sum(1, "b").sum(1, "c").sub(3),
+        Frac(1, "a").sub(1, "b").sub(2),
+        Frac(3, "a").sum(1, "b").sub(1, "c").sum(1)
+    };
+    QStringList lUnkNumbers = { "a", "b", "c" };
+    Frac::solvingEquations(lFracs, lUnkNumbers);
 
 
     Widget w;
