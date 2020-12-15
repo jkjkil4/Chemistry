@@ -1,4 +1,5 @@
 #include "formula.h"
+#include <QDebug>
 
 
 Formula::Formula(int count) : count(count) {}
@@ -9,57 +10,17 @@ Formula::Formula(int count) : count(count) {}
 #define IsDigit(ch) (ch >= '0' && ch <= '9')
 #define IsSign(ch) (ch == '+' || ch == '-')
 
-Formula_Group::Formula_Group(const QString &str, int count)
+Formula_Group::Formula_Group(QString str, int count)
     : Formula(count)
 {
-    enum ParserState {
-        PS_Element_Head, PS_Element_Body,
-        PS_Elec_Head, PS_Elec_Body, PS_Count
-    };
-
-    QString tmpElement, tmpElec, tmpDigit;
-    ParserState state = PS_Element_Head;
-    for(const QChar &ch : str) {
-        switch(state) {
-        case PS_Element_Head:
-            tmpElement = "";
-            tmpElec = "";
-            tmpDigit = "";
-
-            if(IsBlockLetter(ch)) {
-                tmpElement = ch;
-                state = PS_Element_Body;
-            } else {
-                throw ParserError(ParserError::Unknown, "元素必须为大写字母开头");
-            }
-            break;
-        case PS_Element_Body:
-            if(IsLetter(ch)) {
-                tmpElement += ch;
-            } else {
-                if(ch != '[')
-                    throw ParserError(ParserError::Unknown, "元素后必须标注化合价(用\"[\"和\"]\"包住化合价)");
-                state = PS_Elec_Head;
-            }
-            break;
-        case PS_Elec_Head:
-            if(!IsSign(ch) && !IsDigit(ch))
-                throw ParserError(ParserError::Unknown, "电荷数 格式错误");
-            tmpElec = ch == '-' ? "-" : "";
-            state = PS_Elec_Body;
-            break;
-        case PS_Elec_Body:
-            if(ch == ']') {
-                //TODO:
-            }
-            if(!IsDigit(ch))
-                throw ParserError(ParserError::Unknown, "电荷数 格式错误");
-            tmpElec += ch;
-            break;
-        case PS_Count:
-
-            break;
+    str += '$';
+    QString divide;
+    for(QChar ch : str) {
+        if((IsBlockLetter(ch) || ch == '$') && !divide.isEmpty()) {
+            qDebug() << divide;
+            divide.clear();
         }
+        divide += ch;
     }
 }
 

@@ -18,7 +18,7 @@ public:
 class Formula_Group : public Formula
 {
 public:
-    Formula_Group(const QString &str, int count = 1);
+    Formula_Group(QString str, int count = 1);
     ~Formula_Group() override;
 
     QList<Formula*> childs;

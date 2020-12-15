@@ -43,7 +43,7 @@ int Frac::Lcm(const QVector<int> &vValues, int n) {
     return (n == 1 ? vValues[0] : Lcm(vValues[n - 1], Lcm(vValues, n - 1)));
 }
 
-//#define DEBUG_FRAC_SOLVINGRQUATIONS
+#define DEBUG_FRAC_SOLVINGRQUATIONS
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
 #include <QDebug>
 #endif
