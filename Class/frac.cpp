@@ -288,10 +288,10 @@ Frac& Frac::div(int digit) {
 
 Frac& Frac::sum(const Frac &other) {
     if(!other.mapPoly.isEmpty()) {
-        int CommonMulti = Lcm(b, other.b);
-        int selfMulti = CommonMulti / b;
-        int otherMulti = CommonMulti / other.b;
-        b = CommonMulti;
+        int commonMulti = Lcm(b, other.b);
+        int selfMulti = commonMulti / b;
+        int otherMulti = commonMulti / other.b;
+        b = commonMulti;
 
         for(int &mono : mapPoly)
             mono *= selfMulti;
