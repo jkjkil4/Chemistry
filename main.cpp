@@ -7,11 +7,9 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Formula_Group("BaSO4");
-    qDebug() << "";
-    Formula_Group("NaOH");
-    qDebug() << "";
-    Formula_Group("HCl");
+    //Formula_Group("Ba[+2]S[+6]O[-2]4");
+
+    qDebug() << QString(" -  2").replace(' ', "").toInt();
 
 
     Widget w;

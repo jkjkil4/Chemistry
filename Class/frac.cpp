@@ -5,6 +5,10 @@ Frac::Frac(int value, const QString &key) {
         mapPoly[key] = value;
 }
 
+Frac::Frac(QString str) {
+    str.replace(' ', "");
+}
+
 //void Frac::checkZero() {
 //    QStringList lNeedRemoveMono;
 //    for(auto iter = mapPoly.begin(); iter != mapPoly.end(); ++iter)

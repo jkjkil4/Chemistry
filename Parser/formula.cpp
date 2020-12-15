@@ -18,6 +18,8 @@ Formula_Group::Formula_Group(QString str, int count)
     for(QChar ch : str) {
         if((IsBlockLetter(ch) || ch == '$') && !divide.isEmpty()) {
             qDebug() << divide;
+            bool ok;
+            childs << new Formula_Element(divide, ok);
             divide.clear();
         }
         divide += ch;
@@ -31,8 +33,12 @@ Formula_Group::~Formula_Group() {
 }
 
 
-Formula_Element::Formula_Element(const QString &str, int count, int elec)
-    : Formula(count), elec(elec)
+Formula_Element::Formula_Element(const QString &str, bool &ok)
 {
-
+    int indexOfLeftElec = str.indexOf('[');
+    int indexOfRightElec = str.lastIndexOf(']');
+    qDebug() << (element = str.left(indexOfLeftElec));
+    //bool okToDigit = false;
+    qDebug() << str.mid(indexOfLeftElec + 1, indexOfRightElec - indexOfLeftElec - 1);
+    qDebug() << str.right(str.length() - indexOfRightElec - 1);
 }

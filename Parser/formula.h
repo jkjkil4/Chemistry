@@ -1,18 +1,23 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
-#include <QVariant>
+//#include <QVariant>
+#include <QList>
 
+#include "Class/frac.h"
 #include "parsererror.h"
+
+#include <QDebug>
 
 class Formula
 {
 public:
     enum Type { Group, Element };
+    Formula() = default;
     Formula(int count);
     virtual ~Formula() = default;
 
-    int count;
+    Frac count = 1;
 };
 
 class Formula_Group : public Formula
@@ -27,9 +32,11 @@ public:
 class Formula_Element : public Formula
 {
 public:
-    Formula_Element(const QString &str, int count, int elec);
+    Formula_Element(const QString &str, bool &ok);
+    ~Formula_Element() override = default;
 
-    int elec;
+    QString element;
+    Frac elec;
 };
 
 #endif // FORMULA_H
