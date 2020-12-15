@@ -217,7 +217,7 @@ QString Frac::format(bool autoSpace, bool useColor) const {
         return res;
     }
 
-    if(size != 1)
+    if(b != 1 && size != 1)
         res += "(";
 
     bool hasPrev = false;
@@ -237,9 +237,9 @@ QString Frac::format(bool autoSpace, bool useColor) const {
         if(!key.isEmpty())
             res += (useColor ? "\033[33m[\033[0m" : "[") + key + (useColor ? "\033[33m]\033[0m" : "]");
     }
-    if(size != 1)
-        res += ")";
     if(b != 1) {
+        if(size != 1)
+            res += ")";
         res += autoSpace ? " / " : "/";
         res += QString::number(b);
     }

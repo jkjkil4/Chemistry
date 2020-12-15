@@ -30,10 +30,20 @@ int main(int argc, char *argv[])
 //    QStringList lUnkNumbers = { "a", "b", "c" };
 //    Frac::solvingEquations(lFracs, lUnkNumbers);
 
-    QList<Frac> lFracs = {  // a = 3, b = 2/3, c = 1
-        Frac(1, "a").sum(1, "b").sub(Frac(11).div(3)),  // a + b = 11/3
-        Frac(1, "a").sum(3, "b").sub(2, "c").sub(3),    // a + 3b - 2c = 3
-        Frac(3, "b").sub(2, "c")                        // b - 2c = 0
+//    QList<Frac> lFracs = {  // a = 3, b = 2/3, c = 1
+//        Frac(1, "a").sum(1, "b").sub(Frac(11).div(3)),  // a + b = 11/3
+//        Frac(1, "a").sum(3, "b").sub(2, "c").sub(3),    // a + 3b - 2c = 3
+//        Frac(3, "b").sub(2, "c")                        // 3b - 2c = 0
+//    };
+//    QStringList lUnkNumbers = { "a", "b", "c" };
+//    Frac::solvingEquations(lFracs, lUnkNumbers);
+
+    QList<Frac> lFracs = {  // a = m + 2n, b = m - 2, c = n + 1
+        Frac(1, "b").sub(2, "c").sub(Frac(1, "m").sub(2, "n").sub(4)), // b - 2c       = m - 2n - 4
+        Frac(1, "a").sum(3, "c").sub(Frac(1, "m").sum(5, "n").sum(3)), // a + 3c       = m + 5n + 3
+        Frac(1, "a").sub(1, "b").sum(2, "c").sub(Frac(4, "n").sum(4)), // a - b + 2c   = 4n + 4
+        Frac(1, "a").sub(1, "c").sub(Frac(1, "m").sum(1, "n").sub(1)), // a - c        = m + n - 1
+        Frac(1, "b").sum(1, "c").sub(Frac(1, "m").sum(1, "n").sub(1))  // b + c        = m + n - 1
     };
     QStringList lUnkNumbers = { "a", "b", "c" };
     Frac::solvingEquations(lFracs, lUnkNumbers);
@@ -44,3 +54,20 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
