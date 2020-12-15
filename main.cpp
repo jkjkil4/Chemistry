@@ -9,8 +9,6 @@ int main(int argc, char *argv[])
 
     //Formula_Group("Ba[+2]S[+6]O[-2]4");
 
-    qDebug() << QString(" -  2").replace(' ', "").toInt();
-
 
     Widget w;
     w.show();
