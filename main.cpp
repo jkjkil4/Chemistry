@@ -7,7 +7,9 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    //Formula_Group("Ba[+2]S[+6]O[-2]4");
+    bool ok;
+    Formula_Group("(BaCr2)11(SO2)45(BrCl4)14", 1, &ok);
+    qDebug() << ok;
 
 
     Widget w;

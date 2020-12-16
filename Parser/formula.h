@@ -14,7 +14,7 @@ class Formula
 public:
     enum Type { Group, Element };
     Formula() = default;
-    Formula(int count);
+    Formula(Frac count);
     virtual ~Formula() = default;
 
     Frac count = 1;
@@ -23,7 +23,7 @@ public:
 class Formula_Group : public Formula
 {
 public:
-    Formula_Group(QString str, int count = 1);
+    Formula_Group(QString str, Frac count = 1, bool *ok = nullptr);
     ~Formula_Group() override;
 
     QList<Formula*> childs;
@@ -32,7 +32,7 @@ public:
 class Formula_Element : public Formula
 {
 public:
-    Formula_Element(const QString &str, bool &ok);
+    Formula_Element(const QString &str, bool *ok = nullptr);
     ~Formula_Element() override = default;
 
     QString element;

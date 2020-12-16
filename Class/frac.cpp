@@ -55,7 +55,7 @@ int Frac::Lcm(const QVector<int> &vValues, int n) {
 QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok) {
     //对于可以直接判断无解的情况，就结束该函数
     if(lUnkNumbers.isEmpty() || lFracs.size() < lUnkNumbers.size()) {
-        if(ok) *ok = false;
+        SET_PTR(ok, false);
         return QList<Frac>();
     }
 
@@ -77,7 +77,7 @@ QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         }
         //如果无法从现有的式子中找到该未知数，就结束该函数
         if(iter == lFracs.end()) {
-            if(ok) *ok = false;
+            SET_PTR(ok, false);
             return lRes;
         }
         Frac paramFrac = (*iter).paramSep(unkNumber);   //参变分离(我不确定是不是这么说)
@@ -106,7 +106,7 @@ QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
 
     for(Frac &frac : lFracs) {  //判断是否无解(若有任何一个多余项不为0，就无解)
         if(!frac.mapPoly.isEmpty()) {
-            if(ok) *ok = false;
+            SET_PTR(ok, false);
             return QList<Frac>();
         }
     }
@@ -135,7 +135,7 @@ QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
     }
 #endif
 
-    if(ok) *ok = true;
+    SET_PTR(ok, true);
     return lRes;
 }
 
@@ -161,7 +161,7 @@ void Frac::reduct() {
 Frac Frac::paramSep(const QString &param, bool *ok) {
 //    checkZero();
     if(!mapPoly.contains(param)) {
-        if(ok) *ok = false;
+        SET_PTR(ok, false);
         return Frac();
     }
 
@@ -171,7 +171,7 @@ Frac Frac::paramSep(const QString &param, bool *ok) {
     res.div(-mapPoly[param]);
     res.reduct();
 
-    if(ok) *ok = true;
+    SET_PTR(ok, true);
     return res;
 }
 

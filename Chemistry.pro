@@ -34,6 +34,7 @@ HEADERS += \
         Class/frac.h \
         Parser/formula.h \
         Parser/parsererror.h \
+        mheader.h \
         widget.h
 
 # Default rules for deployment.

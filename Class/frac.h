@@ -4,6 +4,8 @@
 #include <QString>
 #include <QMap>
 
+#include "mheader.h"
+
 class Frac
 {
 public:
