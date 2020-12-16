@@ -9,7 +9,10 @@ int main(int argc, char *argv[])
 
 
 
-    QStringList list = { "Mn[+7]O[-2]4", "O[0]2", "NaN", "BaB", "", "S[+6]O[-2]4" };
+    QStringList list = {
+        "Mn[+7]O[-2]4", "O[0]2", "NaN", "BaB", "",
+        "S[+6]O[-2]4", "Fe[+8/3]", "Fe[+3](C[+2]N[-3])6", "K[+1]3(Fe[+3](C[+2]N[-3])6)"
+    };
 
     for(QString str : list) {
         bool ok;

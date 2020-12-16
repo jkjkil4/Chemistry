@@ -39,18 +39,20 @@ Formula_Group::Formula_Group(QString str, int count, bool *ok)
                 //检查格式
                 for(QChar ch : strDigit) {
                     if(!IsDigit(ch)) {
+                        //qDebug() << 1;
                         SET_PTR(ok, false);
                         return;
                     }
                 }
 
                 //个数
-                Frac count = strDigit.isEmpty() ? 1 : strDigit.toInt();
+                int count = strDigit.isEmpty() ? 1 : strDigit.toInt();
 
                 //qDebug().noquote() << "\033[34m" << divide << strDigit << "\033[0m";
                 bool ok2;
-                childs << new Formula_Group(divide.mid(1, divide.length() - 2), 1, &ok2);
+                childs << new Formula_Group(divide.mid(1, divide.length() - 2), count, &ok2);
                 if(!ok2) {
+                    //qDebug() << 2;
                     SET_PTR(ok, false);
                     return;
                 }
@@ -59,6 +61,7 @@ Formula_Group::Formula_Group(QString str, int count, bool *ok)
                 bool ok2;
                 childs << new Formula_Element(divide, &ok2);
                 if(!ok2) {
+                    //qDebug() << 3;
                     SET_PTR(ok, false);
                     return;
                 }
@@ -69,6 +72,7 @@ Formula_Group::Formula_Group(QString str, int count, bool *ok)
     }
 
     if(childs.isEmpty()) {
+        //qDebug() << 4;
         SET_PTR(ok, false);
         return;
     }
@@ -103,11 +107,13 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
 
     //检查是否符合格式要求
     if(element.isEmpty() || strElec.isEmpty()) {
+        //qDebug() << 6;
         SET_PTR(ok, false);
         return;
     }
     for(QChar ch : element) {
         if(!IsBlockLetter(ch) && !IsLetter(ch)) {
+            //qDebug() << 7;
             SET_PTR(ok, false);
             return;
         }
@@ -115,6 +121,7 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
     bool ok2;
     elec = Frac(strElec, &ok2);
     if(!ok2) {
+        //qDebug() << 8;
         SET_PTR(ok, false);
         return;
     }
@@ -128,6 +135,7 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
 //        }
         for(QChar ch : strCount) {
             if(!IsDigit(ch)) {
+                //qDebug() << 9;
                 SET_PTR(ok, false);
                 return;
             }
