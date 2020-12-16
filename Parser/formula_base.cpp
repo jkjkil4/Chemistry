@@ -1,8 +1,8 @@
-#include "formula.h"
-#include <QDebug>
+#include "formula_base.h"
+//#include <QDebug>
 
 
-Formula::Formula(Frac count) : count(count) {}
+Formula_Parent::Formula_Parent(Frac count) : count(count) {}
 
 
 #define IsBlockLetter(ch) (ch >= 'A' && ch <= 'Z')
@@ -11,7 +11,7 @@ Formula::Formula(Frac count) : count(count) {}
 #define IsSign(ch) (ch == '+' || ch == '-')
 
 Formula_Group::Formula_Group(QString str, Frac count, bool *ok)
-    : Formula(count)
+    : Formula_Parent(count)
 {
     str += '$';
     QString divide;
@@ -25,7 +25,9 @@ Formula_Group::Formula_Group(QString str, Frac count, bool *ok)
         bool condBracket = ch == '(' && bracketsCount == 1;
         if((condBlockLetter || condEnd || condBracket) && !divide.isEmpty()) {
             if(divide[0] == '(') {
-                qDebug().noquote() << "\033[35m" << divide << "\033[0m";
+                //qDebug().noquote() << "\033[35m" << divide << "\033[0m";
+
+                //分割式子和个数
                 QString strDigit;
                 for(int i = divide.length() - 1; i >= 0; i--) {
                     if(divide[i] >= '0' && divide[i] <= '9') {
@@ -33,24 +35,50 @@ Formula_Group::Formula_Group(QString str, Frac count, bool *ok)
                         divide.remove(i, 1);
                     } else break;
                 }
-                qDebug().noquote() << "\033[34m" << divide << strDigit << "\033[0m";
-                childs << new Formula_Group(divide.mid(1, divide.length() - 2));
+
+                //检查格式
+                for(QChar ch : strDigit) {
+                    if(!IsDigit(ch)) {
+                        SET_PTR(ok, false);
+                        return;
+                    }
+                }
+
+                //个数
+                Frac count = strDigit.isEmpty() ? 1 : strDigit.toInt();
+
+                //qDebug().noquote() << "\033[34m" << divide << strDigit << "\033[0m";
+                bool ok2;
+                childs << new Formula_Group(divide.mid(1, divide.length() - 2), 1, &ok2);
+                if(!ok2) {
+                    SET_PTR(ok, false);
+                    return;
+                }
             } else {
-                qDebug() << divide;
-                //bool ok;
-                childs << new Formula_Element(divide, ok);
+                //qDebug() << divide;
+                bool ok2;
+                childs << new Formula_Element(divide, &ok2);
+                if(!ok2) {
+                    SET_PTR(ok, false);
+                    return;
+                }
             }
             divide.clear();
         }
         divide += ch;
     }
+
     SET_PTR(ok, bracketsCount == 0);
 }
 
 Formula_Group::~Formula_Group() {
-    for(Formula *child : childs) {
+    for(Formula_Parent *child : childs) {
         delete child;
     }
+}
+
+void Formula_Group::paint(QPainter &p, int &xOffset) {
+
 }
 
 
@@ -82,17 +110,27 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
         return;
     }
     if(!strCount.isEmpty()) {
-        bool isLetter = IsLetter(strCount[0]);
+//        bool isLetter = IsLetter(strCount[0]);
+//        for(QChar ch : strCount) {
+//            if(!(isLetter ? IsLetter(ch) : IsDigit(ch))) {
+//                SET_PTR(ok, false);
+//                return;
+//            }
+//        }
         for(QChar ch : strCount) {
-            if(!(isLetter ? IsLetter(ch) : IsDigit(ch))) {
+            if(!IsDigit(ch)) {
                 SET_PTR(ok, false);
                 return;
             }
         }
     }
-
+    count = strCount.isEmpty() ? 1 : strCount.toInt();
 
     SET_PTR(ok, true);
+}
+
+void Formula_Element::paint(QPainter &p, int &xOffset) {
+
 }
 
 QString Formula_Element::formatInfo() {

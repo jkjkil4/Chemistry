@@ -26,13 +26,14 @@ CONFIG += c++11
 
 SOURCES += \
         Class/frac.cpp \
-        Parser/formula.cpp \
+        Parser/formula_base.cpp \
         main.cpp \
         widget.cpp
 
 HEADERS += \
         Class/frac.h \
         Parser/formula.h \
+        Parser/formula_base.h \
         Parser/parsererror.h \
         mheader.h \
         widget.h

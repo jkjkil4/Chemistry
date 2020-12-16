@@ -30,7 +30,7 @@ public:
     static int Lcm(int a, int b);   //得到两个数的最小公倍数
     static int Lcm(const QVector<int>& vValues, int n = -1);   //得到许多数的最小公倍数
 
-    static QList<Frac> solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok = nullptr);
+    static QList<Frac> SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok = nullptr);
 
     void reduct();
     Frac paramSep(const QString &param, bool *ok = nullptr);    //参变分离，假设该式等于0来处理

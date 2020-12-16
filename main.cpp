@@ -9,11 +9,11 @@ int main(int argc, char *argv[])
 
     QStringList list = { "Ba[+2]2", "O[0]2", "BaB" };
 
-    for(QString element : list) {
+    for(QString str : list) {
         bool ok;
-        Formula_Element b(element, &ok);
+        Formula_Group b(str, 1, &ok);
         qDebug() << "";
-        if(ok) qDebug().noquote() << b.formatInfo();
+        //if(ok) qDebug().noquote() << b.formatInfo();
         qDebug() << ok;
     }
 
