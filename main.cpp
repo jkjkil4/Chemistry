@@ -7,9 +7,9 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    bool ok;
-    Formula_Group("(BaCr2)11(SO2)45(BrCl4)14", 1, &ok);
-    qDebug() << ok;
+    //bool ok;
+    //Formula_Group("(BaCr2)11(SO2)45(BrCl4)14", 1, &ok);
+    qDebug() << Frac("114/514").format();
 
 
     Widget w;

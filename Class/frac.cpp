@@ -5,8 +5,33 @@ Frac::Frac(int value, const QString &key) {
         mapPoly[key] = value;
 }
 
-Frac::Frac(QString str) {
+Frac::Frac(QString str, int *ok) {
     str.replace(' ', "");
+    int indexOfDiv = str.indexOf("/");
+    if(indexOfDiv == -1) {
+        bool ok2;
+        int value = str.toInt(&ok2);
+        if(ok2) {
+            mapPoly[""] = value;
+        } else {
+            SET_PTR(ok, false);
+            return;
+        }
+    } else {
+        bool ok2;
+        int top = str.left(indexOfDiv).toInt(&ok2);
+        if(!ok2) {
+            SET_PTR(ok, false);
+            return;
+        }
+        int bottom = str.right(str.length() - indexOfDiv - 1).toInt(&ok2);
+        if(!ok2) {
+            SET_PTR(ok, false);
+            return;
+        }
+        mapPoly[""] = top;
+        b = bottom;
+    }
 }
 
 //void Frac::checkZero() {
@@ -47,7 +72,7 @@ int Frac::Lcm(const QVector<int> &vValues, int n) {
     return (n == 1 ? vValues[0] : Lcm(vValues[n - 1], Lcm(vValues, n - 1)));
 }
 
-#define DEBUG_FRAC_SOLVINGRQUATIONS
+//#define DEBUG_FRAC_SOLVINGRQUATIONS
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
 #include <QDebug>
 #endif

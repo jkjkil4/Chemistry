@@ -58,8 +58,26 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
 {
     int indexOfLeftElec = str.indexOf('[');
     int indexOfRightElec = str.lastIndexOf(']');
+
+    //得到元素、电荷数、个数
     element = (element = str.left(indexOfLeftElec));
     QString strElec = str.mid(indexOfLeftElec + 1, indexOfRightElec - indexOfLeftElec - 1);
     QString strCount = str.right(str.length() - indexOfRightElec - 1);
+
+    //检查是否符合格式要求
+    if(element.isEmpty()) {
+        SET_PTR(ok, false);
+        return;
+    }
+    for(QChar ch : element) {
+        if(!IsBlockLetter(ch) && !IsLetter(ch)) {
+            SET_PTR(ok, false);
+            return;
+        }
+    }
+    if(strElec.isEmpty()) {
+        SET_PTR(ok, false);
+        return;
+    }
 
 }
