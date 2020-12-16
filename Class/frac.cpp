@@ -78,7 +78,7 @@ int Frac::Lcm(const QVector<int> &vValues, int n) {
 #include <QDebug>
 #endif
 
-QList<Frac> Frac::solvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok) {
+QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok) {
     //对于可以直接判断无解的情况，就结束该函数
     if(lUnkNumbers.isEmpty() || lFracs.size() < lUnkNumbers.size()) {
         SET_PTR(ok, false);
@@ -216,13 +216,13 @@ Frac& Frac::substitute(const QString &param, int digit) {
 Frac& Frac::substitute(const QString &param, const Frac &other) {
     auto iter = mapPoly.find(param);
     if(iter != mapPoly.end()) {
-        int mul = iter.value();
+        int valueMul = iter.value();
         mapPoly.erase(iter);
         b *= other.b;
         for(int &mono : mapPoly)
             mono *= other.b;
         for(auto otherIter = other.mapPoly.begin(); otherIter != other.mapPoly.end(); ++otherIter)
-            if((mapPoly[otherIter.key()] += otherIter.value() * mul) == 0)
+            if((mapPoly[otherIter.key()] += otherIter.value() * valueMul) == 0)
                 mapPoly.remove(otherIter.key());
         reduct();
     }
@@ -295,7 +295,7 @@ Frac& Frac::sub(int digit, const QString &key) {
     }
     return *this;
 }
-Frac& Frac::multi(int digit) {
+Frac& Frac::mul(int digit) {
     if(digit == 0) {
         mapPoly.clear();
         b = 1;

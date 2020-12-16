@@ -44,7 +44,7 @@ public:
 
     Frac& sum(int digit, const QString &key = "");
     Frac& sub(int digit, const QString &key = "");
-    Frac& multi(int digit);
+    Frac& mul(int digit);
     Frac& div(int digit);
 
     Frac& sum(const Frac &other);

@@ -1,14 +1,52 @@
-#ifndef FORMULA_H
-#define FORMULA_H
+#ifndef FORMULA_BASE_H
+#define FORMULA_BASE_H
 
-#include "formula_base.h"
+//#include <QVariant>
+#include <QList>
 
-class Formula
+#include "Class/frac.h"
+#include "parsererror.h"
+
+#include <QPainter>
+
+class Formula_Parent
 {
 public:
-    Formula(const QString &str, bool *ok = nullptr) : formula(str, 1, ok) {}
-    ~Formula() = default;
-    Formula_Group formula;
+    enum Type { Group, Element };
+    Formula_Parent() = default;
+    Formula_Parent(int count);
+    virtual ~Formula_Parent() = default;
+
+    virtual void paint(QPainter &p, int &xOffset) = 0;
+
+    int count = 1;
+    Frac elec;
 };
 
-#endif // FORMULA_H
+class Formula_Group : public Formula_Parent
+{
+public:
+    Formula_Group(QString str, int count = 1, bool *ok = nullptr);
+    ~Formula_Group() override;
+
+    void paint(QPainter &p, int &xOffset) override;
+
+    QList<Formula_Parent*> childs;
+};
+
+class Formula_Element : public Formula_Parent
+{
+public:
+    Formula_Element(const QString &str, bool *ok = nullptr);
+    ~Formula_Element() override = default;
+
+    void paint(QPainter &p, int &xOffset) override;
+
+    QString formatInfo();
+
+    QString element;
+};
+
+typedef Formula_Group Formula;
+
+#endif // FORMULA_BASE_H

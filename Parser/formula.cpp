@@ -1,8 +1,8 @@
-#include "formula_base.h"
+#include "formula.h"
 //#include <QDebug>
 
 
-Formula_Parent::Formula_Parent(Frac count) : count(count) {}
+Formula_Parent::Formula_Parent(int count) : count(count) {}
 
 
 #define IsBlockLetter(ch) (ch >= 'A' && ch <= 'Z')
@@ -10,7 +10,7 @@ Formula_Parent::Formula_Parent(Frac count) : count(count) {}
 #define IsDigit(ch) (ch >= '0' && ch <= '9')
 #define IsSign(ch) (ch == '+' || ch == '-')
 
-Formula_Group::Formula_Group(QString str, Frac count, bool *ok)
+Formula_Group::Formula_Group(QString str, int count, bool *ok)
     : Formula_Parent(count)
 {
     str += '$';
@@ -66,6 +66,15 @@ Formula_Group::Formula_Group(QString str, Frac count, bool *ok)
             divide.clear();
         }
         divide += ch;
+    }
+
+    if(childs.isEmpty()) {
+        SET_PTR(ok, false);
+        return;
+    }
+
+    for(Formula_Parent *child : childs) {
+        elec.sum(Frac(child->elec).mul(child->count));
     }
 
     SET_PTR(ok, bracketsCount == 0);
@@ -134,5 +143,5 @@ void Formula_Element::paint(QPainter &p, int &xOffset) {
 }
 
 QString Formula_Element::formatInfo() {
-    return "元素: " + element + "   电荷: " + elec.format() + "   个数: " + count.format();
+    return "元素: " + element + "   电荷: " + elec.format() + "   个数: " + QString::number(count);
 }
