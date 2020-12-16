@@ -17,7 +17,7 @@ public:
 
     Frac() = default;
     Frac(int value, const QString &key = "");
-    Frac(QString str, int *ok = nullptr);
+    Frac(QString str, bool *ok = nullptr);
 
     QMap<QString, int> mapPoly;
     int b = 1;

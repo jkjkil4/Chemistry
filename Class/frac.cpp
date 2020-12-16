@@ -5,7 +5,7 @@ Frac::Frac(int value, const QString &key) {
         mapPoly[key] = value;
 }
 
-Frac::Frac(QString str, int *ok) {
+Frac::Frac(QString str, bool *ok) {
     str.replace(' ', "");
     int indexOfDiv = str.indexOf("/");
     if(indexOfDiv == -1) {
@@ -32,6 +32,7 @@ Frac::Frac(QString str, int *ok) {
         mapPoly[""] = top;
         b = bottom;
     }
+    SET_PTR(ok, true);
 }
 
 //void Frac::checkZero() {

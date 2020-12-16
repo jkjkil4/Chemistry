@@ -35,6 +35,8 @@ public:
     Formula_Element(const QString &str, bool *ok = nullptr);
     ~Formula_Element() override = default;
 
+    QString formatInfo();
+
     QString element;
     Frac elec;
 };

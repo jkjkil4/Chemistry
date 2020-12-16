@@ -7,9 +7,16 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    //bool ok;
-    //Formula_Group("(BaCr2)11(SO2)45(BrCl4)14", 1, &ok);
-    qDebug() << Frac("114/514").format();
+    QStringList list = { "Ba[+2]2", "O[0]2", "BaB" };
+
+    for(QString element : list) {
+        bool ok;
+        Formula_Element b(element, &ok);
+        qDebug() << "";
+        if(ok) qDebug().noquote() << b.formatInfo();
+        qDebug() << ok;
+    }
+
 
 
     Widget w;

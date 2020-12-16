@@ -65,7 +65,7 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
     QString strCount = str.right(str.length() - indexOfRightElec - 1);
 
     //检查是否符合格式要求
-    if(element.isEmpty()) {
+    if(element.isEmpty() || strElec.isEmpty()) {
         SET_PTR(ok, false);
         return;
     }
@@ -75,9 +75,26 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
             return;
         }
     }
-    if(strElec.isEmpty()) {
+    bool ok2;
+    elec = Frac(strElec, &ok2);
+    if(!ok2) {
         SET_PTR(ok, false);
         return;
     }
+    if(!strCount.isEmpty()) {
+        bool isLetter = IsLetter(strCount[0]);
+        for(QChar ch : strCount) {
+            if(!(isLetter ? IsLetter(ch) : IsDigit(ch))) {
+                SET_PTR(ok, false);
+                return;
+            }
+        }
+    }
 
+
+    SET_PTR(ok, true);
+}
+
+QString Formula_Element::formatInfo() {
+    return "元素: " + element + "   电荷: " + elec.format() + "   个数: " + count.format();
 }
