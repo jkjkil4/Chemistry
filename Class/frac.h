@@ -4,7 +4,7 @@
 #include <QString>
 #include <QMap>
 
-#include "mheader.h"
+#include <mlibheader.h>
 
 class Frac
 {

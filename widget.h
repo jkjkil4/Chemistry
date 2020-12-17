@@ -9,7 +9,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include <header.h>
+#include <mlibheader.h>
 
 class Widget : public QWidget
 {

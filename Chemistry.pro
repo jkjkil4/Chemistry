@@ -27,6 +27,7 @@ CONFIG += c++11
 SOURCES += \
         Class/frac.cpp \
         Parser/formula.cpp \
+        Widget/formulawidget.cpp \
         main.cpp \
         widget.cpp
 
@@ -34,7 +35,7 @@ HEADERS += \
         Class/frac.h \
         Parser/formula.h \
         Parser/parsererror.h \
-        mheader.h \
+        Widget/formulawidget.h \
         widget.h
 
 # Default rules for deployment.

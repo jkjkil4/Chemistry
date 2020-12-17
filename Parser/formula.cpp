@@ -37,31 +37,34 @@ Formula_Group::Formula_Group(QString str, int count, bool *ok)
                 }
 
                 //检查格式
-                for(QChar ch : strDigit) {
-                    if(!IsDigit(ch)) {
-                        //qDebug() << 1;
-                        SET_PTR(ok, false);
-                        return;
+                if(!strDigit.isEmpty()) {
+                    for(QChar ch : strDigit) {
+                        if(!IsDigit(ch)) {
+                            SET_PTR(ok, false);
+                            return;
+                        }
                     }
                 }
 
                 //个数
-                int count = strDigit.isEmpty() ? 1 : strDigit.toInt();
+                bool ok2 = true;
+                int count = strDigit.isEmpty() ? 1 : strDigit.toInt(&ok2);
+
+                if(!ok2) {
+                    SET_PTR(ok, false);
+                    return;
+                }
 
                 //qDebug().noquote() << "\033[34m" << divide << strDigit << "\033[0m";
-                bool ok2;
                 childs << new Formula_Group(divide.mid(1, divide.length() - 2), count, &ok2);
                 if(!ok2) {
-                    //qDebug() << 2;
                     SET_PTR(ok, false);
                     return;
                 }
             } else {
-                //qDebug() << divide;
                 bool ok2;
                 childs << new Formula_Element(divide, &ok2);
                 if(!ok2) {
-                    //qDebug() << 3;
                     SET_PTR(ok, false);
                     return;
                 }
@@ -72,14 +75,13 @@ Formula_Group::Formula_Group(QString str, int count, bool *ok)
     }
 
     if(childs.isEmpty()) {
-        //qDebug() << 4;
         SET_PTR(ok, false);
         return;
     }
 
-    for(Formula_Parent *child : childs) {
+    for(Formula_Parent *child : childs)
         elec.sum(Frac(child->elec).mul(child->count));
-    }
+    elec.moveNegativeToTop();
 
     SET_PTR(ok, bracketsCount == 0);
 }
@@ -90,8 +92,28 @@ Formula_Group::~Formula_Group() {
     }
 }
 
-void Formula_Group::paint(QPainter &p, int &xOffset) {
+void Formula_Group::paint(QPainter &p, int &x, int y, bool useBrackets) const {
+    QRect rect;
 
+    if(useBrackets) {
+        j::DrawText(p, x, y, Qt::AlignBottom | Qt::AlignLeft, "(", -1, -1, &rect);
+        x += rect.width();
+    }
+
+    for(Formula_Parent *child : childs)
+        child->paint(p, x, y, true);
+
+    if(useBrackets) {
+        j::DrawText(p, x, y, Qt::AlignBottom | Qt::AlignLeft, ")", -1, -1, &rect);
+        x += rect.width();
+    }
+    if(count != 1) {
+        int pointSize = p.font().pointSize();
+        j::SetPointSize(&p, qMax(1, pointSize / 2));
+        j::DrawText(p, x, y, Qt::AlignBottom | Qt::AlignLeft, QString::number(count), -1, -1, &rect);
+        x += rect.width();
+        j::SetPointSize(&p, pointSize);
+    }
 }
 
 
@@ -125,6 +147,7 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
         SET_PTR(ok, false);
         return;
     }
+    elec.moveNegativeToTop();
     if(!strCount.isEmpty()) {
 //        bool isLetter = IsLetter(strCount[0]);
 //        for(QChar ch : strCount) {
@@ -146,10 +169,23 @@ Formula_Element::Formula_Element(const QString &str, bool *ok)
     SET_PTR(ok, true);
 }
 
-void Formula_Element::paint(QPainter &p, int &xOffset) {
+void Formula_Element::paint(QPainter &p, int &x, int y, bool) const {
+    QRect rect;
 
+    //绘制元素
+    j::DrawText(p, x, y, Qt::AlignBottom | Qt::AlignLeft, element, -1, -1, &rect);
+    x += rect.width();
+
+    //绘制个数
+    if(count != 1) {
+        int pointSize = p.font().pointSize();
+        j::SetPointSize(&p, qMax(1, pointSize / 2));
+        j::DrawText(p, x, y, Qt::AlignBottom | Qt::AlignLeft, QString::number(count), -1, -1, &rect);
+        x += rect.width();
+        j::SetPointSize(&p, pointSize);
+    }
 }
 
-QString Formula_Element::formatInfo() {
+QString Formula_Element::formatInfo() const {
     return "元素: " + element + "   电荷: " + elec.format() + "   个数: " + QString::number(count);
 }

@@ -2,25 +2,28 @@
 #include <QApplication>
 #include <QDebug>
 #include "Parser/formula.h"
+#include "Widget/formulawidget.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
 
-
     QStringList list = {
-        "Mn[+7]O[-2]4", "O[0]2", "NaN", "BaB", "",
-        "S[+6]O[-2]4", "Fe[+8/3]", "Fe[+3](C[+2]N[-3])6", "K[+1]3(Fe[+3](C[+2]N[-3])6)"
+        "Fe[+3](C[+2]N[-3])6", "Mn[+7]O[-2]4", "K[+1]", "To[+2947/114]114Nk[-2]514"
     };
 
-    for(QString str : list) {
+    for(QString &str : list){
         bool ok;
-        Formula f(str, 1, &ok);
+        Formula *f = new Formula(str, 1, &ok);
         if(ok) {
-            qDebug().noquote() << "\n解析" << str << "成功\n电荷数:" << f.elec.format();
+            qDebug().noquote() << "\n解析" << str <<  "成功" << f->elec.format();
+            FormulaWidget *w = new FormulaWidget(f);
+            w->setAttribute(Qt::WA_DeleteOnClose);
+            w->show();
         } else {
             qDebug().noquote() << "\n解析" << str << "失败";
+            delete f;
         }
     }
 
