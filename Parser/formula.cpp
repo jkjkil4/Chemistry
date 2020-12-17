@@ -186,6 +186,3 @@ void Formula_Element::paint(QPainter &p, int &x, int y, bool) const {
     }
 }
 
-QString Formula_Element::formatInfo() const {
-    return "元素: " + element + "   电荷: " + elec.format() + "   个数: " + QString::number(count);
-}

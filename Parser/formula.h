@@ -43,8 +43,6 @@ public:
 
     void paint(QPainter &p, int &x, int y, bool) const override;
 
-    QString formatInfo() const;
-
     QString element;
 };
 
