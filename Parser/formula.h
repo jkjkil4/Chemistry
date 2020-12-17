@@ -50,4 +50,25 @@ public:
 
 typedef Formula_Group Formula;
 
+inline void DrawFormula(QPainter &p, int x, int y, Formula *formula, int *pWidth = nullptr) {
+    int xStart = x;
+    formula->paint(p, x, y);
+    if(!formula->elec.mapPoly.isEmpty()) {
+        x += 5;
+        y -= QFontMetrics(p.font()).height();
+        j::SetPointSize(&p, qMax(1, p.font().pointSize() / 2));
+        QString elec = formula->elec.format(false, false);
+        bool isOne = Frac(formula->elec).sum(1).mapPoly.isEmpty() || Frac(formula->elec).sub(1).mapPoly.isEmpty();
+        if(elec[0] == '-') {
+            elec.remove(0, 1);
+            isOne ? elec = '-' : elec.append('-');
+        } else isOne ? elec = '+' : elec.append('+');
+
+        QRect rect;
+        j::DrawText(p, x, y, Qt::AlignLeft | Qt::AlignTop, elec, -1, -1, &rect);
+        x += rect.width();
+    }
+    SET_PTR(pWidth, x - xStart);
+}
+
 #endif // FORMULA_BASE_H
