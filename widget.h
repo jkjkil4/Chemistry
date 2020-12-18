@@ -3,11 +3,13 @@
 
 #include <QWidget>
 #include <QPlainTextEdit>
-#include <QTabWidget>
+#include <QGroupBox>
 #include <QPushButton>
+#include <QStackedWidget>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QSplitter>
 
 #include <mlibheader.h>
 
@@ -22,12 +24,15 @@ public slots:
     void onAnalysis();
 
 private:
-    QTabWidget *tabWidget = new QTabWidget;
+    QStackedWidget *stackedWidget = new QStackedWidget;
+    QWidget *viewNone = new QWidget;
+    QWidget *viewError = new QWidget;
+    QWidget *viewResult = new QWidget;
 
     QPlainTextEdit *editFormula = new QPlainTextEdit;
     QPlainTextEdit *editRel = new QPlainTextEdit;
 
-    QPushButton *btnAnalysis = new QPushButton;
+    QPushButton *btnAnalysis = new QPushButton("配平");
 };
 
 #endif // WIDGET_H
