@@ -63,14 +63,23 @@ Widget::~Widget()
 }
 
 void Widget::onAnalysis() {
-
+    QVector<Formula*> vFormulas;
     {//解析化学式
         QTextDocument *doc = editFormula->document();
         int count = doc->lineCount();
         repeat(i, count) {
             QString line = doc->findBlockByLineNumber(i).text();
             QStringList list = line.split(' ', QString::SplitBehavior::SkipEmptyParts);
-            //TODO:
+            for(QString &str : list) {
+                bool ok;
+                Formula *formula = new Formula(str, 1, &ok);
+                if(ok) {
+                    vFormulas << formula;
+                } else {
+                    delete formula;
+                }
+                //TODO:
+            }
         }
     }
 }
