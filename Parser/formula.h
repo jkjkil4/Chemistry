@@ -5,7 +5,7 @@
 #include <QList>
 
 #include "Class/frac.h"
-#include "parsererror.h"
+//#include "parsererror.h"
 
 #include <QPainter>
 
@@ -13,6 +13,7 @@ class Formula_Parent
 {
 public:
     enum Type { Group, Element };
+
     Formula_Parent() = default;
     Formula_Parent(int count);
     virtual ~Formula_Parent() = default;

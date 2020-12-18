@@ -34,7 +34,6 @@ SOURCES += \
 HEADERS += \
         Class/frac.h \
         Parser/formula.h \
-        Parser/parsererror.h \
         Widget/formulawidget.h \
         widget.h
 

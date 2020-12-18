@@ -9,7 +9,8 @@ Widget::Widget(QWidget *parent)
     j::SetPointSize(editRel, 11);;
     connect(btnAnalysis, SIGNAL(clicked()), this, SLOT(onAnalysis()));
 
-    stackedWidget->setStyleSheet("background-color:rgb(220, 220, 220)");
+    stackedWidget->setObjectName("StackedWidget");
+    stackedWidget->setStyleSheet("#StackedWidget{background-color:rgb(225, 225, 225)}");
     stackedWidget->addWidget(viewNone);
     stackedWidget->addWidget(viewError);
     stackedWidget->addWidget(viewResult);
@@ -63,8 +64,13 @@ Widget::~Widget()
 
 void Widget::onAnalysis() {
 
-
-    //QStringList lReactants, lProducts;
-
-
+    {//解析化学式
+        QTextDocument *doc = editFormula->document();
+        int count = doc->lineCount();
+        repeat(i, count) {
+            QString line = doc->findBlockByLineNumber(i).text();
+            QStringList list = line.split(' ', QString::SplitBehavior::SkipEmptyParts);
+            //TODO:
+        }
+    }
 }

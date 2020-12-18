@@ -10,8 +10,11 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QSplitter>
+#include <QTextBlock>
 
 #include <mlibheader.h>
+
+#include "Parser/formula.h"
 
 class Widget : public QWidget
 {
