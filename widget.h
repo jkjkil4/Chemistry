@@ -36,6 +36,20 @@ public:
             return !tmp.mapPoly.isEmpty() && tmp.mapPoly[""] < 0;
         }
     };
+    struct Error
+    {
+        enum Type { FormulaError } type;
+        QStringList args;
+        static QMap<Type, QString> mapText;
+
+        Error(Type type, const QStringList &args) : type(type), args(args) {}
+        QString text() {
+            QString str = mapText[type];
+            for(QString &arg : args)
+                str = str.arg(arg);
+            return str;
+        }
+    };
 
     Widget(QWidget *parent = nullptr);
     ~Widget();

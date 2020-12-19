@@ -1,6 +1,12 @@
 #include "widget.h"
 #include <QDebug>
 
+
+QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
+    { FormulaError, "(E0-1) 解析化学式出错，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" }
+};
+
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
@@ -65,7 +71,8 @@ Widget::~Widget()
 
 void Widget::onAnalysis() {
     stackedWidget->setCurrentWidget(viewNone);
-    QVector<QPoint> vErrorPos;
+
+    QList<Error> lErrors;
 
     QMap<FormulaKey, Formula*> mapFormulas;
     QVector<Formula*> vReactants, vProducts;
@@ -83,7 +90,8 @@ void Widget::onAnalysis() {
                 if(ok) {
                     mapFormulas[FormulaKey(formula)] = formula;
                 } else {
-                    vErrorPos << QPoint(index, i);
+                    lErrors << Error(Error::FormulaError,  QStringList() << "化学式" << QString::number(i + 1)
+                                     << QString::number(index + 1) << str);
                     delete formula;
                 }
                 index++;
@@ -92,11 +100,10 @@ void Widget::onAnalysis() {
     }
 
     //对错误内容进行提示 并跳至结尾
-    if(!vErrorPos.isEmpty()) {
+    if(!lErrors.isEmpty()) {
         viewError->clear();
-        for(QPoint pos : vErrorPos) {
-            QListWidgetItem *item = new QListWidgetItem("(E0-1) 解析化学式出错，在 \"化学式\" 输入框的 第"
-                               + QString::number(pos.y()) + "行 第" + QString::number(pos.x() + 1) + "个化学式");
+        for(Error &err : lErrors) {
+            QListWidgetItem *item = new QListWidgetItem(err.text());
             item->setIcon(QApplication::style()->standardIcon(QStyle::StandardPixmap::SP_MessageBoxCritical));
             viewError->addItem(item);
         }
