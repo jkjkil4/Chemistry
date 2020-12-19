@@ -20,6 +20,21 @@ class Widget : public QWidget
 {
     Q_OBJECT
 public:
+    struct FormulaKey
+    {
+        FormulaKey(const QString &key, const Frac &elec) : key(key), elec(elec) {}
+        explicit FormulaKey(Formula *formula) : key(formula->format()), elec(formula->elec) {}
+        QString key;
+        Frac elec;
+        friend inline bool operator<(const FormulaKey &a, const FormulaKey &b) {
+            if(a.key != b.key)
+                return a.key < b.key;
+            Frac tmp(a.elec);
+            tmp.sub(b.elec).moveNegativeToTop();
+            return !tmp.mapPoly.isEmpty() && tmp.mapPoly[""] < 0;
+        }
+    };
+
     Widget(QWidget *parent = nullptr);
     ~Widget();
 

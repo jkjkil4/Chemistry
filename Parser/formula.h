@@ -19,6 +19,7 @@ public:
     virtual ~Formula_Parent() = default;
 
     virtual void paint(QPainter &p, int &x, int y, bool useBrackets = false) const = 0;
+    virtual QString format(bool useBrackets = false) const = 0;
 
     int count = 1;
     Frac elec;
@@ -32,6 +33,7 @@ public:
     ~Formula_Group() override;
 
     void paint(QPainter &p, int &x, int y, bool useBrackets = false) const override;
+    QString format(bool useBrackets = false) const override;
 
     QList<Formula_Parent*> childs;
 };
@@ -42,7 +44,8 @@ public:
     Formula_Element(const QString &str, bool *ok = nullptr);
     ~Formula_Element() override = default;
 
-    void paint(QPainter &p, int &x, int y, bool) const override;
+    void paint(QPainter &p, int &x, int y, bool = false) const override;
+    QString format(bool = false) const override;
 
     QString element;
 };

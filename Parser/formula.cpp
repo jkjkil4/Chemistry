@@ -95,7 +95,7 @@ Formula_Group::~Formula_Group() {
 void Formula_Group::paint(QPainter &p, int &x, int y, bool useBrackets) const {
     QRect rect;
 
-    if(useBrackets) {
+    if(count != 1 || useBrackets) {
         j::DrawText(p, x, y, Qt::AlignBottom | Qt::AlignLeft, "(", -1, -1, &rect);
         x += rect.width();
     }
@@ -103,7 +103,7 @@ void Formula_Group::paint(QPainter &p, int &x, int y, bool useBrackets) const {
     for(Formula_Parent *child : childs)
         child->paint(p, x, y, true);
 
-    if(useBrackets) {
+    if(count != 1 || useBrackets) {
         j::DrawText(p, x, y, Qt::AlignBottom | Qt::AlignLeft, ")", -1, -1, &rect);
         x += rect.width();
     }
@@ -114,6 +114,19 @@ void Formula_Group::paint(QPainter &p, int &x, int y, bool useBrackets) const {
         x += rect.width();
         j::SetPointSize(&p, pointSize);
     }
+}
+
+QString Formula_Group::format(bool useBrackets) const {
+    QString res;
+    if(count != 1 || useBrackets)
+        res += '(';
+    for(Formula_Parent *child : childs)
+        res += child->format(true);
+    if(count != 1 || useBrackets)
+        res += ')';
+    if(count != 1)
+        res += QString::number(count);
+    return res;
 }
 
 
@@ -185,4 +198,9 @@ void Formula_Element::paint(QPainter &p, int &x, int y, bool) const {
         j::SetPointSize(&p, pointSize);
     }
 }
+
+QString Formula_Element::format(bool) const {
+    return count == 1 ? element : element + QString::number(count);
+}
+
 

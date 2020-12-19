@@ -1,12 +1,13 @@
 #include "widget.h"
+#include <QDebug>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
     editFormula->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-    j::SetPointSize(editFormula, 11);
+    j::SetPointSize(editFormula, 13);
     editRel->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-    j::SetPointSize(editRel, 11);;
+    j::SetPointSize(editRel, 13);;
     connect(btnAnalysis, SIGNAL(clicked()), this, SLOT(onAnalysis()));
 
     stackedWidget->setObjectName("StackedWidget");
@@ -63,7 +64,7 @@ Widget::~Widget()
 }
 
 void Widget::onAnalysis() {
-    QVector<Formula*> vFormulas;
+    QMap<FormulaKey, Formula*> vFormulas;
     {//解析化学式
         QTextDocument *doc = editFormula->document();
         int count = doc->lineCount();
@@ -74,12 +75,16 @@ void Widget::onAnalysis() {
                 bool ok;
                 Formula *formula = new Formula(str, 1, &ok);
                 if(ok) {
-                    vFormulas << formula;
+                    vFormulas[FormulaKey(formula)] = formula;
                 } else {
                     delete formula;
                 }
-                //TODO:
             }
         }
     }
+
+    //清空化学式
+    for(Formula *formula : vFormulas)
+        delete formula;
+    vFormulas.clear();
 }
