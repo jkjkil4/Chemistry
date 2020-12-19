@@ -69,6 +69,19 @@ Widget::~Widget()
 
 }
 
+//如果有错误，对错误内容进行提示 并跳至结尾
+#define CHECK_ERR \
+    if(!lErrors.isEmpty()) {                \
+        viewError->clear();                 \
+        for(Error &err : lErrors) {         \
+            QListWidgetItem *item = new QListWidgetItem(err.text());\
+            item->setIcon(QApplication::style()->standardIcon(QStyle::StandardPixmap::SP_MessageBoxCritical));\
+            viewError->addItem(item);       \
+        }                                   \
+        stackedWidget->setCurrentWidget(viewError);\
+        goto End;                           \
+    }
+
 void Widget::onAnalysis() {
     stackedWidget->setCurrentWidget(viewNone);
 
@@ -98,18 +111,7 @@ void Widget::onAnalysis() {
             }
         }
     }
-
-    //对错误内容进行提示 并跳至结尾
-    if(!lErrors.isEmpty()) {
-        viewError->clear();
-        for(Error &err : lErrors) {
-            QListWidgetItem *item = new QListWidgetItem(err.text());
-            item->setIcon(QApplication::style()->standardIcon(QStyle::StandardPixmap::SP_MessageBoxCritical));
-            viewError->addItem(item);
-        }
-        stackedWidget->setCurrentWidget(viewError);
-        goto End;
-    }
+    CHECK_ERR
 
     {//解析反应物与生成物
         QTextDocument *doc = editRel->document();
@@ -117,14 +119,43 @@ void Widget::onAnalysis() {
         repeat(i, count) {
             QString line = doc->findBlockByLineNumber(i).text();
             QStringList list = line.simplified().split(' ', QString::SplitBehavior::SkipEmptyParts);
+            int index = 0;
             for(QString &str : list) {
-                //TODO: .......
+                bool isProduct = false;
+                if(str[0] == '$') {
+                    isProduct = true;
+                    str.remove(0, 1);
+                }
+                bool ok;
+                Formula *formula = new Formula(str, 1, &ok);
+                if(ok) {
+                    (isProduct ? vProducts : vReactants) << formula;
+                } else {
+                    lErrors << Error(Error::FormulaError, QStringList() << "反应物与生成物" << QString::number(i + 1)
+                                     << QString::number(index + 1) << str);
+                    delete formula;
+                }
+                index++;
             }
         }
     }
+    CHECK_ERR
+
+    {
+
+    }
 
     //清空
-    End:for(Formula *formula : mapFormulas)
+    End:
+    for(Formula *formula : mapFormulas)
         delete formula;
     mapFormulas.clear();
+    for(Formula *formula : vReactants)
+        delete formula;
+    vReactants.clear();
+    for(Formula *formula : vProducts)
+        delete formula;
+    vProducts.clear();
 }
+
+#undef CHECK_ERR
