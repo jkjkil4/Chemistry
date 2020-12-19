@@ -75,7 +75,7 @@ void Widget::onAnalysis() {
         int count = doc->lineCount();
         repeat(i, count) {
             QString line = doc->findBlockByLineNumber(i).text();
-            QStringList list = line.split(' ', QString::SplitBehavior::SkipEmptyParts);
+            QStringList list = line.simplified().split(' ', QString::SplitBehavior::SkipEmptyParts);
             int index = 0;
             for(QString &str : list) {
                 bool ok;
@@ -91,6 +91,7 @@ void Widget::onAnalysis() {
         }
     }
 
+    //对错误内容进行提示 并跳至结尾
     if(!vErrorPos.isEmpty()) {
         viewError->clear();
         for(QPoint pos : vErrorPos) {
@@ -103,6 +104,17 @@ void Widget::onAnalysis() {
         goto End;
     }
 
+    {//解析反应物与生成物
+        QTextDocument *doc = editRel->document();
+        int count = doc->lineCount();
+        repeat(i, count) {
+            QString line = doc->findBlockByLineNumber(i).text();
+            QStringList list = line.simplified().split(' ', QString::SplitBehavior::SkipEmptyParts);
+            for(QString &str : list) {
+                //TODO: .......
+            }
+        }
+    }
 
     //清空
     End:for(Formula *formula : mapFormulas)
