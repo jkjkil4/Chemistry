@@ -6,11 +6,13 @@
 #include <QGroupBox>
 #include <QPushButton>
 #include <QStackedWidget>
+#include <QListWidget>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QTextBlock>
+#include <QApplication>
 
 #include <mlibheader.h>
 
@@ -44,7 +46,7 @@ public slots:
 private:
     QStackedWidget *stackedWidget = new QStackedWidget;
     QWidget *viewNone = new QWidget;
-    QWidget *viewError = new QWidget;
+    QListWidget *viewError = new QListWidget;
     QWidget *viewResult = new QWidget;
 
     QPlainTextEdit *editFormula = new QPlainTextEdit;

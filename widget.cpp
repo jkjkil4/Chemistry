@@ -64,27 +64,48 @@ Widget::~Widget()
 }
 
 void Widget::onAnalysis() {
-    QMap<FormulaKey, Formula*> vFormulas;
+    stackedWidget->setCurrentWidget(viewNone);
+    QVector<QPoint> vErrorPos;
+
+    QMap<FormulaKey, Formula*> mapFormulas;
+    QVector<Formula*> vReactants, vProducts;
+
     {//解析化学式
         QTextDocument *doc = editFormula->document();
         int count = doc->lineCount();
         repeat(i, count) {
             QString line = doc->findBlockByLineNumber(i).text();
             QStringList list = line.split(' ', QString::SplitBehavior::SkipEmptyParts);
+            int index = 0;
             for(QString &str : list) {
                 bool ok;
                 Formula *formula = new Formula(str, 1, &ok);
                 if(ok) {
-                    vFormulas[FormulaKey(formula)] = formula;
+                    mapFormulas[FormulaKey(formula)] = formula;
                 } else {
+                    vErrorPos << QPoint(index, i);
                     delete formula;
                 }
+                index++;
             }
         }
     }
 
-    //清空化学式
-    for(Formula *formula : vFormulas)
+    if(!vErrorPos.isEmpty()) {
+        viewError->clear();
+        for(QPoint pos : vErrorPos) {
+            QListWidgetItem *item = new QListWidgetItem("(E0-1) 解析化学式出错，在 \"化学式\" 输入框的 第"
+                               + QString::number(pos.y()) + "行 第" + QString::number(pos.x() + 1) + "个化学式");
+            item->setIcon(QApplication::style()->standardIcon(QStyle::StandardPixmap::SP_MessageBoxCritical));
+            viewError->addItem(item);
+        }
+        stackedWidget->setCurrentWidget(viewError);
+        goto End;
+    }
+
+
+    //清空
+    End:for(Formula *formula : mapFormulas)
         delete formula;
-    vFormulas.clear();
+    mapFormulas.clear();
 }
