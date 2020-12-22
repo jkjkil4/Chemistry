@@ -29,19 +29,17 @@ public:
         explicit FormulaKey(const QString &str, bool *ok = nullptr) {
             int indexOfLeft = str.indexOf('{');
             int indexOfRight = str.indexOf('}');
-            if(/*.....某些判断....*/  indexOfLeft >= indexOfRight) {
+            if(indexOfLeft == -1 || indexOfRight == -1 || indexOfLeft >= indexOfRight) {
                 SET_PTR(ok, false);
                 return;
             }
             key = str.left(indexOfLeft);
-            qDebug() << str.left(indexOfLeft) << key;
             if(key.isEmpty()) {
                 SET_PTR(ok, false);
                 return;
             }
             bool ok2;
-            elec = Frac(str.mid(indexOfLeft, indexOfRight - indexOfLeft - 1), &ok2);
-            qDebug() << str.mid(indexOfLeft, indexOfRight - indexOfLeft - 1) << elec.format();
+            elec = Frac(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok2);
             if(!ok2) {
                 SET_PTR(ok, false);
                 return;
@@ -67,9 +65,9 @@ public:
         static QMap<Type, QString> mapText;
 
         Error(Type type, const QStringList &args) : type(type), args(args) {}
-        QString text() {
+        QString text() const {
             QString str = mapText[type];
-            for(QString &arg : args)
+            for(const QString &arg : args)
                 str = str.arg(arg);
             return str;
         }

@@ -18,8 +18,12 @@ public:
     Formula_Parent(int count);
     virtual ~Formula_Parent() = default;
 
+    //绘制化学式，xy为左下角
     virtual void paint(QPainter &p, int &x, int y, bool useBrackets = false) const = 0;
+    //格式化为字符串
     virtual QString format(bool useBrackets = false) const = 0;
+    //得到元素数量，不会自动清空mapElementCount
+    virtual void elementCount(QMap<QString, Frac> &mapElementCount, int mulCount = 1) const = 0;
 
     int count = 1;
     Frac elec;
@@ -34,6 +38,7 @@ public:
 
     void paint(QPainter &p, int &x, int y, bool useBrackets = false) const override;
     QString format(bool useBrackets = false) const override;
+    void elementCount(QMap<QString, Frac> &mapElementCount, int mulCount = 1) const override;
 
     QList<Formula_Parent*> childs;
 };
@@ -46,6 +51,7 @@ public:
 
     void paint(QPainter &p, int &x, int y, bool = false) const override;
     QString format(bool = false) const override;
+    void elementCount(QMap<QString, Frac> &mapElementCount, int mulCount = 1) const override;
 
     QString element;
 };

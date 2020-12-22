@@ -126,15 +126,6 @@ void Widget::onAnalysis() {
                     isProduct = true;
                     str.remove(0, 1);
                 }
-//                bool ok;
-//                Formula *formula = new Formula(str, 1, &ok);
-//                if(ok) {
-//                    (isProduct ? vProducts : vReactants) << formula;
-//                } else {
-//                    lErrors << Error(Error::FormulaError, QStringList() << "反应物与生成物" << QString::number(i + 1)
-//                                     << QString::number(index + 1) << str);
-//                    delete formula;
-//                }
                 bool ok;
                 FormulaKey key(str, &ok);
                 if(ok) {
@@ -154,8 +145,9 @@ void Widget::onAnalysis() {
     }
     CHECK_ERR
 
-    {
-
+    {//配平
+        //原子守恒
+        //.............
     }
 
     //清空

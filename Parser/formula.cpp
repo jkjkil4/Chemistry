@@ -129,6 +129,11 @@ QString Formula_Group::format(bool useBrackets) const {
     return res;
 }
 
+void Formula_Group::elementCount(QMap<QString, Frac> &mapElementCount, int mulCount) const {
+    for(Formula_Parent *child : childs)
+        child->elementCount(mapElementCount, mulCount * count);
+}
+
 
 Formula_Element::Formula_Element(const QString &str, bool *ok)
 {
@@ -203,4 +208,7 @@ QString Formula_Element::format(bool) const {
     return count == 1 ? element : element + QString::number(count);
 }
 
+void Formula_Element::elementCount(QMap<QString, Frac> &mapElementCount, int mulCount) const {
+    mapElementCount[element].sum(count * mulCount);
+}
 
