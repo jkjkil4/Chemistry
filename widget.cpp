@@ -3,7 +3,8 @@
 
 QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
     { FormulaError, "(E0-1) 解析化学式出错，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" },
-    { FormulaNotExists, "(E0-2) 化学式未定义，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" }
+    { FormulaNotExists, "(E0-2) 化学式未定义，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" },
+    { IsEmpty, "(E1-3) %1为空" }
 };
 
 
@@ -141,6 +142,13 @@ void Widget::onAnalysis() {
                 }
                 index++;
             }
+        }
+        //检查是否为空
+        if(lErrors.isEmpty()) {
+            if(lReactants.isEmpty())
+                lErrors << Error(Error::IsEmpty, QStringList() << "反应物");
+            if(lProducts.isEmpty())
+                lErrors << Error(Error::IsEmpty, QStringList() << "生成物");
         }
     }
     CHECK_ERR

@@ -60,7 +60,7 @@ public:
     };
     struct Error
     {
-        enum Type { FormulaError, FormulaNotExists } type;
+        enum Type { FormulaError, FormulaNotExists, IsEmpty } type;
         QStringList args;
         static QMap<Type, QString> mapText;
 
