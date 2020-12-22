@@ -88,7 +88,7 @@ void Widget::onAnalysis() {
     QList<Error> lErrors;
 
     QMap<FormulaKey, Formula*> mapFormulas;
-    QVector<FormulaKey> vReactants, vProducts;
+    QList<FormulaKey> lReactants, lProducts;
 
     {//解析化学式
         QTextDocument *doc = editFormula->document();
@@ -133,7 +133,7 @@ void Widget::onAnalysis() {
                         lErrors << Error(Error::FormulaNotExists, QStringList() << "反应物与生成物" << QString::number(i + 1)
                                          << QString::number(index + 1) << str);
                     } else {
-                        (isProduct ? vProducts : vReactants) << key;
+                        (isProduct ? lProducts : lReactants) << key;
                     }
                 } else {
                     lErrors << Error(Error::FormulaError, QStringList() << "反应物与生成物" << QString::number(i + 1)
@@ -146,8 +146,15 @@ void Widget::onAnalysis() {
     CHECK_ERR
 
     {//配平
-        //原子守恒
-        //.............
+        QList<Frac> lEquations;
+        {//原子守恒
+            QMap<QString, Frac> mapLElement, mapRElement;
+            for(FormulaKey &key : lReactants)   //得到反应物的各原子总数
+                mapFormulas[key]->elementCount(mapLElement);
+            for(FormulaKey &key : lProducts)    //得到生成物的各原子总数
+                mapFormulas[key]->elementCount(mapRElement);
+
+        }
     }
 
     //清空
