@@ -2,9 +2,14 @@
 
 
 QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
+    { Any, "%1" },
     { FormulaError, "(E0-1) 解析化学式出错，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" },
     { FormulaNotExists, "(E0-2) 化学式未定义，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" },
-    { IsEmpty, "(E1-3) %1为空" }
+    { FormulaMultiDefined, "(E0-3) 化学式 \"%1\" 重复出现" },
+
+    { IsEmpty, "(E1-0) %1为空" },
+
+    { ElementNotExists, "(E2-0) \"%1\" 元素在 %2 中存在，却无法在 %3 中找到" }
 };
 
 
@@ -134,7 +139,11 @@ void Widget::onAnalysis() {
                         lErrors << Error(Error::FormulaNotExists, QStringList() << "反应物与生成物" << QString::number(i + 1)
                                          << QString::number(index + 1) << str);
                     } else {
-                        (isProduct ? lProducts : lReactants) << key;
+                        if(!lReactants.contains(key) && !lProducts.contains(key)) {
+                            (isProduct ? lProducts : lReactants) << key;
+                        } else {
+                            lErrors << Error(Error::FormulaMultiDefined, QStringList() << str);
+                        }
                     }
                 } else {
                     lErrors << Error(Error::FormulaError, QStringList() << "反应物与生成物" << QString::number(i + 1)
@@ -154,16 +163,56 @@ void Widget::onAnalysis() {
     CHECK_ERR
 
     {//配平
-        QList<Frac> lEquations;
-        {//原子守恒
-            QMap<QString, Frac> mapLElement, mapRElement;
-            for(FormulaKey &key : lReactants)   //得到反应物的各原子总数
-                mapFormulas[key]->elementCount(mapLElement);
-            for(FormulaKey &key : lProducts)    //得到生成物的各原子总数
-                mapFormulas[key]->elementCount(mapRElement);
+        QMap<QString, Frac> mapLElement, mapRElement;
+        QMap<FormulaKey, QString> mapElementCoeff;
+        {//得到两边的各原子总数
+            int count = 0;
+            for(FormulaKey &key : lReactants) {   //得到反应物的各原子总数
+                QString coeff = count == 0 ? "" : (mapElementCoeff[key] = "v" + QString::number(count));
+                QMap<QString, Frac> tmpMap;
+                mapFormulas[key]->elementCount(tmpMap);
+                for(auto iter = tmpMap.begin(); iter != tmpMap.end(); ++iter)
+                    mapLElement[iter.key()].sum(iter->changeMono("", coeff));
+                count++;
+            }
+            for(FormulaKey &key : lProducts) {    //得到生成物的各原子总数
+                QString coeff = mapElementCoeff[key] = "v" + QString::number(count);
+                QMap<QString, Frac> tmpMap;
+                mapFormulas[key]->elementCount(tmpMap);
+                for(auto iter = tmpMap.begin(); iter != tmpMap.end(); ++iter)
+                    mapRElement[iter.key()].sum(iter->changeMono("", coeff));
+                count++;
+            }
+        }
 
+        //检查是否两边含有相同元素(如果没有则报错)
+        for(auto iter = mapLElement.begin(); iter != mapLElement.end(); ++iter)
+            if(!mapRElement.contains(iter.key()))
+                lErrors << Error(Error::ElementNotExists, QStringList() << iter.key() << "反应物" << "生成物");
+        for(auto iter = mapRElement.begin(); iter != mapRElement.end(); ++iter)
+            if(!mapLElement.contains(iter.key()))
+                lErrors << Error(Error::ElementNotExists, QStringList() << iter.key() << "生成物" << "反应物");
+
+        if(lErrors.isEmpty()) {
+            QList<Frac> lEquations;
+            {//原子守恒
+                for(auto iter = mapLElement.begin(); iter != mapLElement.end(); ++iter)
+                    lEquations << Frac(*iter).sub(mapRElement[iter.key()]);
+            }
+            for(Frac &frac : lEquations) {
+                qDebug().noquote() << frac.format();
+            }
+
+            //解方程
+            QStringList lCoeffs;
+            for(QString &coeff : mapElementCoeff)
+                lCoeffs << coeff;
+            bool ok;
+            Frac::SolvingEquations(lEquations, lCoeffs, &ok);
+            qDebug() << ok;
         }
     }
+    CHECK_ERR
 
     //清空
     End:

@@ -57,10 +57,15 @@ public:
             tmp.sub(b.elec).moveNegativeToTop();
             return !tmp.mapPoly.isEmpty() && tmp.mapPoly[""] < 0;
         }
+        friend inline bool operator==(FormulaKey &a, const FormulaKey &b) {
+            Frac tmp(a.elec);
+            tmp.sub(b.elec);
+            return a.key == b.key && tmp.mapPoly.isEmpty();
+        }
     };
     struct Error
     {
-        enum Type { FormulaError, FormulaNotExists, IsEmpty } type;
+        enum Type { Any, FormulaError, FormulaNotExists, FormulaMultiDefined, IsEmpty, ElementNotExists } type;
         QStringList args;
         static QMap<Type, QString> mapText;
 

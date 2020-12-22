@@ -33,6 +33,7 @@ public:
     static QList<Frac> SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok = nullptr);
 
     void reduct();
+    Frac& changeMono(const QString &before, const QString &now);
     Frac paramSep(const QString &param, bool *ok = nullptr);    //参变分离，假设该式等于0来处理
 
     Frac& substitute(const QString &param, int digit);              //代入数字

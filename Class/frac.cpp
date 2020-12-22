@@ -184,6 +184,17 @@ void Frac::reduct() {
     }
 }
 
+Frac& Frac::changeMono(const QString &before, const QString &now) {
+    if(before != now) {
+        auto iter = mapPoly.find(before);
+        if(iter != mapPoly.end()) {
+            mapPoly[now] += *iter;
+            mapPoly.erase(iter);
+        }
+    }
+    return *this;
+}
+
 Frac Frac::paramSep(const QString &param, bool *ok) {
 //    checkZero();
     if(!mapPoly.contains(param)) {
