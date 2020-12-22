@@ -1,9 +1,9 @@
 #include "widget.h"
-#include <QDebug>
 
 
 QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
-    { FormulaError, "(E0-1) 解析化学式出错，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" }
+    { FormulaError, "(E0-1) 解析化学式出错，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" },
+    { FormulaNotExists, "(E0-2) 化学式未定义，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" }
 };
 
 
@@ -88,7 +88,7 @@ void Widget::onAnalysis() {
     QList<Error> lErrors;
 
     QMap<FormulaKey, Formula*> mapFormulas;
-    QVector<Formula*> vReactants, vProducts;
+    QVector<FormulaKey> vReactants, vProducts;
 
     {//解析化学式
         QTextDocument *doc = editFormula->document();
@@ -126,14 +126,27 @@ void Widget::onAnalysis() {
                     isProduct = true;
                     str.remove(0, 1);
                 }
+//                bool ok;
+//                Formula *formula = new Formula(str, 1, &ok);
+//                if(ok) {
+//                    (isProduct ? vProducts : vReactants) << formula;
+//                } else {
+//                    lErrors << Error(Error::FormulaError, QStringList() << "反应物与生成物" << QString::number(i + 1)
+//                                     << QString::number(index + 1) << str);
+//                    delete formula;
+//                }
                 bool ok;
-                Formula *formula = new Formula(str, 1, &ok);
+                FormulaKey key(str, &ok);
                 if(ok) {
-                    (isProduct ? vProducts : vReactants) << formula;
+                    if(!mapFormulas.contains(key)) {
+                        lErrors << Error(Error::FormulaNotExists, QStringList() << "反应物与生成物" << QString::number(i + 1)
+                                         << QString::number(index + 1) << str);
+                    } else {
+                        (isProduct ? vProducts : vReactants) << key;
+                    }
                 } else {
                     lErrors << Error(Error::FormulaError, QStringList() << "反应物与生成物" << QString::number(i + 1)
                                      << QString::number(index + 1) << str);
-                    delete formula;
                 }
                 index++;
             }
@@ -150,12 +163,6 @@ void Widget::onAnalysis() {
     for(Formula *formula : mapFormulas)
         delete formula;
     mapFormulas.clear();
-    for(Formula *formula : vReactants)
-        delete formula;
-    vReactants.clear();
-    for(Formula *formula : vProducts)
-        delete formula;
-    vProducts.clear();
 }
 
 #undef CHECK_ERR

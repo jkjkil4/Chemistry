@@ -18,13 +18,37 @@
 
 #include "Parser/formula.h"
 
+#include <QDebug>
+
 class Widget : public QWidget
 {
     Q_OBJECT
 public:
     struct FormulaKey
     {
-        FormulaKey(const QString &key, const Frac &elec) : key(key), elec(elec) {}
+        explicit FormulaKey(const QString &str, bool *ok = nullptr) {
+            int indexOfLeft = str.indexOf('{');
+            int indexOfRight = str.indexOf('}');
+            if(/*.....某些判断....*/  indexOfLeft >= indexOfRight) {
+                SET_PTR(ok, false);
+                return;
+            }
+            key = str.left(indexOfLeft);
+            qDebug() << str.left(indexOfLeft) << key;
+            if(key.isEmpty()) {
+                SET_PTR(ok, false);
+                return;
+            }
+            bool ok2;
+            elec = Frac(str.mid(indexOfLeft, indexOfRight - indexOfLeft - 1), &ok2);
+            qDebug() << str.mid(indexOfLeft, indexOfRight - indexOfLeft - 1) << elec.format();
+            if(!ok2) {
+                SET_PTR(ok, false);
+                return;
+            }
+            SET_PTR(ok, true);
+        }
+        explicit FormulaKey(const QString &key, const Frac &elec) : key(key), elec(elec) {}
         explicit FormulaKey(Formula *formula) : key(formula->format()), elec(formula->elec) {}
         QString key;
         Frac elec;
@@ -38,7 +62,7 @@ public:
     };
     struct Error
     {
-        enum Type { FormulaError } type;
+        enum Type { FormulaError, FormulaNotExists } type;
         QStringList args;
         static QMap<Type, QString> mapText;
 
