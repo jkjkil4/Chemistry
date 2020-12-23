@@ -199,9 +199,9 @@ void Widget::onAnalysis() {
                 for(auto iter = mapLElement.begin(); iter != mapLElement.end(); ++iter)
                     lEquations << Frac(*iter).sub(mapRElement[iter.key()]);
             }
-            for(Frac &frac : lEquations) {
+
+            for(Frac &frac : lEquations)
                 qDebug().noquote() << frac.format();
-            }
 
             //解方程
             QStringList lCoeffs;

@@ -12,13 +12,18 @@ protected:
     void paintEvent(QPaintEvent *) override;
 
 public:
-    explicit FormulaWidget(Formula *formula, QWidget *parent = nullptr);
+    struct FormulaStruct
+    {
+        FormulaStruct(Formula *formula, const Frac &count) : formula(formula), count(count) {}
+        Formula *formula;
+        Frac count;
+    };
+
+    explicit FormulaWidget(const QList<FormulaStruct> &lReactants, const QList<FormulaStruct> &lProducts, QWidget *parent = nullptr);
     ~FormulaWidget() override;
 
-    VAR_GET_FUNC(Formula, formula, Formula*)
-
 private:
-    Formula *formula;
+    QList<FormulaStruct> lReactants, lProducts;
 };
 
 #endif // FORMULAWIDGET_H

@@ -1,10 +1,13 @@
 #include "formulawidget.h"
 
-FormulaWidget::FormulaWidget(Formula *formula, QWidget *parent)
-    : QWidget(parent), formula(formula) {}
+FormulaWidget::FormulaWidget(const QList<FormulaStruct> &lReactants, const QList<FormulaStruct> &lProducts, QWidget *parent)
+    : QWidget(parent), lReactants(lReactants), lProducts(lProducts) {}
 
 FormulaWidget::~FormulaWidget() {
-    delete formula;
+    for(FormulaStruct &fs : lReactants)
+        delete fs.formula;
+    for(FormulaStruct &fs : lProducts)
+        delete fs.formula;
 }
 
 void FormulaWidget::paintEvent(QPaintEvent *) {
