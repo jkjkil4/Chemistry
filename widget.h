@@ -23,12 +23,12 @@
 class Widget : public QWidget
 {
     Q_OBJECT
-public:
+public:/*
     struct FormulaKey
     {
         explicit FormulaKey(const QString &str, bool *ok = nullptr) {
             int indexOfLeft = str.indexOf('{');
-            int indexOfRight = str.indexOf('}');
+            int indexOfRight = str.lastIndexOf('}');
             if(indexOfLeft == -1 || indexOfRight == -1 || indexOfLeft >= indexOfRight) {
                 SET_PTR(ok, false);
                 return;
@@ -62,7 +62,7 @@ public:
             tmp.sub(b.elec);
             return a.key == b.key && tmp.mapPoly.isEmpty();
         }
-    };
+    };*/
     struct Error
     {
         enum Type { Any, FormulaError, FormulaNotExists, FormulaMultiDefined, IsEmpty, ElementNotExists } type;

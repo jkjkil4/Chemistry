@@ -1,14 +1,38 @@
 #ifndef FORMULA_BASE_H
 #define FORMULA_BASE_H
 
-//#include <QVariant>
+#include <QVariant>
 #include <QList>
 
 #include "Class/frac.h"
 //#include "parsererror.h"
 
 #include <QPainter>
+#include <QDebug>
 
+class Formula
+{
+public:
+    enum Type { Element, Group };
+
+    Formula(Type type, const QString &str, int count = 1);
+    Formula(const Formula &other);
+    ~Formula();
+
+    VAR_GET_FUNC(Type, type, Type)
+    bool isVaild() { return vaild; }
+
+    static bool ParseStr(Type type, const QString &str, QString &inner, int &count);
+
+private:
+    Type type;      //类型
+    int count = 1;  //数量
+    Frac elec;      //电荷总数
+
+    void *data = nullptr;   //数据(type == Element -> QString, type == Group -> QList<Formula>)
+    bool vaild = true;      //是否有效
+};
+/*
 class Formula_Parent
 {
 public:
@@ -77,6 +101,6 @@ inline void DrawFormula(QPainter &p, int x, int y, Formula *formula, int *pWidth
         x += rect.width();
     }
     SET_PTR(pWidth, x - xStart);
-}
+}*/
 
 #endif // FORMULA_BASE_H

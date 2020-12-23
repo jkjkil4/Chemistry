@@ -89,7 +89,7 @@ Widget::~Widget()
     }
 
 void Widget::onAnalysis() {
-    stackedWidget->setCurrentWidget(viewNone);
+    /*stackedWidget->setCurrentWidget(viewNone);
 
     QList<Error> lErrors;
 
@@ -218,7 +218,7 @@ void Widget::onAnalysis() {
     End:
     for(Formula *formula : mapFormulas)
         delete formula;
-    mapFormulas.clear();
+    mapFormulas.clear();*/
 }
 
 #undef CHECK_ERR

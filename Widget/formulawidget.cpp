@@ -1,5 +1,6 @@
 #include "formulawidget.h"
 
+
 FormulaWidget::FormulaWidget(const QList<FormulaStruct> &lReactants, const QList<FormulaStruct> &lProducts, QWidget *parent)
     : QWidget(parent), lReactants(lReactants), lProducts(lProducts) {}
 
@@ -13,5 +14,5 @@ FormulaWidget::~FormulaWidget() {
 void FormulaWidget::paintEvent(QPaintEvent *) {
     QPainter p(this);
     j::SetPointSize(&p, 35);
-    DrawFormula(p, 20, 70, formula);
+    //DrawFormula(p, 20, 70, formula);
 }
