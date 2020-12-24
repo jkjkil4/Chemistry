@@ -14,9 +14,12 @@ public:
     //将化学式格式化为字符串
     QString format();
 
+    const Frac& getElec() { return elec; }
+
 private:
     bool vaild = true;
     QList<Formula> lFormulas;
+    Frac elec;
 };
 
 #endif // FORMULAGROUP_H

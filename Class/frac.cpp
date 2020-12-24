@@ -32,6 +32,8 @@ Frac::Frac(QString str, bool *ok) {
         mapPoly[""] = top;
         b = bottom;
     }
+
+    reduct();
     SET_PTR(ok, true);
 }
 

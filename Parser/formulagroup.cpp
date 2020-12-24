@@ -17,6 +17,7 @@ FormulaGroup::FormulaGroup(const QString &str)
         int count = leftLen == 0 ? 1 : str.left(leftLen).toInt(&ok);
         if(!ok || count <= 0) {
             vaild = false;
+            lFormulas.clear();
             return;
         }
 
@@ -25,9 +26,11 @@ FormulaGroup::FormulaGroup(const QString &str)
         Formula formula(Formula::Group, strFormula, count);
         if(!formula.isVaild()) {
             vaild = false;
+            lFormulas.clear();
             return;
         }
         lFormulas << formula;
+        elec.sum(Frac(formula.getElec()).mul(formula.getCount()));
     }
 }
 

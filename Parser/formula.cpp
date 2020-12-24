@@ -28,6 +28,7 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
             return;
         }
 
+        elec = frac.moveNegativeToTop();
         data = new QString(strElement);
     } else {
         QList<Formula> *pLChildren = new QList<Formula>;  //new 临时的list
@@ -80,6 +81,9 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
             vaild = false;
             return;
         }
+
+        for(Formula &child : *pLChildren)
+            elec.sum(Frac(child.elec).mul(child.count));
         data = pLChildren;
     }
 }
