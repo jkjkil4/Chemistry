@@ -49,31 +49,6 @@ Frac::Frac(QString str, bool *ok) {
 //        b = 1;
 //}
 
-int Frac::Gcd(int a, int b) {
-    int absA = qMax(qAbs(a), qAbs(b));
-    int absB = qMin(qAbs(a), qAbs(b));
-    return absB == 0 ? absA : Gcd(b, a % b);
-}
-
-int Frac::Gcd(const QVector<int> &vValues, int n) {
-    if(n == -1)
-        n = vValues.size();
-    return (n == 1 ? vValues[0] : Gcd(vValues[n - 1], Gcd(vValues, n - 1)));
-}
-
-int Frac::Lcm(int a, int b) {
-    if(a == 0 || b == 0)
-        return 0;
-    return qAbs(a / Gcd(a, b) * b);
-}
-
-int Frac::Lcm(const QVector<int> &vValues, int n) {
-    if(n == -1)
-        n = vValues.size();
-    if(vValues[n - 1] == 0)
-        return 0;
-    return (n == 1 ? vValues[0] : Lcm(vValues[n - 1], Lcm(vValues, n - 1)));
-}
 
 //#define DEBUG_FRAC_SOLVINGRQUATIONS
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
@@ -177,7 +152,7 @@ void Frac::reduct() {
         QVector<int> vValues { b };
         for(int value : mapPoly)
             vValues << value;
-        int divNum = Gcd(vValues);
+        int divNum = j::Gcd(vValues);
         if(divNum == 1 || divNum == 0)
             break;
         for(int &value : mapPoly)
@@ -331,7 +306,7 @@ Frac& Frac::div(int digit) {
 
 Frac& Frac::sum(const Frac &other) {
     if(!other.mapPoly.isEmpty()) {
-        int commonMulti = Lcm(b, other.b);
+        int commonMulti = j::Lcm(b, other.b);
         int selfMulti = commonMulti / b;
         int otherMulti = commonMulti / other.b;
         b = commonMulti;
@@ -347,7 +322,7 @@ Frac& Frac::sum(const Frac &other) {
 }
 Frac& Frac::sub(const Frac &other) {
     if(!other.mapPoly.isEmpty()) {
-        int CommonMulti = Lcm(b, other.b);
+        int CommonMulti = j::Lcm(b, other.b);
         int selfMulti = CommonMulti / b;
         int otherMulti = CommonMulti / other.b;
         b = CommonMulti;
