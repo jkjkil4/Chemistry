@@ -42,13 +42,13 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
                 bracketCount--; //括号数量自减
                 if(bracketCount == 0) { //如果括号数量为0
                     QString inner;
-                    int count;
-                    if(!ParseStr(Group, divide, inner, count)) {   //解析字符串，如果失败则结束
+                    int childCount;
+                    if(!ParseStr(Group, divide, inner, childCount)) {   //解析字符串，如果失败则结束
                         delete pLChildren;
                         vaild = false;
                         return;
                     }
-                    Formula child(Group, inner, count); //子内容(组)
+                    Formula child(Group, inner, childCount); //子内容(组)
                     if(!child.isVaild()) {  //如果 子内容 解析失败则结束
                         delete pLChildren;
                         vaild = false;
@@ -59,13 +59,13 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
                 }
             } else if(bracketCount == 0 && ch >= 'A' && ch <= 'Z') {    //如果 括号数量为0 并且 当前字母为大写字母
                 QString inner;
-                int count;
-                if(!ParseStr(Element, divide, inner, count)) {   //解析字符串，如果失败则结束
+                int childCount;
+                if(!ParseStr(Element, divide, inner, childCount)) {   //解析字符串，如果失败则结束
                     delete pLChildren;
                     vaild = false;
                     return;
                 }
-                Formula child(Element, inner, count);   //子内容(单个元素)
+                Formula child(Element, inner, childCount);   //子内容(单个元素)
                 if(!child.isVaild()) {  //如果 子内容 解析失败则结束
                     delete pLChildren;
                     vaild = false;
@@ -86,6 +86,9 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
 
 Formula::Formula(const Formula &other) {
     type = other.type;
+    count = other.count;
+    elec = other.elec;
+    vaild = other.vaild;
     data = (type == Element ? (void*)new QString(*(QString*)other.data) : (void*)new QList<Formula>(*(QList<Formula>*)other.data));
 }
 
