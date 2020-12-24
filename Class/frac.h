@@ -35,7 +35,7 @@ public:
 
     Frac& moveNegativeToTop();
 
-    QString format(bool autoSpace = true, bool useColor = true) const;
+    QString format(bool autoSpace = false, bool useColor = false) const;
 
     Frac& sum(int digit, const QString &key = "");
     Frac& sub(int digit, const QString &key = "");
