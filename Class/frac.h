@@ -6,6 +6,8 @@
 
 #include <mlibheader.h>
 
+#include "plainfrac.h"
+
 class Frac
 {
 public:
@@ -18,11 +20,6 @@ public:
     Frac() = default;
     Frac(int value, const QString &key = "");
     Frac(QString str, bool *ok = nullptr);
-
-    QMap<QString, int> mapPoly;
-    int b = 1;
-
-//    void checkZero();
 
     static QList<Frac> SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok = nullptr);
 
@@ -44,6 +41,10 @@ public:
 
     Frac& sum(const Frac &other);
     Frac& sub(const Frac &other);
+
+private:
+    QMap<QString, int> mapPoly;
+    int b = 1;
 };
 
 

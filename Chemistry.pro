@@ -26,7 +26,7 @@ CONFIG += c++11
 
 SOURCES += \
         Class/frac.cpp \
-        Class/simplefrac.cpp \
+        Class/plainfrac.cpp \
         Parser/formula.cpp \
         Parser/formulagroup.cpp \
         Widget/formulawidget.cpp \
@@ -35,7 +35,7 @@ SOURCES += \
 
 HEADERS += \
         Class/frac.h \
-        Class/simplefrac.h \
+        Class/plainfrac.h \
         Parser/formula.h \
         Parser/formulagroup.h \
         Widget/formulawidget.h \
