@@ -15,13 +15,17 @@ class Formula
 public:
     enum Type { Element, Group };
 
-    Formula(Type type, const QString &str, int count = 1);
+    explicit Formula(Type type, const QString &str, int count = 1);
     Formula(const Formula &other);
     ~Formula();
 
     VAR_GET_FUNC(Type, type, Type)
     bool isVaild() { return vaild; }
 
+    //化学式格式化为字符串
+    QString format(bool useBrackets = false);
+
+    //解析字符串(分离数字和数据)
     static bool ParseStr(Type type, const QString &str, QString &inner, int &count);
 
 private:
@@ -31,6 +35,9 @@ private:
 
     void *data = nullptr;   //数据(type == Element -> QString, type == Group -> QList<Formula>)
     bool vaild = true;      //是否有效
+
+    QString& rElementData();
+    QList<Formula>& rGroupData();
 };
 /*
 class Formula_Parent

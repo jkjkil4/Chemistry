@@ -36,7 +36,6 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
         for(auto iter = str.rbegin(); iter != str.rend(); ++iter) { //反向遍历str的字符
             QChar ch = *iter;   //字符
             divide.insert(0, ch);   //将该字符插入到divide的第一个
-            qDebug() << divide;
             if(ch == ')') {     //如果是')'
                 bracketCount++; //括号数量自增
             } else if(ch == '(') {  //如果是'('
@@ -45,14 +44,12 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
                     QString inner;
                     int count;
                     if(!ParseStr(Group, divide, inner, count)) {   //解析字符串，如果失败则结束
-                        qDebug() << inner << "1";
                         delete pLChildren;
                         vaild = false;
                         return;
                     }
                     Formula child(Group, inner, count); //子内容(组)
                     if(!child.isVaild()) {  //如果 子内容 解析失败则结束
-                        qDebug() << inner << "2";
                         delete pLChildren;
                         vaild = false;
                         return;
@@ -64,14 +61,12 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
                 QString inner;
                 int count;
                 if(!ParseStr(Element, divide, inner, count)) {   //解析字符串，如果失败则结束
-                    qDebug() << inner << "3";
                     delete pLChildren;
                     vaild = false;
                     return;
                 }
                 Formula child(Element, inner, count);   //子内容(单个元素)
                 if(!child.isVaild()) {  //如果 子内容 解析失败则结束
-                    qDebug() << inner << "4";
                     delete pLChildren;
                     vaild = false;
                     return;
@@ -81,7 +76,6 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
             }
         }
         if(pLChildren->isEmpty() || bracketCount != 0) {    //如果没有 子内容 或者 括号数量不为0，则结束
-            qDebug() << "5";
             delete pLChildren;
             vaild = false;
             return;
@@ -99,6 +93,34 @@ Formula::~Formula() {
     type == Element ? delete (QString*)data : delete (QList<Formula>*)data;
 }
 
+
+QString Formula::format(bool useBrackets) {
+    if(type == Element) {
+        return count == 1 ? rElementData() : rElementData() + QString::number(count);
+    } else {
+        QString inner;
+        QList<Formula>& lChildren = rGroupData();
+        for(Formula& child : lChildren)
+            inner += child.format(true);
+        QString strCount = count == 1 ? "" : QString::number(count);
+        return useBrackets ? '(' + inner + ')' + strCount : strCount + inner;
+    }
+}
+
+
+QString& Formula::rElementData() {
+    if(type != Element)
+        throw;
+    return *(QString*)data;
+}
+
+QList<Formula>& Formula::rGroupData() {
+    if(type != Group)
+        throw;
+    return *(QList<Formula>*)data;
+}
+
+
 bool Formula::ParseStr(Type type, const QString &str, QString &inner, int &count) {
     if(type == Element) {
         //得到右侧数字长度
@@ -113,7 +135,7 @@ bool Formula::ParseStr(Type type, const QString &str, QString &inner, int &count
         //得到数量
         bool ok = true;
         int tmpCount = rightLen == 0 ? 1 : str.right(rightLen).toInt(&ok);
-        if(!ok) //若失败则返回false
+        if(!ok || tmpCount <= 0) //若失败则返回false
             return false;
 
         inner = str.left(str.size() - rightLen);    //子内容
@@ -131,7 +153,7 @@ bool Formula::ParseStr(Type type, const QString &str, QString &inner, int &count
         QString strCount = str.right(str.size() - indexOfRight - 1);
         bool ok = true;
         int tmpCount = strCount.isEmpty() ? 1 : strCount.toInt(&ok);
-        if(!ok) //若失败则返回false
+        if(!ok || tmpCount <= 0) //若失败则返回false
             return false;
 
         inner = str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1);   //子内容
