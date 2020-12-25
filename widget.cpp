@@ -114,6 +114,83 @@ Widget::~Widget()
     }
 
 void Widget::onAnalysis() {
+    stackedWidget->setCurrentWidget(viewNone);
+
+    QList<Error> lErrors;
+
+    QMap<FormulaKey, FormulaGroup> mapFormulas;
+    QList<FormulaKey> lReactants, lProducts;
+
+    {//解析化学式
+        QTextDocument *doc = editFormula->document();
+        int count = doc->lineCount();
+        repeat(i, count) {
+            QString line = doc->findBlockByLineNumber(i).text();
+            QStringList list = line.simplified().split(' ', QString::SplitBehavior::SkipEmptyParts);
+            int index = 0;
+            for(QString &str : list) {
+                FormulaGroup formula(str);
+                if(formula.isVaild()) {
+                    mapFormulas[FormulaKey(formula)] = formula;
+                } else {
+                    lErrors << Error(Error::FormulaError,  QStringList() << "化学式" << QString::number(i + 1)
+                                     << QString::number(index + 1) << str);
+                }
+                index++;
+            }
+        }
+    }
+    CHECK_ERR
+
+    {//解析反应物与生成物
+        QTextDocument *doc = editRel->document();
+        int count = doc->lineCount();
+        repeat(i, count) {
+            QString line = doc->findBlockByLineNumber(i).text();
+            QStringList list = line.simplified().split(' ', QString::SplitBehavior::SkipEmptyParts);
+            int index = 0;
+            for(QString &str : list) {
+                bool isProduct = false;
+                if(str[0] == '$') {
+                    isProduct = true;
+                    str.remove(0, 1);
+                }
+                bool ok;
+                FormulaKey key(str, &ok);
+                if(ok) {
+                    if(!mapFormulas.contains(key)) {
+                        lErrors << Error(Error::FormulaNotExists, QStringList() << "反应物与生成物" << QString::number(i + 1)
+                                         << QString::number(index + 1) << str);
+                    } else {
+                        if(!lReactants.contains(key) && !lProducts.contains(key)) {
+                            (isProduct ? lProducts : lReactants) << key;
+                        } else {
+                            lErrors << Error(Error::FormulaMultiDefined, QStringList() << str);
+                        }
+                    }
+                } else {
+                    lErrors << Error(Error::FormulaError, QStringList() << "反应物与生成物" << QString::number(i + 1)
+                                     << QString::number(index + 1) << str);
+                }
+                index++;
+            }
+        }
+        //检查是否为空
+        if(lErrors.isEmpty()) {
+            if(lReactants.isEmpty())
+                lErrors << Error(Error::IsEmpty, QStringList() << "反应物");
+            if(lProducts.isEmpty())
+                lErrors << Error(Error::IsEmpty, QStringList() << "生成物");
+        }
+    }
+    CHECK_ERR
+
+    {//配平
+        //TODO: ......
+    }
+
+    End:;
+
     /*stackedWidget->setCurrentWidget(viewNone);
 
     QList<Error> lErrors;

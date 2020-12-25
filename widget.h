@@ -23,46 +23,7 @@
 class Widget : public QWidget
 {
     Q_OBJECT
-public:/*
-    struct FormulaKey
-    {
-        explicit FormulaKey(const QString &str, bool *ok = nullptr) {
-            int indexOfLeft = str.indexOf('{');
-            int indexOfRight = str.lastIndexOf('}');
-            if(indexOfLeft == -1 || indexOfRight == -1 || indexOfLeft >= indexOfRight) {
-                SET_PTR(ok, false);
-                return;
-            }
-            key = str.left(indexOfLeft);
-            if(key.isEmpty()) {
-                SET_PTR(ok, false);
-                return;
-            }
-            bool ok2;
-            elec = Frac(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok2);
-            if(!ok2) {
-                SET_PTR(ok, false);
-                return;
-            }
-            SET_PTR(ok, true);
-        }
-        explicit FormulaKey(const QString &key, const Frac &elec) : key(key), elec(elec) {}
-        explicit FormulaKey(Formula *formula) : key(formula->format()), elec(formula->elec) {}
-        QString key;
-        Frac elec;
-        friend inline bool operator<(const FormulaKey &a, const FormulaKey &b) {
-            if(a.key != b.key)
-                return a.key < b.key;
-            Frac tmp(a.elec);
-            tmp.sub(b.elec).moveNegativeToTop();
-            return !tmp.mapPoly.isEmpty() && tmp.mapPoly[""] < 0;
-        }
-        friend inline bool operator==(FormulaKey &a, const FormulaKey &b) {
-            Frac tmp(a.elec);
-            tmp.sub(b.elec);
-            return a.key == b.key && tmp.mapPoly.isEmpty();
-        }
-    };*/
+public:
     struct FormulaKey
     {
         explicit FormulaKey(const QString &str, bool *ok = nullptr);
