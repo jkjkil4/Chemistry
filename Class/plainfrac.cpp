@@ -77,6 +77,12 @@ QString PlainFrac::format(bool autoSpace) const {
     return (b == 1 ? QString::number(a) : QString::number(a) + (autoSpace ? " / " : "/") + QString::number(b));
 }
 
+PlainFrac& PlainFrac::abs() {
+    if(a < 0) a = -a;
+    if(b < 0) b = -b;
+    return *this;
+}
+
 PlainFrac& PlainFrac::sum(int digit) {
     if(digit != 0) {
         digit *= b;

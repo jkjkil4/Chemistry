@@ -25,6 +25,8 @@ public:
 
     QString format(bool autoSpace = false) const;
 
+    PlainFrac& abs();
+
     PlainFrac& sum(int digit);
     PlainFrac& sub(int digit);
     PlainFrac& mul(int digit);
