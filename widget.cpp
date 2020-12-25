@@ -13,6 +13,31 @@ QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
 };
 
 
+Widget::FormulaKey::FormulaKey(const QString &str, bool *ok) {
+    int indexOfLeft = str.indexOf('{');
+    int indexOfRight = str.lastIndexOf('}');
+    if(indexOfLeft == -1 || indexOfRight == -1 || indexOfLeft >= indexOfRight) {
+        SET_PTR(ok, false);
+        return;
+    }
+    QString tmpKey = str.left(indexOfLeft);
+    if(key.isEmpty()) {
+        SET_PTR(ok, false);
+        return;
+    }
+    bool ok2;
+    PlainFrac tmpElec(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok2);
+    if(!ok2) {
+        SET_PTR(ok, false);
+        return;
+    }
+
+    key = tmpKey;
+    elec = tmpElec;
+    SET_PTR(ok, true);
+}
+
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {

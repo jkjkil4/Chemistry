@@ -12,7 +12,7 @@ public:
     bool isVaild() const { return vaild; }
 
     //将化学式格式化为字符串
-    QString format();
+    QString format() const;
     //绘制化学式
     void paint(QPainter &p, int x, int y, Formula::PaintAlign pa);
 

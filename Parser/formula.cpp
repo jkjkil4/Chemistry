@@ -101,13 +101,13 @@ Formula::~Formula() {
 }
 
 
-QString Formula::format(bool useBrackets) {
+QString Formula::format(bool useBrackets) const {
     if(type == Element) {
-        return count == 1 ? rElementData() : rElementData() + QString::number(count);
+        return count == 1 ? elementData() : elementData() + QString::number(count);
     } else {
         QString inner;
-        QList<Formula>& lChildren = rGroupData();
-        for(Formula& child : lChildren)
+        const QList<Formula>& lChildren = groupData();
+        for(const Formula& child : lChildren)
             inner += child.format(true);
         QString strCount = count == 1 ? "" : QString::number(count);
         return useBrackets ? '(' + inner + ')' + strCount : strCount + inner;
@@ -161,6 +161,18 @@ QString& Formula::rElementData() {
 }
 
 QList<Formula>& Formula::rGroupData() {
+    if(type != Group)
+        throw;
+    return *(QList<Formula>*)data;
+}
+
+const QString& Formula::elementData() const {
+    if(type != Element)
+        throw;
+    return *(QString*)data;
+}
+
+const QList<Formula>& Formula::groupData() const {
     if(type != Group)
         throw;
     return *(QList<Formula>*)data;

@@ -26,7 +26,7 @@ public:
     bool isVaild() const { return vaild; }
 
     //化学式格式化为字符串
-    QString format(bool useBrackets = false);
+    QString format(bool useBrackets = false) const;
     //绘制化学式
     void paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets = false);
 
@@ -43,6 +43,8 @@ private:
 
     QString& rElementData();
     QList<Formula>& rGroupData();
+    const QString& elementData() const;
+    const QList<Formula>& groupData() const;
 };
 /*
 class Formula_Parent

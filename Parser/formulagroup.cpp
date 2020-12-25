@@ -34,10 +34,10 @@ FormulaGroup::FormulaGroup(const QString &str)
     }
 }
 
-QString FormulaGroup::format() {
+QString FormulaGroup::format() const {
     QString res;
     bool hasPrev = false;
-    for(Formula &formula : lFormulas) {
+    for(const Formula &formula : lFormulas) {
         if(hasPrev) {
             res += '_';
         } else hasPrev = true;

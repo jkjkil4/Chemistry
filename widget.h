@@ -16,7 +16,7 @@
 
 #include <mlibheader.h>
 
-#include "Parser/formula.h"
+#include "Parser/formulagroup.h"
 
 #include <QDebug>
 
@@ -63,6 +63,23 @@ public:/*
             return a.key == b.key && tmp.mapPoly.isEmpty();
         }
     };*/
+    struct FormulaKey
+    {
+        explicit FormulaKey(const QString &str, bool *ok = nullptr);
+        explicit FormulaKey(const QString &key, const PlainFrac &elec) : key(key), elec(elec) {}
+        explicit FormulaKey(const FormulaGroup &formula) : key(formula.format()), elec(formula.elec()) {}
+
+        QString key;
+        PlainFrac elec;
+
+        inline bool operator<(const FormulaKey &other) {
+            if(key != other.key)
+                return key < other.key;
+            return elec < other.elec;
+        }
+        inline bool operator==(const FormulaKey &other) { return key == other.key && elec == other.elec; }
+    };
+
     struct Error
     {
         enum Type { Any, FormulaError, FormulaNotExists, FormulaMultiDefined, IsEmpty, ElementNotExists } type;
