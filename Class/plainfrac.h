@@ -40,12 +40,12 @@ public:
     int top() const { return a; }
     int bottom() const { return b; }
 
-    inline bool operator==(const PlainFrac &other) { return PlainFrac(*this).sub(other).a == 0; }
-    inline bool operator<(const PlainFrac &other) { return PlainFrac(*this).sub(other).moveNegativeToTop().a < 0; }
-    inline bool operator>(const PlainFrac &other) { return PlainFrac(*this).sub(other).moveNegativeToTop().a > 0; }
-    inline bool operator<=(const PlainFrac &other) { return !operator>(other); }
-    inline bool operator>=(const PlainFrac &other) { return !operator<(other); }
-    inline bool operator!=(const PlainFrac &other) { return !operator==(other); }
+    inline bool operator==(const PlainFrac &other) const { return PlainFrac(*this).sub(other).a == 0; }
+    inline bool operator<(const PlainFrac &other) const { return PlainFrac(*this).sub(other).moveNegativeToTop().a < 0; }
+    inline bool operator>(const PlainFrac &other) const { return PlainFrac(*this).sub(other).moveNegativeToTop().a > 0; }
+    inline bool operator<=(const PlainFrac &other) const { return !operator>(other); }
+    inline bool operator>=(const PlainFrac &other) const { return !operator<(other); }
+    inline bool operator!=(const PlainFrac &other) const { return !operator==(other); }
 
 private:
     int a = 0;

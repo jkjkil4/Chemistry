@@ -6,6 +6,7 @@
 class FormulaGroup
 {
 public:
+    FormulaGroup() = default;
     explicit FormulaGroup(const QString &str);
     ~FormulaGroup() = default;
 

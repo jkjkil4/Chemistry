@@ -33,12 +33,12 @@ public:
         QString key;
         PlainFrac elec;
 
-        inline bool operator<(const FormulaKey &other) {
+        inline bool operator<(const FormulaKey &other) const {
             if(key != other.key)
                 return key < other.key;
             return elec < other.elec;
         }
-        inline bool operator==(const FormulaKey &other) { return key == other.key && elec == other.elec; }
+        inline bool operator==(const FormulaKey &other) const { return key == other.key && elec == other.elec; }
     };
 
     struct Error
