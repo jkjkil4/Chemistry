@@ -29,6 +29,8 @@ public:
 
     PlainFrac& sum(const PlainFrac &other);
     PlainFrac& sub(const PlainFrac &other);
+    PlainFrac& mul(const PlainFrac &other);
+    PlainFrac& div(const PlainFrac &other);
 
 private:
     int a = 0;

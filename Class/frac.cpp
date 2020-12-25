@@ -296,7 +296,7 @@ Frac& Frac::mul(int digit) {
 }
 Frac& Frac::div(int digit) {
     if(digit == 0)
-        throw Error("cannot div 0");
+        throw FracError("cannot div 0");
     if(!mapPoly.isEmpty()) {
         b *= digit;
         reduct();

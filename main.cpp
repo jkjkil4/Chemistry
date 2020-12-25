@@ -8,6 +8,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    PlainFrac f(3);
+    f.div(4).mul(PlainFrac(4).div(-3)).moveNegativeToTop();
+    qDebug() << f.format();
+
     Widget w;
     w.show();
 

@@ -11,12 +11,6 @@
 class Frac
 {
 public:
-    struct Error
-    {
-        Error(const QString &what) : what(what) {}
-        QString what;
-    };
-
     Frac() = default;
     Frac(int value, const QString &key = "");
     Frac(QString str, bool *ok = nullptr);

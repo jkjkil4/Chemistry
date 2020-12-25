@@ -129,4 +129,23 @@ PlainFrac& PlainFrac::sub(const PlainFrac &other) {
     }
     return *this;
 }
+PlainFrac& PlainFrac::mul(const PlainFrac &other) {
+    if(other.a == 0) {
+        a = 0;
+        b = 1;
+    } else {
+        a *= other.a;
+        b *= other.b;
+        reduct();
+    }
+    return *this;
+}
+PlainFrac& PlainFrac::div(const PlainFrac &other) {
+    if(other.a == 0)
+        throw FracError("cannot div 0");
+    a *= other.b;
+    b *= other.a;
+    reduct();
+    return *this;
+}
 
