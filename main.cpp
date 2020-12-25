@@ -8,9 +8,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Frac f(3);
-    f.div(4).sum(PlainFrac(4).div(3)).moveNegativeToTop();
-    qDebug() << f.format();
+    FormulaGroup f("Mn[+7]O[-2]4");
+    qDebug() << f.isVaild() << f.format() << f.elec().format();
 
     Widget w;
     w.show();

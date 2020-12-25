@@ -30,7 +30,7 @@ FormulaGroup::FormulaGroup(const QString &str)
             return;
         }
         lFormulas << formula;
-        elec.sum(Frac(formula.getElec()).mul(formula.getCount()));
+        mElec.sum(PlainFrac(formula.elec()).mul(formula.getCount()));
     }
 }
 

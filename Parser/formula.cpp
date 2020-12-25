@@ -22,13 +22,13 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
 
         //得到电荷数
         bool ok;
-        Frac frac(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok);
+        PlainFrac frac(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok);
         if(!ok) {
             vaild = false;
             return;
         }
 
-        elec = frac.moveNegativeToTop();
+        mElec = frac.moveNegativeToTop();
         data = new QString(strElement);
     } else {
         QList<Formula> *pLChildren = new QList<Formula>;  //new 临时的list
@@ -83,7 +83,7 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
         }
 
         for(Formula &child : *pLChildren)
-            elec.sum(Frac(child.elec).mul(child.count));
+            mElec.sum(PlainFrac(child.mElec).mul(child.count));
         data = pLChildren;
     }
 }
@@ -91,7 +91,7 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
 Formula::Formula(const Formula &other) {
     type = other.type;
     count = other.count;
-    elec = other.elec;
+    mElec = other.mElec;
     vaild = other.vaild;
     data = (type == Element ? (void*)new QString(*(QString*)other.data) : (void*)new QList<Formula>(*(QList<Formula>*)other.data));
 }
