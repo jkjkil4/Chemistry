@@ -114,6 +114,45 @@ QString Formula::format(bool useBrackets) {
     }
 }
 
+void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets) {
+    int yy = pa == PA_Top ? y + QFontMetrics(p.font()).height() : y;
+    QRect rect;
+
+    if(type == Element) {
+        //绘制元素
+        j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, rElementData(), -1, -1, &rect);
+        x += rect.width();
+
+        //绘制数量
+        if(count != 1) {
+            int pointSize = p.font().pointSize();
+            j::SetPointSize(&p, qMax(1, pointSize / 2));
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
+            j::SetPointSize(&p, pointSize);
+            x += rect.width();
+        }
+    } else {
+        if(!useBrackets) {
+            //绘制数量
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
+            x += rect.width();
+        }
+
+        //绘制子内容
+        for(Formula &child : rGroupData())
+            child.paint(p, x, y, pa, true);
+
+        if(useBrackets) {
+            //绘制数量
+            int pointSize = p.font().pointSize();
+            j::SetPointSize(&p, qMax(1, pointSize / 2));
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
+            j::SetPointSize(&p, pointSize);
+            x += rect.width();
+        }
+    }
+}
+
 
 QString& Formula::rElementData() {
     if(type != Element)

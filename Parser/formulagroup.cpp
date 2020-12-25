@@ -45,3 +45,17 @@ QString FormulaGroup::format() {
     }
     return res;
 }
+
+void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa) {
+    QRect rect;
+    int yy = pa == Formula::PA_Top ? y + QFontMetrics(p.font()).height() : y;
+    bool hasPrev = false;
+    for(Formula &formula : lFormulas) {
+        if(hasPrev) {
+            x += 2;
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, "·", -1, -1, &rect);
+            x += 2 + rect.width();
+        } else hasPrev = true;
+        formula.paint(p, x, y, pa);
+    }
+}

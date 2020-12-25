@@ -13,6 +13,8 @@ public:
 
     //将化学式格式化为字符串
     QString format();
+    //绘制化学式
+    void paint(QPainter &p, int x, int y, Formula::PaintAlign pa);
 
     const PlainFrac& elec() const { return mElec; }
 
