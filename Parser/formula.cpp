@@ -132,7 +132,7 @@ void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets)
             x += rect.width();
         }
     } else {
-        if(!useBrackets) {
+        if(count != 1 && !useBrackets) {
             //绘制数量
             j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
             x += rect.width();
@@ -142,7 +142,7 @@ void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets)
         for(Formula &child : rGroupData())
             child.paint(p, x, y, pa, true);
 
-        if(useBrackets) {
+        if(count != 1 && useBrackets) {
             //绘制数量
             int pointSize = p.font().pointSize();
             j::SetPointSize(&p, qMax(1, pointSize / 2));

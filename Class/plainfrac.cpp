@@ -6,6 +6,14 @@ PlainFrac::PlainFrac(int value) {
         a = value;
 }
 
+PlainFrac::PlainFrac(int a, int b) {
+    if(b == 0)
+        throw FracError("cannot div 0");
+    this->a = a;
+    this->b = b;
+    reduct();
+}
+
 PlainFrac::PlainFrac(QString str, bool *ok) {
     str.replace(' ', "");
     int indexOfDiv = str.indexOf("/");

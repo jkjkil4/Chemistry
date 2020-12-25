@@ -5,6 +5,15 @@ Frac::Frac(int value, const QString &key) {
         mapPoly[key] = value;
 }
 
+Frac::Frac(int a, int b) {
+    if(b == 0)
+        throw FracError("cannot div 0");
+    if(a != 0)
+        mapPoly[""] = a;
+    this->b = b;
+    reduct();
+}
+
 Frac::Frac(QString str, bool *ok) {
     str.replace(' ', "");
     int indexOfDiv = str.indexOf("/");
@@ -42,6 +51,11 @@ Frac::Frac(const PlainFrac &plain) {
         return;
     mapPoly[""] = plain.a;
     b = plain.b;
+}
+
+PlainFrac Frac::toPlain() {
+    int a = mapPoly.value("", 0);
+    return PlainFrac(a, b);
 }
 
 //void Frac::checkZero() {

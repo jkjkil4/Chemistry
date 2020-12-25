@@ -57,5 +57,7 @@ void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa) {
             x += 2 + rect.width();
         } else hasPrev = true;
         formula.paint(p, x, y, pa);
+
+
     }
 }

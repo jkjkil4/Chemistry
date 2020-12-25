@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "Parser/formula.h"
+#include "Parser/formulagroup.h"
 
 class FormulaWidget : public QWidget
 {
@@ -12,18 +12,11 @@ protected:
     void paintEvent(QPaintEvent *) override;
 
 public:
-    struct FormulaStruct
-    {
-        FormulaStruct(Formula *formula, const Frac &count) : formula(formula), count(count) {}
-        Formula *formula;
-        Frac count;
-    };
-
-    explicit FormulaWidget(const QList<FormulaStruct> &lReactants, const QList<FormulaStruct> &lProducts, QWidget *parent = nullptr);
-    ~FormulaWidget() override;
+    explicit FormulaWidget(const FormulaGroup &formula, QWidget *parent = nullptr);
+    ~FormulaWidget() override = default;
 
 private:
-    QList<FormulaStruct> lReactants, lProducts;
+    FormulaGroup formula;
 };
 
 #endif // FORMULAWIDGET_H
