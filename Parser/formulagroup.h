@@ -9,12 +9,12 @@ public:
     explicit FormulaGroup(const QString &str);
     ~FormulaGroup() = default;
 
-    bool isVaild() { return vaild; }
+    bool isVaild() const { return vaild; }
 
     //将化学式格式化为字符串
     QString format();
 
-    const Frac& getElec() { return elec; }
+    const Frac& getElec() const { return elec; }
 
 private:
     bool vaild = true;

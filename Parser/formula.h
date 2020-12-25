@@ -21,8 +21,8 @@ public:
 
     VAR_GET_FUNC(Type, type, Type)
     VAR_GET_FUNC(Count, count, int)
-    const Frac& getElec() { return elec; }
-    bool isVaild() { return vaild; }
+    const Frac& getElec() const { return elec; }
+    bool isVaild() const { return vaild; }
 
     //化学式格式化为字符串
     QString format(bool useBrackets = false);

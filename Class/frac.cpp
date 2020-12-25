@@ -25,7 +25,7 @@ Frac::Frac(QString str, bool *ok) {
             return;
         }
         int bottom = str.right(str.length() - indexOfDiv - 1).toInt(&ok2);
-        if(!ok2) {
+        if(!ok2 || bottom == 0) {
             SET_PTR(ok, false);
             return;
         }
@@ -35,6 +35,13 @@ Frac::Frac(QString str, bool *ok) {
 
     reduct();
     SET_PTR(ok, true);
+}
+
+Frac::Frac(const PlainFrac &plain) {
+    if(plain.a == 0)
+        return;
+    mapPoly[""] = plain.a;
+    b = plain.b;
 }
 
 //void Frac::checkZero() {

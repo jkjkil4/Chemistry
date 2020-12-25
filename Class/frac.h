@@ -14,6 +14,7 @@ public:
     Frac() = default;
     Frac(int value, const QString &key = "");
     Frac(QString str, bool *ok = nullptr);
+    Frac(const PlainFrac &plain);
 
     static QList<Frac> SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok = nullptr);
 

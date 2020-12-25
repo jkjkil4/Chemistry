@@ -12,6 +12,8 @@ struct FracError
 class PlainFrac
 {
 public:
+    friend class Frac;
+
     PlainFrac() = default;
     PlainFrac(int value);
     PlainFrac(QString str, bool *ok = nullptr);
@@ -31,6 +33,9 @@ public:
     PlainFrac& sub(const PlainFrac &other);
     PlainFrac& mul(const PlainFrac &other);
     PlainFrac& div(const PlainFrac &other);
+
+    int top() const { return a; }
+    int bottom() const { return b; }
 
 private:
     int a = 0;
