@@ -40,6 +40,19 @@ public:
     int top() const { return a; }
     int bottom() const { return b; }
 
+    //下列重载的运算符会发生拷贝(在某些时候可能降低效率)
+    friend inline PlainFrac operator+(const PlainFrac &a, const PlainFrac &b) { return PlainFrac(a).sum(b); }
+    friend inline PlainFrac operator-(const PlainFrac &a, const PlainFrac &b) { return PlainFrac(a).sub(b); }
+    friend inline PlainFrac operator*(const PlainFrac &a, const PlainFrac &b) { return PlainFrac(a).mul(b); }
+    friend inline PlainFrac operator/(const PlainFrac &a, const PlainFrac &b) { return PlainFrac(a).div(b); }
+
+    //对自运算符的重载
+    inline PlainFrac& operator+=(const PlainFrac &other) { return sum(other); }
+    inline PlainFrac& operator-=(const PlainFrac &other) { return sub(other); }
+    inline PlainFrac& operator*=(const PlainFrac &other) { return mul(other); }
+    inline PlainFrac& operator/=(const PlainFrac &other) { return div(other); }
+
+    //对逻辑运算符的重载
     inline bool operator==(const PlainFrac &other) const { return PlainFrac(*this).sub(other).a == 0; }
     inline bool operator< (const PlainFrac &other) const { return PlainFrac(*this).sub(other).moveNegativeToTop().a < 0; }
     inline bool operator> (const PlainFrac &other) const { return PlainFrac(*this).sub(other).moveNegativeToTop().a > 0; }

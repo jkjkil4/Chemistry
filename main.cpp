@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     Widget w;
     w.show();
 
-    qDebug() << Frac(3, "a").div(2).div(PlainFrac(2, 3)).format();
+    qDebug() << (PlainFrac(3, 4) - 2).format();
 
     return a.exec();
 }
