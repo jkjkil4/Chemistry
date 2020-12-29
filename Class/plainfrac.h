@@ -53,9 +53,9 @@ public:
     inline PlainFrac& operator/=(const PlainFrac &other) { return div(other); }
 
     //对逻辑运算符的重载
-    inline bool operator==(const PlainFrac &other) const { return PlainFrac(*this).sub(other).a == 0; }
-    inline bool operator< (const PlainFrac &other) const { return PlainFrac(*this).sub(other).moveNegativeToTop().a < 0; }
-    inline bool operator> (const PlainFrac &other) const { return PlainFrac(*this).sub(other).moveNegativeToTop().a > 0; }
+    inline bool operator==(const PlainFrac &other) const { return (*this - other).a == 0; }
+    inline bool operator< (const PlainFrac &other) const { return (*this - other).moveNegativeToTop().a < 0; }
+    inline bool operator> (const PlainFrac &other) const { return (*this - other).moveNegativeToTop().a > 0; }
     inline bool operator<=(const PlainFrac &other) const { return !operator>(other); }
     inline bool operator>=(const PlainFrac &other) const { return !operator<(other); }
     inline bool operator!=(const PlainFrac &other) const { return !operator==(other); }
