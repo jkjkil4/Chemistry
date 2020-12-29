@@ -13,6 +13,8 @@ class Frac
 public:
     Frac() = default;
     Frac(int value, const QString &key = "");
+    Frac(int value, char) = delete;
+    Frac(int value, QChar) = delete;
     Frac(int a, int b);     //如果b为0，会抛出FracError错误
     Frac(QString str, bool *ok = nullptr);
     Frac(const PlainFrac &plain);
@@ -39,6 +41,8 @@ public:
 
     Frac& sum(const Frac &other);
     Frac& sub(const Frac &other);
+    Frac& mul(const PlainFrac &other);
+    Frac& div(const PlainFrac &other);  //如果other为0，会抛出FracError错误
 
 private:
     QMap<QString, int> mapPoly;

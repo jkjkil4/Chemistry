@@ -357,3 +357,25 @@ Frac& Frac::sub(const Frac &other) {
     }
     return *this;
 }
+
+Frac& Frac::mul(const PlainFrac &other) {
+    if(other.a == 0) {
+        mapPoly.clear();
+        b = 1;
+    } else {
+        for(int &mono : mapPoly)
+            mono *= other.a;
+        b *= other.b;
+        reduct();
+    }
+    return *this;
+}
+Frac& Frac::div(const PlainFrac &other) {
+    if(other.a == 0)
+        throw FracError("cannot div 0");
+    for(int &mono : mapPoly)
+        mono *= other.b;
+    b *= other.a;
+    reduct();
+    return *this;
+}
