@@ -44,6 +44,19 @@ public:
     Frac& mul(const PlainFrac &other);
     Frac& div(const PlainFrac &other);  //如果other为0，会抛出FracError错误
 
+    //下列重载的运算符会发生拷贝(在某些时候可能降低效率)
+    friend inline Frac operator+(const Frac &a, const Frac &b) { return Frac(a).sum(b); }
+    friend inline Frac operator-(const Frac &a, const Frac &b) { return Frac(a).sub(b); }
+    friend inline Frac operator*(const Frac &a, const PlainFrac &b) { return Frac(a).mul(b); }
+    friend inline Frac operator*(const PlainFrac &a, const Frac &b) { return Frac(b).mul(a); }
+    friend inline Frac operator/(const Frac &a, const PlainFrac &b) { return Frac(a).div(b); }
+
+    //对自运算符的重载
+    inline Frac& operator+=(const Frac &other) { return sum(other); }
+    inline Frac& operator-=(const Frac &other) { return sub(other); }
+    inline Frac& operator*=(const PlainFrac &other) { return mul(other); }
+    inline Frac& operator/=(const PlainFrac &other) { return div(other); }
+
 private:
     QMap<QString, int> mapPoly;
     int b = 1;
