@@ -8,12 +8,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    FormulaGroup f("Cu[2]S[6]O[-2]4_5H[1]2O[-2]");
-    qDebug() << f.isVaild() << f.format() << f.elec().format();
-
-    FormulaWidget fw(f);
-    fw.show();
-
     Widget w;
     w.show();
 

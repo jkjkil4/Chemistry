@@ -18,17 +18,20 @@ Widget::FormulaKey::FormulaKey(const QString &str, bool *ok) {
     int indexOfRight = str.lastIndexOf('}');
     if(indexOfLeft == -1 || indexOfRight == -1 || indexOfLeft >= indexOfRight) {
         SET_PTR(ok, false);
+        qDebug() << "E1" << indexOfLeft << indexOfRight;
         return;
     }
     QString tmpKey = str.left(indexOfLeft);
-    if(key.isEmpty()) {
+    if(tmpKey.isEmpty()) {
         SET_PTR(ok, false);
+        qDebug() << "E2" << indexOfLeft << indexOfRight;
         return;
     }
     bool ok2;
     PlainFrac tmpElec(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok2);
     if(!ok2) {
         SET_PTR(ok, false);
+        qDebug() << "E3" << indexOfLeft << indexOfRight;
         return;
     }
 
