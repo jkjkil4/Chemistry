@@ -9,7 +9,7 @@ QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
 
     { IsEmpty, "(E1-0) %1为空" },
 
-    { ElementNotExists, "(E2-0) \"%1\" 元素在 %2 中存在，却无法在 %3 中找到" }
+    { ElementNotExists, "(E2-0) \"%1\" 元素在 %2 中存在，却无法在 %3 中找到" },
 };
 
 
@@ -189,23 +189,60 @@ void Widget::onAnalysis() {
     CHECK_ERR
 
     {//配平
-        QMap<FormulaKey, QString> mapUnkNums;   //用于FormulaKey和未知数对应
-        QMap<QString, Frac> mapLeftElemCount, mapRightElemCount;    //左部和右部的元素数量
-        {//设置未知数
+        QMap<FormulaKey, UnkNum> mapUnkNums;   //用于FormulaKey和未知数对应
+        QMap<QString, Frac> mapLeftElemCount, mapRightElemCount;    //左部和右部的原子数量
+        QList<Frac> lFracs;     //配平的关系式
+        {//获得用于配平的东西
             int unkNumCount = 0;
             auto fnGetUnkNums = [&mapFormulas, &mapUnkNums, &unkNumCount]
                     (QList<FormulaKey> &list, QMap<QString, Frac> &map)
-            {//lambda，用于设置未知数
+            {//lambda，用于 设置未知数 得到原子数
                 for(auto iter = list.begin(); iter != list.end(); ++iter) {
-                    QString strUnkNum = mapUnkNums[*iter] = (unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount));
-                    mapFormulas[*iter].elementCount(map, Frac(1, strUnkNum));
+                    //未知数
+                    UnkNum &unkNum = mapUnkNums[*iter] = unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount);
+                    //得到原子数
+                    mapFormulas[*iter].elementCount(map, Frac(1, unkNum.name));
                     unkNumCount++;
                 }
             };
             fnGetUnkNums(lReactants, mapLeftElemCount);
             fnGetUnkNums(lProducts, mapRightElemCount);
+
+            //检查
+            for(auto iter = mapLeftElemCount.begin(); iter != mapLeftElemCount.end(); ++iter)
+                if(!mapRightElemCount.contains(iter.key()))
+                    lErrors << Error(Error::ElementNotExists, QStringList() << iter.key() << "反应物" << "生成物");
+            for(auto iter = mapRightElemCount.begin(); iter != mapRightElemCount.end(); ++iter)
+                if(!mapLeftElemCount.contains(iter.key()))
+                    lErrors << Error(Error::ElementNotExists, QStringList() << iter.key() << "生成物" << "反应物");
+            if(!lErrors.isEmpty())
+                goto Jump;
         }
 
+        {//原子守恒
+            for(auto iter = mapLeftElemCount.begin(); iter != mapLeftElemCount.end(); ++iter)
+                lFracs << *iter - mapRightElemCount[iter.key()];
+        }
+
+        {//解方程，得出结果
+            QList<UnkNum*> lPUnkNum;
+            QStringList lUnkNumbers;
+            for(UnkNum &unkNum : mapUnkNums) {
+                if(!unkNum.name.isEmpty()) {
+                    lPUnkNum << &unkNum;
+                    lUnkNumbers << unkNum.name;
+                }
+            }
+            bool ok;
+            Frac::SolvingEquations(lFracs, lUnkNumbers, &ok);
+            if(!ok) {
+                lErrors << Error(Error::Any, QStringList() << "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒)");
+            } else {
+
+            }
+        }
+        Jump:
+        CHECK_ERR
     }
 
     End:;

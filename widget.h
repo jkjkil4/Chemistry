@@ -50,6 +50,14 @@ public:
 #endif
     };
 
+    struct UnkNum
+    {
+        UnkNum() = default;
+        UnkNum(const QString &name) : name(name) {}
+        QString name;
+        Frac value;
+    };
+
     struct Error
     {
         enum Type { Any, FormulaError, FormulaNotExists, FormulaMultiDefined, IsEmpty, ElementNotExists } type;
