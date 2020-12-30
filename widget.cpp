@@ -200,6 +200,8 @@ void Widget::onAnalysis() {
                 for(auto iter = list.begin(); iter != list.end(); ++iter) {
                     //未知数
                     UnkNum &unkNum = mapUnkNums[*iter] = unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount);
+                    if(unkNumCount == 0)
+                        unkNum.value = 1;
                     //得到原子数
                     mapFormulas[*iter].elementCount(map, Frac(1, unkNum.name));
                     unkNumCount++;
