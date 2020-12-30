@@ -190,18 +190,21 @@ void Widget::onAnalysis() {
 
     {//配平
         QMap<FormulaKey, QString> mapUnkNums;   //用于FormulaKey和未知数对应
+        QMap<QString, Frac> mapLeftElemCount, mapRightElemCount;    //左部和右部的元素数量
         {//设置未知数
             int unkNumCount = 0;
-            auto fnGetUnkNums = [&mapUnkNums, &unkNumCount](QList<FormulaKey> &list){   //lambda，用于设置未知数
+            auto fnGetUnkNums = [&mapFormulas, &mapUnkNums, &unkNumCount]
+                    (QList<FormulaKey> &list, QMap<QString, Frac> &map)
+            {//lambda，用于设置未知数
                 for(auto iter = list.begin(); iter != list.end(); ++iter) {
-                    mapUnkNums[*iter] = (unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount));
+                    QString strUnkNum = mapUnkNums[*iter] = (unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount));
+                    mapFormulas[*iter].elementCount(map, Frac(1, strUnkNum));
                     unkNumCount++;
                 }
             };
-            fnGetUnkNums(lReactants);
-            fnGetUnkNums(lProducts);
+            fnGetUnkNums(lReactants, mapLeftElemCount);
+            fnGetUnkNums(lProducts, mapRightElemCount);
         }
-        qDebug() << mapUnkNums;
 
     }
 

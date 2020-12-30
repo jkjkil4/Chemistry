@@ -8,6 +8,11 @@
 
 #include "plainfrac.h"
 
+#define DEBUG_FRAC
+#ifdef DEBUG_FRAC
+#include <QDebug>
+#endif
+
 class Frac
 {
 public:
@@ -56,6 +61,12 @@ public:
     inline Frac& operator-=(const Frac &other) { return sub(other); }
     inline Frac& operator*=(const PlainFrac &other) { return mul(other); }
     inline Frac& operator/=(const PlainFrac &other) { return div(other); }
+
+#ifdef DEBUG_FRAC
+    friend inline QDebug& operator<<(QDebug &de, const Frac &frac) {
+        return de << frac.format(de.autoInsertSpaces(), true);
+    }
+#endif
 
 private:
     QMap<QString, int> mapPoly;

@@ -76,3 +76,8 @@ void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa) {
         }
     }
 }
+
+void FormulaGroup::elementCount(QMap<QString, Frac> &map, const Frac &mul) {
+    for(Formula &formula : lFormulas)
+        formula.elementCount(map, mul);
+}
