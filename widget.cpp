@@ -119,10 +119,10 @@ Widget::~Widget()
 void Widget::onAnalysis() {
     stackedWidget->setCurrentWidget(viewNone);
 
-    QList<Error> lErrors;
+    QList<Error> lErrors;   //错误列表
 
-    QMap<FormulaKey, FormulaGroup> mapFormulas;
-    QList<FormulaKey> lReactants, lProducts;
+    QMap<FormulaKey, FormulaGroup> mapFormulas; //用于FormulaKey和FormulaGroup对应
+    QList<FormulaKey> lReactants, lProducts;    //lReactants为反应物，lProducts为生成物
 
     {//解析化学式
         QTextDocument *doc = editFormula->document();
@@ -189,7 +189,20 @@ void Widget::onAnalysis() {
     CHECK_ERR
 
     {//配平
-        //TODO: ......
+        QMap<FormulaKey, QString> mapUnkNums;   //用于FormulaKey和未知数对应
+        {//设置未知数
+            int unkNumCount = 0;
+            auto fnGetUnkNums = [&mapUnkNums, &unkNumCount](QList<FormulaKey> &list){   //lambda，用于设置未知数
+                for(auto iter = list.begin(); iter != list.end(); ++iter) {
+                    mapUnkNums[*iter] = (unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount));
+                    unkNumCount++;
+                }
+            };
+            fnGetUnkNums(lReactants);
+            fnGetUnkNums(lProducts);
+        }
+        qDebug() << mapUnkNums;
+
     }
 
     End:;

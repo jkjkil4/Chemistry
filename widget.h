@@ -18,7 +18,11 @@
 
 #include "Parser/formulagroup.h"
 
+#define DEBUG_FORMULAKEY
+
+#ifdef DEBUG_FORMULAKEY
 #include <QDebug>
+#endif
 
 class Widget : public QWidget
 {
@@ -39,6 +43,11 @@ public:
             return elec < other.elec;
         }
         inline bool operator==(const FormulaKey &other) const { return key == other.key && elec == other.elec; }
+#ifdef DEBUG_FORMULAKEY
+        friend inline QDebug& operator<<(QDebug& de, const FormulaKey& fk) {
+            return de << "FormulaKey(" + fk.key + ", " + fk.elec.format() + ")";
+        }
+#endif
     };
 
     struct Error

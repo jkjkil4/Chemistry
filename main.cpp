@@ -11,11 +11,6 @@ int main(int argc, char *argv[])
     Widget w;
     w.show();
 
-    Frac(3, "a").div(2) * 2;
-    2 * Frac(3, "a").div(2);
-    Frac(3, "a").div(2) / 2;
-    2 / Frac(3, "a").div(2);
-
     return a.exec();
 }
 
