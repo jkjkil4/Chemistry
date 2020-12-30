@@ -28,7 +28,7 @@ public:
     //化学式格式化为字符串
     QString format(bool useBrackets = false) const;
     //绘制化学式
-    void paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets = false);
+    void paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets = false) const;
     //得到元素数量
     void elementCount(QMap<QString, Frac> &map, const Frac &mul = 1) const;
 
@@ -43,8 +43,6 @@ private:
     void *data = nullptr;   //数据(type == Element -> QString, type == Group -> QList<Formula>)
     bool vaild = true;      //是否有效
 
-    QString& rElementData();
-    QList<Formula>& rGroupData();
     const QString& elementData() const;
     const QList<Formula>& groupData() const;
 };

@@ -114,13 +114,13 @@ QString Formula::format(bool useBrackets) const {
     }
 }
 
-void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets) {
+void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets) const {
     int yy = pa == PA_Top ? y + QFontMetrics(p.font()).height() : y;
     QRect rect;
 
     if(type == Element) {
         //绘制元素
-        j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, rElementData(), -1, -1, &rect);
+        j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, elementData(), -1, -1, &rect);
         x += rect.width();
 
         //绘制数量
@@ -139,7 +139,7 @@ void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets)
         }
 
         //绘制子内容
-        for(Formula &child : rGroupData())
+        for(const Formula &child : groupData())
             child.paint(p, x, y, pa, true);
 
         if(count != 1 && useBrackets) {
@@ -163,18 +163,6 @@ void Formula::elementCount(QMap<QString, Frac> &map, const Frac &mul) const {
     }
 }
 
-
-QString& Formula::rElementData() {
-    if(type != Element)
-        throw;
-    return *(QString*)data;
-}
-
-QList<Formula>& Formula::rGroupData() {
-    if(type != Group)
-        throw;
-    return *(QList<Formula>*)data;
-}
 
 const QString& Formula::elementData() const {
     if(type != Element)

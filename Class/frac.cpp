@@ -102,7 +102,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         //如果无法从现有的式子中找到该未知数，就结束该函数
         if(iter == lFracs.end()) {
             SET_PTR(ok, false);
-            return lRes;
+            return QList<Frac>();
         }
         Frac paramFrac = (*iter).paramSep(unkNumber);   //参变分离(我不确定是不是这么说)
         lRes << paramFrac;      //将其加入到结果list中

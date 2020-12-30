@@ -17,6 +17,7 @@
 #include <mlibheader.h>
 
 #include "Parser/formulagroup.h"
+#include "Widget/formulawidget.h"
 
 #define DEBUG_FORMULAKEY
 
@@ -83,7 +84,7 @@ private:
     QStackedWidget *stackedWidget = new QStackedWidget;
     QWidget *viewNone = new QWidget;
     QListWidget *viewError = new QListWidget;
-    QWidget *viewResult = new QWidget;
+    FormulaWidget *viewResult = new FormulaWidget;
 
     QPlainTextEdit *editFormula = new QPlainTextEdit;
     QPlainTextEdit *editRel = new QPlainTextEdit;

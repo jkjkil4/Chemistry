@@ -46,12 +46,12 @@ QString FormulaGroup::format() const {
     return res;
 }
 
-void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa) {
+void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa) const {
     QRect rect;
     int fmHeight = QFontMetrics(p.font()).height();
     int yy = pa == Formula::PA_Top ? y + fmHeight : y;
     bool hasPrev = false;
-    for(Formula &formula : lFormulas) {
+    for(const Formula &formula : lFormulas) {
         if(hasPrev) {
             j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, "·", -1, -1, &rect);
             x += rect.width();

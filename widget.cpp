@@ -234,11 +234,22 @@ void Widget::onAnalysis() {
                 }
             }
             bool ok;
-            Frac::SolvingEquations(lFracs, lUnkNumbers, &ok);
+            QList<Frac> lRes = Frac::SolvingEquations(lFracs, lUnkNumbers, &ok);
             if(!ok) {
                 lErrors << Error(Error::Any, QStringList() << "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒)");
             } else {
+                auto lPUnkNumIter = lPUnkNum.begin();
+                for(Frac &frac : lRes) {
+                    (*lPUnkNumIter)->value = frac;
+                    lPUnkNumIter++;
+                }
 
+                viewResult->clear();
+                for(FormulaKey &key : lReactants)
+                    viewResult->addReactant(mapUnkNums[key].value, mapFormulas[key]);
+                for(FormulaKey &key : lProducts)
+                    viewResult->addReactant(mapUnkNums[key].value, mapFormulas[key]);
+                stackedWidget->setCurrentWidget(viewResult);
             }
         }
         Jump:
