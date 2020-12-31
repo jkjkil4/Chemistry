@@ -250,7 +250,7 @@ void Widget::onAnalysis() {
                 for(FormulaKey &key : lReactants)
                     viewResult->addReactant(mapUnkNums[key].value, mapFormulas[key]);
                 for(FormulaKey &key : lProducts)
-                    viewResult->addReactant(mapUnkNums[key].value, mapFormulas[key]);
+                    viewResult->addProduct(mapUnkNums[key].value, mapFormulas[key]);
                 stackedWidget->setCurrentWidget(viewResult);
             }
         }

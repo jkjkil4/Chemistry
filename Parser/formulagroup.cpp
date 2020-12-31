@@ -46,7 +46,8 @@ QString FormulaGroup::format() const {
     return res;
 }
 
-void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa) const {
+void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRect *pRect) const {
+    int xStart = x;
     QRect rect;
     int fmHeight = QFontMetrics(p.font()).height();
     int yy = pa == Formula::PA_Top ? y + fmHeight : y;
@@ -75,6 +76,7 @@ void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa) cons
             //x += rect.width();
         }
     }
+    SET_PTR(pRect, QRect(xStart, y, x - xStart, fmHeight));
 }
 
 void FormulaGroup::elementCount(QMap<QString, Frac> &map, const Frac &mul) {
