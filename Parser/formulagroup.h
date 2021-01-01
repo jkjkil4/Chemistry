@@ -17,7 +17,7 @@ public:
     //绘制化学式
     void paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRect *pRect = nullptr) const;
     //得到元素数量
-    void elementCount(QMap<QString, Frac> &map, const Frac &mul = 1);
+    void elementCount(QMap<QString, Frac> &map, const Frac &mul = 1) const;
 
     const PlainFrac& elec() const { return mElec; }
 

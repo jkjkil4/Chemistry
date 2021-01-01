@@ -189,48 +189,63 @@ void Widget::onAnalysis() {
     CHECK_ERR
 
     {//配平
+        struct Part
+        {
+            QMap<QString, Frac> mapElemCount;
+            Frac elec;
+        } left, right;
+
         QMap<FormulaKey, UnkNum> mapUnkNums;   //用于FormulaKey和未知数对应
-        QMap<QString, Frac> mapLeftElemCount, mapRightElemCount;    //左部和右部的原子数量
         QList<Frac> lFracs;     //配平的关系式
         {//获得用于配平的东西
             int unkNumCount = 0;
             auto fnGetUnkNums = [&mapFormulas, &mapUnkNums, &unkNumCount]
-                    (QList<FormulaKey> &list, QMap<QString, Frac> &map)
+                    (QList<FormulaKey> &list, Part &part)
             {//lambda，用于 设置未知数 得到原子数
                 for(auto iter = list.begin(); iter != list.end(); ++iter) {
                     //未知数
                     UnkNum &unkNum = mapUnkNums[*iter] = unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount);
                     if(unkNumCount == 0)
                         unkNum.value = 1;
+                    const FormulaGroup &formula = mapFormulas[*iter];
+                    Frac mul = Frac(1, unkNum.name);
                     //得到原子数
-                    mapFormulas[*iter].elementCount(map, Frac(1, unkNum.name));
+                    formula.elementCount(part.mapElemCount, mul);
+                    //得到电荷数
+                    part.elec += formula.elec() * mul;
+
                     unkNumCount++;
                 }
             };
-            fnGetUnkNums(lReactants, mapLeftElemCount);
-            fnGetUnkNums(lProducts, mapRightElemCount);
+            fnGetUnkNums(lReactants, left);
+            fnGetUnkNums(lProducts, right);
 
             //检查
-            for(auto iter = mapLeftElemCount.begin(); iter != mapLeftElemCount.end(); ++iter)
-                if(!mapRightElemCount.contains(iter.key()))
+            for(auto iter = left.mapElemCount.begin(); iter != left.mapElemCount.end(); ++iter)
+                if(!right.mapElemCount.contains(iter.key()))
                     lErrors << Error(Error::ElementNotExists, QStringList() << iter.key() << "反应物" << "生成物");
-            for(auto iter = mapRightElemCount.begin(); iter != mapRightElemCount.end(); ++iter)
-                if(!mapLeftElemCount.contains(iter.key()))
+            for(auto iter = right.mapElemCount.begin(); iter != right.mapElemCount.end(); ++iter)
+                if(!left.mapElemCount.contains(iter.key()))
                     lErrors << Error(Error::ElementNotExists, QStringList() << iter.key() << "生成物" << "反应物");
             if(!lErrors.isEmpty())
                 goto Jump;
         }
 
-        {//原子守恒
-            for(auto iter = mapLeftElemCount.begin(); iter != mapLeftElemCount.end(); ++iter)
-                lFracs << *iter - mapRightElemCount[iter.key()];
-        }
+        //原子守恒
+        for(auto iter = left.mapElemCount.begin(); iter != left.mapElemCount.end(); ++iter)
+            lFracs << *iter - right.mapElemCount[iter.key()];
+
+        //电荷守恒
+        lFracs << left.elec - right.elec;
 
         {//解方程，得出结果
             QList<UnkNum*> lPUnkNum;
+            UnkNum* firstUnkNum = nullptr;
             QStringList lUnkNumbers;
             for(UnkNum &unkNum : mapUnkNums) {
-                if(!unkNum.name.isEmpty()) {
+                if(unkNum.name.isEmpty()) {
+                    firstUnkNum = &unkNum;
+                } else {
                     lPUnkNum << &unkNum;
                     lUnkNumbers << unkNum.name;
                 }
@@ -238,8 +253,17 @@ void Widget::onAnalysis() {
             bool ok;
             QList<Frac> lRes = Frac::SolvingEquations(lFracs, lUnkNumbers, &ok);
             if(!ok) {
-                lErrors << Error(Error::Any, QStringList() << "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒)");
+                lErrors << Error(Error::Any, QStringList() << "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒、电荷守恒)");
             } else {
+                QVector<int> vValues;
+                for(Frac &frac : lRes)
+                    vValues << frac.bottom();
+                int commonMulti = j::Lcm(vValues);
+                for(Frac &frac : lRes)
+                    frac.mul(commonMulti);
+
+                firstUnkNum->value = commonMulti;
+
                 auto lPUnkNumIter = lPUnkNum.begin();
                 for(Frac &frac : lRes) {
                     (*lPUnkNumIter)->value = frac;

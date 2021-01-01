@@ -49,6 +49,8 @@ public:
     Frac& mul(const PlainFrac &other);
     Frac& div(const PlainFrac &other);  //如果other为0，会抛出FracError错误
 
+    int bottom() const { return b; }
+
     //下列重载的运算符会发生拷贝(在某些时候可能降低效率)
     friend inline Frac operator+(const Frac &a, const Frac &b) { return Frac(a).sum(b); }
     friend inline Frac operator-(const Frac &a, const Frac &b) { return Frac(a).sub(b); }
