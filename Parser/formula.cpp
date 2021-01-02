@@ -138,9 +138,21 @@ void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets)
             x += rect.width();
         }
 
+        if(useBrackets) {
+            //绘制左括号
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, "(", -1, -1, &rect);
+            x += rect.width();
+        }
+
         //绘制子内容
         for(const Formula &child : groupData())
             child.paint(p, x, y, pa, true);
+
+        if(useBrackets) {
+            //绘制右括号
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, ")", -1, -1, &rect);
+            x += rect.width();
+        }
 
         if(count != 1 && useBrackets) {
             //绘制数量
