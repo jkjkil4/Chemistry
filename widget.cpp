@@ -16,22 +16,22 @@ QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
 Widget::FormulaKey::FormulaKey(const QString &str, bool *ok) {
     int indexOfLeft = str.indexOf('{');
     int indexOfRight = str.lastIndexOf('}');
-    if(indexOfLeft == -1 || indexOfRight == -1 || indexOfLeft >= indexOfRight) {
+    if(indexOfLeft == -1 || indexOfRight == -1 || indexOfRight != str.length() - 1 || indexOfLeft >= indexOfRight) {
         SET_PTR(ok, false);
-        qDebug() << "E1" << indexOfLeft << indexOfRight;
+//        qDebug() << "E1" << indexOfLeft << indexOfRight;
         return;
     }
     QString tmpKey = str.left(indexOfLeft);
     if(tmpKey.isEmpty()) {
         SET_PTR(ok, false);
-        qDebug() << "E2" << indexOfLeft << indexOfRight;
+//        qDebug() << "E2" << indexOfLeft << indexOfRight;
         return;
     }
     bool ok2;
     PlainFrac tmpElec(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok2);
     if(!ok2) {
         SET_PTR(ok, false);
-        qDebug() << "E3" << indexOfLeft << indexOfRight;
+//        qDebug() << "E3" << indexOfLeft << indexOfRight;
         return;
     }
 
@@ -255,14 +255,30 @@ void Widget::onAnalysis() {
             if(!ok) {
                 lErrors << Error(Error::Any, QStringList() << "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒、电荷守恒)");
             } else {
-                QVector<int> vValues;
-                for(Frac &frac : lRes)
-                    vValues << frac.bottom();
-                int commonMulti = j::Lcm(vValues);
-                for(Frac &frac : lRes)
-                    frac.mul(commonMulti);
+                {//通分
+                    QVector<int> vValues;
+                    for(Frac &frac : lRes)
+                        vValues << frac.bottom();
+                    int commonMulti = j::Lcm(vValues);
+                    if(commonMulti > 1) {
+                        for(Frac &frac : lRes)
+                            frac.mul(commonMulti);
+                        firstUnkNum->value = commonMulti;
+                    }
+                }
 
-                firstUnkNum->value = commonMulti;
+                {//约分
+                    QVector<int> vValues;
+                    for(Frac &frac : lRes)
+                        for(int mono : frac.top())
+                            vValues << mono;
+                    int div = j::Gcd(vValues);
+                    if(div > 1) {
+                        for(Frac &frac : lRes)
+                            frac.div(div);
+                        firstUnkNum->value.div(div);
+                    }
+                }
 
                 auto lPUnkNumIter = lPUnkNum.begin();
                 for(Frac &frac : lRes) {

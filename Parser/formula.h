@@ -8,7 +8,7 @@
 //#include "parsererror.h"
 
 #include <QPainter>
-#include <QDebug>
+//#include <QDebug>
 
 class Formula
 {

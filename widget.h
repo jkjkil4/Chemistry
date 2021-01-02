@@ -19,7 +19,7 @@
 #include "Parser/formulagroup.h"
 #include "Widget/formulawidget.h"
 
-#define DEBUG_FORMULAKEY
+//#define DEBUG_FORMULAKEY
 
 #ifdef DEBUG_FORMULAKEY
 #include <QDebug>

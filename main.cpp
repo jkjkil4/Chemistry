@@ -1,6 +1,6 @@
 #include "widget.h"
 #include <QApplication>
-#include <QDebug>
+//#include <QDebug>
 #include "Parser/formulagroup.h"
 #include "Widget/formulawidget.h"
 
