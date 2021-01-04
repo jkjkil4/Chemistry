@@ -1,8 +1,19 @@
 #include "formulagroup.h"
 
-FormulaGroup::FormulaGroup(const QString &str)
+FormulaGroup::FormulaGroup(const QString &str) : str(str)
 {
-    QStringList lStrFormulas = str.split('_', QString::SkipEmptyParts);
+    //得到大括号的位置
+    int indexOfLeft = str.indexOf("{");
+    int indexOfRight = str.lastIndexOf("}");
+
+    //对特定情况进行判断
+    if(indexOfLeft == -1 || indexOfRight == -1 || indexOfRight != str.length() - 1 || indexOfLeft >= indexOfRight) {
+        vaild = false;
+        return;
+    }
+
+    //分割
+    QStringList lStrFormulas = str.left(indexOfLeft).split('_', QString::SkipEmptyParts);
     for(QString &str : lStrFormulas) {
         //得到左端数字长度
         int leftLen = 0;
@@ -30,7 +41,16 @@ FormulaGroup::FormulaGroup(const QString &str)
             return;
         }
         lFormulas << formula;
-        mElec.sum(PlainFrac(formula.elec()).mul(formula.getCount()));
+    }
+
+    //得到电荷总数
+    QString strElec = str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1);
+    bool ok;
+    mElec = PlainFrac(strElec, &ok);
+    if(!ok) {
+        vaild = false;
+        lFormulas.clear();
+        return;
     }
 }
 

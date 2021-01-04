@@ -5,31 +5,23 @@
 Formula::Formula(Type type, const QString &str, int count) : type(type), count(count)
 {
     if(type == Element) {
-        //得到中括号的位置
-        int indexOfLeft = str.indexOf('[');
-        int indexOfRight = str.lastIndexOf(']');
-        if(indexOfLeft == -1 || indexOfRight == -1 || indexOfLeft >= indexOfRight) {
+        //检查格式
+        if(str.length() == 0) {
             vaild = false;
             return;
         }
-
-        //得到元素名称
-        QString strElement = str.left(indexOfLeft);
-        if(strElement.isEmpty()) {
+        if(str[0] < 'A' || str[0] > 'Z') {
             vaild = false;
             return;
         }
-
-        //得到电荷数
-        bool ok;
-        PlainFrac frac(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok);
-        if(!ok) {
-            vaild = false;
-            return;
+        for(auto iter = str.begin() + 1; iter != str.end(); ++iter) {
+            if(*iter < 'a' || *iter > 'z') {
+                vaild = false;
+                return;
+            }
         }
 
-        mElec = frac.moveNegativeToTop();
-        data = new QString(strElement);
+        data = new QString(str);
     } else {
         QList<Formula> *pLChildren = new QList<Formula>;  //new 临时的list
         int bracketCount = 0;   //统计括号数量
@@ -82,8 +74,6 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
             return;
         }
 
-        for(Formula &child : *pLChildren)
-            mElec.sum(PlainFrac(child.mElec).mul(child.count));
         data = pLChildren;
     }
 }
@@ -91,7 +81,6 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
 Formula::Formula(const Formula &other) {
     type = other.type;
     count = other.count;
-    mElec = other.mElec;
     vaild = other.vaild;
     data = (type == Element ? (void*)new QString(*(QString*)other.data) : (void*)new QList<Formula>(*(QList<Formula>*)other.data));
 }

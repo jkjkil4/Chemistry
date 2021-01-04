@@ -23,36 +23,10 @@
 
 //#define DEBUG_FORMULAKEY
 
-#ifdef DEBUG_FORMULAKEY
-#include <QDebug>
-#endif
-
 class Widget : public QWidget
 {
     Q_OBJECT
 public:
-    struct FormulaKey
-    {
-        explicit FormulaKey(const QString &str, bool *ok = nullptr);
-        explicit FormulaKey(const QString &key, const PlainFrac &elec) : key(key), elec(elec) {}
-        explicit FormulaKey(const FormulaGroup &formula) : key(formula.format()), elec(formula.elec()) {}
-
-        QString key;
-        PlainFrac elec;
-
-        inline bool operator<(const FormulaKey &other) const {
-            if(key != other.key)
-                return key < other.key;
-            return elec < other.elec;
-        }
-        inline bool operator==(const FormulaKey &other) const { return key == other.key && elec == other.elec; }
-#ifdef DEBUG_FORMULAKEY
-        friend inline QDebug& operator<<(QDebug& de, const FormulaKey& fk) {
-            return de << "FormulaKey(" + fk.key + ", " + fk.elec.format() + ")";
-        }
-#endif
-    };
-
     struct UnkNum
     {
         UnkNum() = default;
@@ -63,7 +37,7 @@ public:
 
     struct Error
     {
-        enum Type { Any, FormulaError, FormulaNotExists, FormulaMultiDefined, IsEmpty, ElementNotExists } type;
+        enum Type { Any, FormulaError, FormulaMultiDefined, IsEmpty, ElementNotExists } type;
         QStringList args;
         static QMap<Type, QString> mapText;
 
@@ -88,7 +62,6 @@ private:
     QListWidget *viewError = new QListWidget;
     FormulaWidget *viewResult = new FormulaWidget;
 
-    QPlainTextEdit *editFormula = new QPlainTextEdit;
     QPlainTextEdit *editRel = new QPlainTextEdit;
 
     QPushButton *btnAnalysis = new QPushButton("配平");

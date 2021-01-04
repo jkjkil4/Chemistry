@@ -8,7 +8,7 @@
 
 #include "plainfrac.h"
 
-#define DEBUG_FRAC
+//#define DEBUG_FRAC
 #ifdef DEBUG_FRAC
 #include <QDebug>
 #endif

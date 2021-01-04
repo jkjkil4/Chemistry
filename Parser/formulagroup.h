@@ -21,8 +21,16 @@ public:
 
     const PlainFrac& elec() const { return mElec; }
 
+    bool operator<(const FormulaGroup& other) const {
+        if(str != other.str)
+            return str < other.str;
+        return mElec < other.mElec;
+    }
+    bool operator==(const FormulaGroup& other) const { return mElec == other.mElec && str == other.str; }
+
 private:
     bool vaild = true;
+    QString str;
     QList<Formula> lFormulas;
     PlainFrac mElec;
 };

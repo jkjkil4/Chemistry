@@ -4,7 +4,6 @@
 QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
     { Any, "%1" },
     { FormulaError, "(E0-1) 解析化学式出错，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" },
-    { FormulaNotExists, "(E0-2) 化学式未定义，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" },
     { FormulaMultiDefined, "(E0-3) 化学式 \"%1\" 重复出现" },
 
     { IsEmpty, "(E1-0) %1为空" },
@@ -13,39 +12,9 @@ QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
 };
 
 
-Widget::FormulaKey::FormulaKey(const QString &str, bool *ok) {
-    int indexOfLeft = str.indexOf('{');
-    int indexOfRight = str.lastIndexOf('}');
-    if(indexOfLeft == -1 || indexOfRight == -1 || indexOfRight != str.length() - 1 || indexOfLeft >= indexOfRight) {
-        SET_PTR(ok, false);
-//        qDebug() << "E1" << indexOfLeft << indexOfRight;
-        return;
-    }
-    QString tmpKey = str.left(indexOfLeft);
-    if(tmpKey.isEmpty()) {
-        SET_PTR(ok, false);
-//        qDebug() << "E2" << indexOfLeft << indexOfRight;
-        return;
-    }
-    bool ok2;
-    PlainFrac tmpElec(str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1), &ok2);
-    if(!ok2) {
-        SET_PTR(ok, false);
-//        qDebug() << "E3" << indexOfLeft << indexOfRight;
-        return;
-    }
-
-    key = tmpKey;
-    elec = tmpElec;
-    SET_PTR(ok, true);
-}
-
-
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
-    editFormula->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-    j::SetPointSize(editFormula, 13);
     editRel->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
     j::SetPointSize(editRel, 13);;
     connect(btnAnalysis, SIGNAL(clicked()), this, SLOT(onAnalysis()));
@@ -75,28 +44,18 @@ Widget::Widget(QWidget *parent)
 
 
     //创建布局
-    QHBoxLayout *layEditFormula = new QHBoxLayout;
-    layEditFormula->addWidget(editFormula);
-    QGroupBox *gbEditFormula = new QGroupBox("化学式");
-    gbEditFormula->setLayout(layEditFormula);
-
     QHBoxLayout *layEditRel = new QHBoxLayout;
     layEditRel->addWidget(editRel);
     QGroupBox *gbEditRel = new QGroupBox("反应物与生成物");
     gbEditRel->setLayout(layEditRel);
-
-    QHBoxLayout *layTop = new QHBoxLayout;
-    layTop->addWidget(gbEditFormula);
-    layTop->addWidget(gbEditRel);
 
     QHBoxLayout *layBottom = new QHBoxLayout;
     layBottom->addStretch();
     layBottom->addWidget(btnAnalysis);
 
     QVBoxLayout *layEdit = new QVBoxLayout;
-    layEdit->addLayout(layTop);
+    layEdit->addWidget(gbEditRel);
     layEdit->addLayout(layBottom);
-    setLayout(layEdit);
 
     QWidget *widgetEdit = new QWidget;
     widgetEdit->setLayout(layEdit);
@@ -146,29 +105,7 @@ void Widget::onAnalysis() {
 
     QList<Error> lErrors;   //错误列表
 
-    QMap<FormulaKey, FormulaGroup> mapFormulas; //用于FormulaKey和FormulaGroup对应
-    QList<FormulaKey> lReactants, lProducts;    //lReactants为反应物，lProducts为生成物
-
-    {//解析化学式
-        QTextDocument *doc = editFormula->document();
-        int count = doc->lineCount();
-        repeat(i, count) {
-            QString line = doc->findBlockByLineNumber(i).text();
-            QStringList list = line.simplified().split(' ', QString::SplitBehavior::SkipEmptyParts);
-            int index = 0;
-            for(QString &str : list) {
-                FormulaGroup formula(str);
-                if(formula.isVaild()) {
-                    mapFormulas[FormulaKey(formula)] = formula;
-                } else {
-                    lErrors << Error(Error::FormulaError,  QStringList() << "化学式" << QString::number(i + 1)
-                                     << QString::number(index + 1) << str);
-                }
-                index++;
-            }
-        }
-    }
-    CHECK_ERR
+    QList<FormulaGroup> lReactants, lProducts;    //lReactants为反应物，lProducts为生成物
 
     {//解析反应物与生成物
         QTextDocument *doc = editRel->document();
@@ -183,18 +120,12 @@ void Widget::onAnalysis() {
                     isProduct = true;
                     str.remove(0, 1);
                 }
-                bool ok;
-                FormulaKey key(str, &ok);
-                if(ok) {
-                    if(!mapFormulas.contains(key)) {
-                        lErrors << Error(Error::FormulaNotExists, QStringList() << "反应物与生成物" << QString::number(i + 1)
-                                         << QString::number(index + 1) << str);
+                FormulaGroup formula(str);
+                if(formula.isVaild()) {
+                    if(!lReactants.contains(formula) && !lProducts.contains(formula)) {
+                        (isProduct ? lProducts : lReactants) << formula;
                     } else {
-                        if(!lReactants.contains(key) && !lProducts.contains(key)) {
-                            (isProduct ? lProducts : lReactants) << key;
-                        } else {
-                            lErrors << Error(Error::FormulaMultiDefined, QStringList() << str);
-                        }
+                        lErrors << Error(Error::FormulaMultiDefined, QStringList() << str);
                     }
                 } else {
                     lErrors << Error(Error::FormulaError, QStringList() << "反应物与生成物" << QString::number(i + 1)
@@ -220,19 +151,19 @@ void Widget::onAnalysis() {
             Frac elec;
         } left, right;
 
-        QMap<FormulaKey, UnkNum> mapUnkNums;   //用于FormulaKey和未知数对应
+        QMap<FormulaGroup, UnkNum> mapUnkNums;   //用于FormulaKey和未知数对应
         QList<Frac> lFracs;     //配平的关系式
         {//获得用于配平的东西
             int unkNumCount = 0;
-            auto fnGetUnkNums = [&mapFormulas, &mapUnkNums, &unkNumCount]
-                    (QList<FormulaKey> &list, Part &part)
+            auto fnGetUnkNums = [&mapUnkNums, &unkNumCount]
+                    (const QList<FormulaGroup> &list, Part &part)
             {//lambda，用于 设置未知数 得到原子数
                 for(auto iter = list.begin(); iter != list.end(); ++iter) {
                     //未知数
                     UnkNum &unkNum = mapUnkNums[*iter] = unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount);
                     if(unkNumCount == 0)
                         unkNum.value = 1;
-                    const FormulaGroup &formula = mapFormulas[*iter];
+                    const FormulaGroup &formula = *iter;
                     Frac mul = Frac(1, unkNum.name);
                     //得到原子数
                     formula.elementCount(part.mapElemCount, mul);
@@ -312,10 +243,10 @@ void Widget::onAnalysis() {
                 }
 
                 viewResult->clear();
-                for(FormulaKey &key : lReactants)
-                    viewResult->addReactant(mapUnkNums[key].value, mapFormulas[key]);
-                for(FormulaKey &key : lProducts)
-                    viewResult->addProduct(mapUnkNums[key].value, mapFormulas[key]);
+                for(FormulaGroup &formula : lReactants)
+                    viewResult->addReactant(mapUnkNums[formula].value, formula);
+                for(FormulaGroup &formula : lProducts)
+                    viewResult->addProduct(mapUnkNums[formula].value, formula);
                 stackedWidget->setCurrentWidget(viewResult);
             }
         }

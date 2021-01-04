@@ -22,7 +22,6 @@ public:
 
     VAR_GET_FUNC(Type, type, Type)
     VAR_GET_FUNC(Count, count, int)
-    const PlainFrac& elec() const { return mElec; }
     bool isVaild() const { return vaild; }
 
     //化学式格式化为字符串
@@ -38,7 +37,6 @@ public:
 private:
     Type type;      //类型
     int count = 1;  //数量
-    PlainFrac mElec;      //电荷总数
 
     void *data = nullptr;   //数据(type == Element -> QString, type == Group -> QList<Formula>)
     bool vaild = true;      //是否有效
