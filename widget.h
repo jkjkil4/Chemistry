@@ -7,6 +7,8 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QListWidget>
+#include <QMenuBar>
+#include <QMessageBox>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>

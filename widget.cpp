@@ -56,6 +56,23 @@ Widget::Widget(QWidget *parent)
     stackedWidget->addWidget(viewError);
     stackedWidget->addWidget(viewResult);
 
+    QMenuBar *menuBar = new QMenuBar;
+
+    QMenu *menuAbout = new QMenu("关于");
+    menuBar->addMenu(menuAbout);
+
+    QAction *actAbout = new QAction("关于");
+    menuAbout->addAction(actAbout);
+    connect(actAbout, &QAction::triggered, [&](){
+        QMessageBox::about(this, "关于",
+                           "作者: jkjkil4<br>"
+                           "github: <a href = https://github.com/jkjkil4/Chemistry>https://github.com/jkjkil4/Chemistry</a><br>"
+                           "反馈问题: jkjkil@qq.com");
+    });
+    QAction *actAboutQt = new QAction("关于Qt");
+    menuAbout->addAction(actAboutQt);
+    connect(actAboutQt, &QAction::triggered, [&](){ QMessageBox::aboutQt(this); });
+
 
     //创建布局
     QHBoxLayout *layEditFormula = new QHBoxLayout;
@@ -89,7 +106,9 @@ Widget::Widget(QWidget *parent)
     splitter->addWidget(stackedWidget);
     splitter->setSizes(QList<int>() << 400 << 100);
 
-    QHBoxLayout *layMain = new QHBoxLayout;
+    QVBoxLayout *layMain = new QVBoxLayout;
+    layMain->setMargin(0);
+    layMain->addWidget(menuBar);
     layMain->addWidget(splitter);
     setLayout(layMain);
 
