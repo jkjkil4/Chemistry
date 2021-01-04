@@ -106,10 +106,16 @@ Widget::Widget(QWidget *parent)
     splitter->addWidget(stackedWidget);
     splitter->setSizes(QList<int>() << 400 << 100);
 
+    QHBoxLayout *layCentral = new QHBoxLayout;
+    layCentral->addWidget(splitter);
+
+    QWidget *centralWidget = new QWidget;
+    centralWidget->setLayout(layCentral);
+
     QVBoxLayout *layMain = new QVBoxLayout;
     layMain->setMargin(0);
     layMain->addWidget(menuBar);
-    layMain->addWidget(splitter);
+    layMain->addWidget(centralWidget);
     setLayout(layMain);
 
 
