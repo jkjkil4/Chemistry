@@ -76,10 +76,14 @@ PlainFrac Frac::toPlain() {
 #include <QDebug>
 #endif
 
-QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok) {
+QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, SolvingError *err) {
     //对于可以直接判断无解的情况，就结束该函数
-    if(lUnkNumbers.isEmpty() || lFracs.size() < lUnkNumbers.size()) {
-        SET_PTR(ok, false);
+    if(lUnkNumbers.isEmpty()) {
+        SET_PTR(err, SolvingError::Unsolvable);
+        return QList<Frac>();
+    }
+    if(lFracs.size() < lUnkNumbers.size()) {
+        SET_PTR(err, SolvingError::Insufficient);
         return QList<Frac>();
     }
 
@@ -101,7 +105,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         }
         //如果无法从现有的式子中找到该未知数，就结束该函数
         if(iter == lFracs.end()) {
-            SET_PTR(ok, false);
+            SET_PTR(err, SolvingError::Insufficient);
             return QList<Frac>();
         }
         Frac paramFrac = (*iter).paramSep(unkNumber);   //参变分离(我不确定是不是这么说)
@@ -130,7 +134,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
 
     for(Frac &frac : lFracs) {  //判断是否无解(若有任何一个多余项不为0，就无解)
         if(!frac.mapPoly.isEmpty()) {
-            SET_PTR(ok, false);
+            SET_PTR(err, SolvingError::Unsolvable);
             return QList<Frac>();
         }
     }
@@ -159,7 +163,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
     }
 #endif
 
-    SET_PTR(ok, true);
+    SET_PTR(err, SolvingError::NoError);
     return lRes;
 }
 

@@ -24,7 +24,14 @@ public:
 
     PlainFrac toPlain();    //转为PlainFrac，假设Frac中的字母都为0
 
-    static QList<Frac> SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, bool *ok = nullptr);    //解方程组
+    struct SolvingError
+    {
+        enum Type { NoError, Insufficient, Unsolvable };
+        SolvingError(Type type = NoError) : type(type) {}
+        Type type;
+        bool hasError() const { return type != NoError; }
+    };
+    static QList<Frac> SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, SolvingError *err = nullptr);    //解方程组
 
     void reduct();  //约分
     Frac& changeMono(const QString &before, const QString &now);

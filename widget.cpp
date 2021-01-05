@@ -234,11 +234,26 @@ void Widget::onAnalysis() {
                     lUnkNumbers << unkNum.name;
                 }
             }
-            bool ok;
-            QList<Frac> lRes = Frac::SolvingEquations(lFracs, lUnkNumbers, &ok);
-            if(!ok) {
-                lErrors << Error(Error::Any, QStringList() << "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒、电荷守恒)");
-            } else {
+            Frac::SolvingError err;
+            QList<Frac> lRes = Frac::SolvingEquations(lFracs, lUnkNumbers, &err);
+            if(err.hasError()) {
+                lErrors << Error(Error::Any, QStringList() <<
+                                 (err.type == Frac::SolvingError::Insufficient
+                                  ? "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒、电荷守恒)"
+                                  : "无法成功配平，化学式有误(各守恒冲突)"
+                                    ));
+                goto Jump;
+            }
+
+            //判断结果是否存在负数
+            for(Frac &res : lRes) {
+                if(res.toPlain() < 0) {
+                    lErrors << Error(Error::Any, QStringList() << "无法成功配平，化学式有误(结果出现负数)");
+                    goto Jump;
+                }
+            }
+
+            {//进行一些处理后 输出最终结果
                 {//通分
                     QVector<int> vValues;
                     for(Frac &frac : lRes)
