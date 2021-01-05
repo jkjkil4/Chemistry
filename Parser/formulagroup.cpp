@@ -7,13 +7,19 @@ FormulaGroup::FormulaGroup(const QString &str) : str(str)
     int indexOfRight = str.lastIndexOf("}");
 
     //对特定情况进行判断
-    if(indexOfLeft == -1 || indexOfRight == -1 || indexOfRight != str.length() - 1 || indexOfLeft >= indexOfRight) {
+    if((indexOfLeft == -1) != (indexOfRight == -1)) {
+        vaild = false;
+        return;
+    }
+    bool hasBrackets = (indexOfLeft != -1 && indexOfRight != -1);
+    if(hasBrackets && (indexOfRight != str.length() - 1 || indexOfLeft >= indexOfRight)) {
         vaild = false;
         return;
     }
 
+
     //分割
-    QStringList lStrFormulas = str.left(indexOfLeft).split('_', QString::SkipEmptyParts);
+    QStringList lStrFormulas = (hasBrackets ? str.left(indexOfLeft) : str).split('_', QString::SkipEmptyParts);
     for(QString &str : lStrFormulas) {
         //得到左端数字长度
         int leftLen = 0;
@@ -44,7 +50,7 @@ FormulaGroup::FormulaGroup(const QString &str) : str(str)
     }
 
     //得到电荷总数
-    QString strElec = str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1);
+    QString strElec = (hasBrackets ? str.mid(indexOfLeft + 1, indexOfRight - indexOfLeft - 1) : "0");
     bool ok;
     mElec = PlainFrac(strElec, &ok);
     if(!ok) {
