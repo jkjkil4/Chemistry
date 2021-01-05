@@ -16,7 +16,8 @@ Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
     editRel->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-    j::SetPointSize(editRel, 13);;
+    j::SetFamily(editRel, fontSourceCodePro.family);
+    j::SetPointSize(editRel, 13);
     connect(btnAnalysis, SIGNAL(clicked()), this, SLOT(onAnalysis()));
 
     stackedWidget->setObjectName("StackedWidget");

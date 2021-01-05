@@ -16,10 +16,10 @@
 #include <QTextBlock>
 #include <QApplication>
 
-#include <mlibheader.h>
-
 #include "Parser/formulagroup.h"
 #include "Widget/formulawidget.h"
+
+#include "global.h"
 
 //#define DEBUG_FORMULAKEY
 

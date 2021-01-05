@@ -4,8 +4,6 @@
 #include <QString>
 #include <QMap>
 
-#include <mlibheader.h>
-
 #include "plainfrac.h"
 
 //#define DEBUG_FRAC

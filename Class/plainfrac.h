@@ -1,7 +1,9 @@
 #ifndef SIMPLEFRAC_H
 #define SIMPLEFRAC_H
 
-#include <mlibheader.h>
+#include <QString>
+#include <Lib/header.h>
+#include <Lib/math.h>
 
 struct FracError
 {

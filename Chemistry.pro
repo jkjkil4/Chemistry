@@ -41,6 +41,7 @@ HEADERS += \
         Parser/formula.h \
         Parser/formulagroup.h \
         Widget/formulawidget.h \
+        global.h \
         widget.h
 
 # Default rules for deployment.
@@ -49,3 +50,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 include($(Lib)/MyQtLibs/myqtlibs.pri)
+
+RESOURCES += \
+    qrc.qrc

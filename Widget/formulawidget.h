@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include <Lib/paint.h>
+
 #include "Parser/formulagroup.h"
 
 class FormulaWidget : public QWidget

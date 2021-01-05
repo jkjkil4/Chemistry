@@ -10,6 +10,8 @@
 #include <QPainter>
 //#include <QDebug>
 
+#include <Lib/paint.h>
+
 class Formula
 {
 public:
