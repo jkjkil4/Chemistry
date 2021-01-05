@@ -28,19 +28,46 @@ Widget::Widget(QWidget *parent)
 
     QMenuBar *menuBar = new QMenuBar;
 
-    QMenu *menuAbout = new QMenu("关于");
-    menuBar->addMenu(menuAbout);
+    QMenu *menuOther = new QMenu("其他");
+    menuBar->addMenu(menuOther);
+
+    QAction *actHelp = new QAction("帮助");
+    menuOther->addAction(actHelp);
+    connect(actHelp, &QAction::triggered, [&](){
+        QFile file(":/rc/rc/explain1.txt");
+        if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&file);
+            in.setCodec("utf-8");
+            QMessageBox::information(this, "帮助", in.readAll());
+            file.close();
+        }
+    });
+
+    QAction *actExample = new QAction("例子");
+    menuOther->addAction(actExample);
+    connect(actExample, &QAction::triggered, [&](){
+        QFile file(":/rc/rc/explain2.txt");
+        if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&file);
+            in.setCodec("utf-8");
+            QMessageBox::information(this, "例子", in.readAll());
+            file.close();
+        }
+    });
+
+    menuOther->addSeparator();
 
     QAction *actAbout = new QAction("关于");
-    menuAbout->addAction(actAbout);
+    menuOther->addAction(actAbout);
     connect(actAbout, &QAction::triggered, [&](){
+
         QMessageBox::about(this, "关于",
                            "作者: jkjkil4<br>"
                            "github: <a href = https://github.com/jkjkil4/Chemistry>https://github.com/jkjkil4/Chemistry</a><br>"
                            "反馈问题: jkjkil@qq.com");
     });
     QAction *actAboutQt = new QAction("关于Qt");
-    menuAbout->addAction(actAboutQt);
+    menuOther->addAction(actAboutQt);
     connect(actAboutQt, &QAction::triggered, [&](){ QMessageBox::aboutQt(this); });
 
 

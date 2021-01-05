@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     //读取字体
-    fontSourceCodePro.load(":/rc/SourceCodePro-Medium.ttf");
+    fontSourceCodePro.load(":/rc/rc/SourceCodePro-Medium.ttf");
 
     Widget w;
     w.show();

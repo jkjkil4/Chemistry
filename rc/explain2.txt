@@ -1,0 +1,25 @@
+<a href = "https://github.com/jkjkil4/Chemistry/blob/main/README.md">在github上的说明文档</a>
+
+<h4>例子1</h4>
+<ul>
+    <li>&quot;反应物与生成物&quot;输入框:
+    <ul>
+    <li>C{0}<br />O2{0}<br />$CO{0}</li>
+    </ul></li>
+    <li>配平结果:
+    <ul>
+    <li>反应物: 2 C + 1 O2</li>
+    <li>生成物: 2 CO</li>
+    </ul></li>
+</ul></li>
+<h4>例子2</h4>
+<ul>
+    <li>&quot;反应物与生成物&quot;输入框
+    <ul>
+    <li>Cu{0}<br />H{+1}<br />NO3{-1}<br />$Cu{+2}<br />$NO{0}<br />$H2O{0}</li>
+    </ul></li>
+    <li>配平结果
+    <ul>
+    <li>略</li>
+    </ul></li>
+</ul>

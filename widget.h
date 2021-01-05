@@ -15,6 +15,7 @@
 #include <QSplitter>
 #include <QTextBlock>
 #include <QApplication>
+#include <QTextStream>
 
 #include "Parser/formulagroup.h"
 #include "Widget/formulawidget.h"

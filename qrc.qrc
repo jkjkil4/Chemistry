@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/rc">
-        <file>SourceCodePro-Medium.ttf</file>
+        <file>rc/explain1.txt</file>
+        <file>rc/explain2.txt</file>
+        <file>rc/SourceCodePro-Medium.ttf</file>
     </qresource>
 </RCC>

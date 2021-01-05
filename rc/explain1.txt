@@ -1,0 +1,30 @@
+<a href = "https://github.com/jkjkil4/Chemistry/blob/main/README.md">在github上的说明文档</a>
+
+<h2>使用方法</h2>
+<ul>
+    <li><h4>在&quot;反应物与生成物&quot;输入框中标明反应物和生成物</h4></li> 
+    <ul>
+        <li>需要类似于 &quot;<strong>化学式{电荷总数}</strong>&quot; (不带引号) 的格式(电荷总数不能省略数字，可以省略正号，正负号写在数字前面)<br />如果电荷总数为0，可以简写为 &quot;<strong>化学式</strong>&quot; (不带引号) 的格式
+        <ul>
+            <li>例子:
+            <ul>
+            <li><strong>H2SO4</strong> 可以写成 <strong>H2SO4{0}</strong> 也可以写成 <strong>H2SO4</strong></li>
+            <li><strong>Fe 2+</strong> (带2正电荷) 需写成 <strong>Fe{+2}</strong></li>
+            <li><strong>MnO4 -</strong> (带1负电荷) 需写成 <strong>MnO4{-1}</strong> (不能写成 <strong>MnO4{-}</strong>)</li>
+            <li><strong>K3[Fe(CN)6]</strong> 需写成 <strong>K3(Fe(CN)6){0}</strong> (原化学式中各种括号都要改成小括号)</li>
+            <li><strong>CuSO4&middot;H2O</strong> 可以写成 <strong>CuSO4_H2O{0}</strong> 也可以写成 <strong>CuSO4_H2O</strong> (原化学式中的 &quot;<strong>&middot;</strong>&quot; 要改为 &quot;<strong>_</strong>&quot;)</li>
+            </ul></li>
+        </ul></li>
+        <li>对于反应物，不需要额外加任何符号</li>
+        <li>对于生成物，需要在化学式的开头加上符号 &quot;<strong>$</strong>&quot; (不带引号)</li>
+    </ul> 
+    <li><h4>点击&quot;配平&quot;按钮即可配平</h4></li> 
+</ul>
+
+<h2>其他</h2> 
+<ul>
+    <li>化学式完全可以随便写，只要符合元素的第一个字母大写，其余小写即可</li>
+    <li>仅支持原子守恒和电荷守恒(不支持得失电子守恒)</li>
+    <li>不支持带字母 如 (...)n</li>
+    <li>不含物质状态和反应条件等信息</li>
+</ul>
