@@ -31,6 +31,7 @@ SOURCES += \
         Class/plainfrac.cpp \
         Parser/formula.cpp \
         Parser/formulagroup.cpp \
+        Parser/highlighter.cpp \
         Widget/formulawidget.cpp \
         main.cpp \
         widget.cpp
@@ -40,6 +41,7 @@ HEADERS += \
         Class/plainfrac.h \
         Parser/formula.h \
         Parser/formulagroup.h \
+        Parser/highlighter.h \
         Widget/formulawidget.h \
         global.h \
         widget.h

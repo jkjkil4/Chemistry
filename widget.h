@@ -19,6 +19,7 @@
 
 #include "Parser/formulagroup.h"
 #include "Widget/formulawidget.h"
+#include "Parser/highlighter.h"
 
 #include "global.h"
 
@@ -66,6 +67,8 @@ private:
     QPlainTextEdit *editRel = new QPlainTextEdit;
 
     QPushButton *btnAnalysis = new QPushButton("配平");
+
+    Highlighter *highter = new Highlighter(editRel->document());
 };
 
 #endif // WIDGET_H
