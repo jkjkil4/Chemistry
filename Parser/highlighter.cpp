@@ -5,7 +5,7 @@ Highlighter::Highlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)
 {
     formatBracket.setForeground(Qt::darkRed);
-    formatRel.setForeground(QColor(180, 40, 180));
+    formatRel.setForeground(QColor(200, 40, 200));
     formatDigit.setForeground(QColor(100, 100, 220));
     formatElec.setForeground(QColor(220, 100, 0));
     formatProduct.setForeground(Qt::darkGreen);

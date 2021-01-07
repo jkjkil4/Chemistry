@@ -15,10 +15,10 @@ protected:
     void highlightBlock(const QString &text) override;
 
 private:
-    QRegularExpression ruleGL = QRegularExpression("\\[(.*?)(?:\\:(.*?)){0,1}\\]");
+    QRegularExpression ruleGL = QRegularExpression("\\[([+-]{0,1}\\d+)(?:\\:([,a-z0-9]*)){0,1}\\]");
     QRegularExpression ruleGLInner = QRegularExpression(",");
     QRegularExpression ruleDigit = QRegularExpression("\\d+");
-    QRegularExpression ruleElec = QRegularExpression("\\{.*?\\}");
+    QRegularExpression ruleElec = QRegularExpression("\\{[+-]{0,1}\\d*\\}");
     QRegularExpression ruleProduct = QRegularExpression("\\$");
 
     QTextCharFormat formatBracket;

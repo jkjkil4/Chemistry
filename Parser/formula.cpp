@@ -1,27 +1,29 @@
 #include "formula.h"
-//#include <QDebug>
+#include <QRegularExpression>
+#include <QDebug>
 
+static QRegularExpression ruleElement = QRegularExpression("([A-Z]{1}[a-z]*)(?:\\[([+-]{0,1}\\d+)(?:\\:([,a-z0-9]*)){0,1}\\]){0,1}");
 
 Formula::Formula(Type type, const QString &str, int count) : type(type), count(count)
 {
     if(type == Element) {
-        //检查格式
-        if(str.length() == 0) {
+        //使用正则表达式
+        QRegularExpressionMatch match = ruleElement.match(str);
+        if(match.capturedStart() != 0 || match.capturedLength() != str.length()) {
             vaild = false;
             return;
-        }
-        if(str[0] < 'A' || str[0] > 'Z') {
-            vaild = false;
-            return;
-        }
-        for(auto iter = str.begin() + 1; iter != str.end(); ++iter) {
-            if(*iter < 'a' || *iter > 'z') {
-                vaild = false;
-                return;
-            }
         }
 
-        data = new QString(str);
+        //得到结果
+        QStringList list = match.capturedTexts();
+        if(list.size() > 2) {
+            pElec = new Elec;
+            pElec->value = PlainFrac(list[2]);
+            if(list.size() > 3)
+                pElec->sKeys = list[3].split(",", QString::SkipEmptyParts).toSet();
+        }
+
+        data = new QString(list[1]);
     } else {
         QList<Formula> *pLChildren = new QList<Formula>;  //new 临时的list
         int bracketCount = 0;   //统计括号数量
@@ -82,6 +84,8 @@ Formula::Formula(const Formula &other) {
     type = other.type;
     count = other.count;
     vaild = other.vaild;
+    if(other.pElec)
+        pElec = new Elec(*other.pElec);
     data = (type == Element ? (void*)new QString(*(QString*)other.data) : (void*)new QList<Formula>(*(QList<Formula>*)other.data));
 }
 

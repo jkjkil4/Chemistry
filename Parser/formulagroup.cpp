@@ -97,9 +97,9 @@ void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRec
             x += 1;
             int pointSize = p.font().pointSize();
             j::SetPointSize(&p, qMax(1, pointSize / 2));
-            j::DrawText(p, x, yy - fmHeight, Qt::AlignLeft | Qt::AlignTop, strElec, -1, -1/*, &rect*/);
+            j::DrawText(p, x, yy - fmHeight, Qt::AlignLeft | Qt::AlignTop, strElec, -1, -1, &rect);
             j::SetPointSize(&p, pointSize);
-            //x += rect.width();
+            x += rect.width();
         }
     }
     SET_PTR(pRect, QRect(xStart, y, x - xStart, fmHeight));

@@ -21,7 +21,7 @@ public:
     struct Elec
     {
         PlainFrac value;
-        QStringList lKeys;
+        QSet<QString> sKeys;
     };
 
     explicit Formula(Type type, const QString &str, int count = 1);

@@ -76,7 +76,13 @@ PlainFrac Frac::toPlain() {
 #include <QDebug>
 #endif
 
-QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, SolvingError *err) {
+QList<Frac> Frac::SolvingEquations(const QList<Frac> &lFracs, const QStringList &lUnkNumbers, SolvingError *err) {
+    return SolvingEquations(lFracs, lUnkNumbers, QStringList(), err);
+}
+
+QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers,
+                                   const QStringList &lRemoveLetters, SolvingError *err)
+{
     //对于可以直接判断无解的情况，就结束该函数
     if(lUnkNumbers.isEmpty()) {
         SET_PTR(err, SolvingError::Unsolvable);
@@ -93,6 +99,30 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         qDebug().noquote() << frac.format() << "= 0";
 #endif
 
+    for(const QString &remove : lRemoveLetters) {
+        //如果未知数中存在该字母，则跳过本次循环
+        if(lUnkNumbers.contains(remove))
+            continue;
+
+        auto iter = lFracs.end();
+        //查找第一个该字母出现的位置
+        for(auto listIter = lFracs.begin(); listIter != lFracs.end(); ++listIter) {
+            if((*listIter).mapPoly.contains(remove)) {
+                iter = listIter;
+                break;
+            }
+        }
+        //如果无法从现有的式子中找到该字母，就跳过本次循环
+        if(iter == lFracs.end())
+            continue;
+
+        Frac paramFrac = (*iter).paramSep(remove);  //分离该字母
+        lFracs.erase(iter); //从lFracs中移除该iter
+
+        for(Frac &otherFrac : lFracs)   //将分离的结果代入到其他式子中
+            otherFrac.substitute(remove, paramFrac);
+    }
+
     QList<Frac> lRes;
     for(const QString &unkNumber : lUnkNumbers) {
         auto iter = lFracs.end();
@@ -108,7 +138,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
             SET_PTR(err, SolvingError::Insufficient);
             return QList<Frac>();
         }
-        Frac paramFrac = (*iter).paramSep(unkNumber);   //参变分离(我不确定是不是这么说)
+        Frac paramFrac = (*iter).paramSep(unkNumber);   //分离该未知数
         lRes << paramFrac;      //将其加入到结果list中
         lFracs.erase(iter);     //从lFracs中移除该iter
 
@@ -116,7 +146,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         qDebug().noquote() << "\n\033[35m将\033[0m " + unkNumber + " = " + paramFrac.format() + " \033[35m代入得:\033[0m";
 #endif
 
-        for(Frac &otherFrac : lFracs) {   //将参变分离的结果代入到其他式子中
+        for(Frac &otherFrac : lFracs) {   //将分离的结果代入到其他式子中
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
             qDebug().noquote() << otherFrac.substitute(unkNumber, paramFrac).format() << "= 0";
 #else

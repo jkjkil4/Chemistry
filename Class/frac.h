@@ -31,7 +31,8 @@ public:
         Type type;
         bool hasError() const { return type != NoError; }
     };
-    static QList<Frac> SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, SolvingError *err = nullptr);    //解方程组
+    static QList<Frac> SolvingEquations(const QList<Frac> &lFracs, const QStringList &lUnkNumbers, SolvingError *err = nullptr);    //解方程组
+    static QList<Frac> SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNumbers, const QStringList &lRemoveLetters, SolvingError *err = nullptr);
 
     void reduct();  //约分
     Frac& changeMono(const QString &before, const QString &now);

@@ -29,14 +29,6 @@ class Widget : public QWidget
 {
     Q_OBJECT
 public:
-    struct UnkNum
-    {
-        UnkNum() = default;
-        UnkNum(const QString &name) : name(name) {}
-        QString name;
-        Frac value;
-    };
-
     struct Error
     {
         enum Type { Any, FormulaError, FormulaMultiDefined, IsEmpty, ElementNotExists } type;
@@ -59,6 +51,25 @@ public slots:
     void onAnalysis();
 
 private:
+    struct UnkNum
+    {
+        UnkNum() = default;
+        UnkNum(const QString &name) : name(name) {}
+        QString name;
+        Frac value;
+    };
+    struct Part
+    {
+        QMap<QString, Frac> mapElemCount;
+        Frac elec;
+    };
+
+
+    void getReactantsAndProducts(QList<FormulaGroup> &lReactants, QList<FormulaGroup> &lProducts, QList<Error> &lErrors);
+    void getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaGroup> &lProducts,
+                 Part &left, Part &right,
+                 QMap<FormulaGroup, UnkNum> &mapUnkNums, QList<Error> &lErrors);
+
     QStackedWidget *stackedWidget = new QStackedWidget;
     QWidget *viewNone = new QWidget;
     QListWidget *viewError = new QListWidget;
