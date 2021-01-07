@@ -86,6 +86,7 @@ Formula::Formula(const Formula &other) {
 }
 
 Formula::~Formula() {
+    j::SafeDelete(pElec);
     type == Element ? delete (QString*)data : delete (QList<Formula>*)data;
 }
 

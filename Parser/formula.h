@@ -18,6 +18,12 @@ public:
     enum Type { Element, Group };
     enum PaintAlign { PA_Top, PA_Bottom };
 
+    struct Elec
+    {
+        PlainFrac value;
+        QStringList lKeys;
+    };
+
     explicit Formula(Type type, const QString &str, int count = 1);
     Formula(const Formula &other);
     ~Formula();
@@ -36,6 +42,9 @@ public:
     //解析字符串(分离数字和数据)
     static bool ParseStr(Type type, const QString &str, QString &inner, int &count);
 
+    const QString& elementData() const;
+    const QList<Formula>& groupData() const;
+
 private:
     Type type;      //类型
     int count = 1;  //数量
@@ -43,8 +52,8 @@ private:
     void *data = nullptr;   //数据(type == Element -> QString, type == Group -> QList<Formula>)
     bool vaild = true;      //是否有效
 
-    const QString& elementData() const;
-    const QList<Formula>& groupData() const;
+    //用于得失电子守恒的数据
+    Elec *pElec = nullptr;
 };
 
 #endif // FORMULA_H
