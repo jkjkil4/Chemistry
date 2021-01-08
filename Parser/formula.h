@@ -46,14 +46,14 @@ public:
     class Iter
     {
     public:
-
-
         Iter(const Formula &formula);
         Iter(const Iter &other);
         ~Iter();
 
         bool hasNext() { return mHasNext; }
         Data next();
+
+        int currentCount() { return childIter ? childIter->currentCount() * formula.count : formula.count; }
 
     private:
         const Formula &formula;
