@@ -6,14 +6,22 @@
 class FormulaGroup
 {
 public:
-//    class Iter
-//    {
-//    public:
-//        Iter(FormulaGroup &data) : data(data) {}
+    class Iter
+    {
+    public:
+        Iter(const FormulaGroup &formula);
 
-//    private:
-//        FormulaGroup &data;
-//    };
+        bool hasNext() const { return mHasNext; }
+        Formula::Data next();
+
+        int currentCount() { return mHasNext ? childIter.currentCount() : 0; }
+
+    private:
+        const FormulaGroup &formula;
+        QList<Formula>::const_iterator listIter;
+        Formula::Iter childIter;
+        bool mHasNext = true;
+    };
 
     FormulaGroup() = default;
     explicit FormulaGroup(const QString &str);

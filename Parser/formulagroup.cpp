@@ -1,5 +1,24 @@
 #include "formulagroup.h"
 
+
+FormulaGroup::Iter::Iter(const FormulaGroup &formula)
+    : formula(formula), listIter(formula.lFormulas.begin()), childIter(*formula.lFormulas.begin()) {}
+
+Formula::Data FormulaGroup::Iter::next() {
+    if(!hasNext())
+        return Formula::Data();
+    Formula::Data data = childIter.next();
+    listIter++;
+    if(!childIter.hasNext()) {
+        listIter++;
+        if(listIter == formula.lFormulas.end())
+            mHasNext = false;
+        else childIter = Formula::Iter(*listIter);
+    }
+    return data;
+}
+
+
 FormulaGroup::FormulaGroup(const QString &str) : str(str)
 {
     //得到大括号的位置

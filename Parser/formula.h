@@ -50,10 +50,10 @@ public:
         Iter(const Iter &other);
         ~Iter();
 
-        bool hasNext() { return mHasNext; }
+        bool hasNext() const { return mHasNext; }
         Data next();
 
-        int currentCount() { return childIter ? childIter->currentCount() * formula.count : formula.count; }
+        int currentCount() const { return childIter ? childIter->currentCount() * formula.count : formula.count; }
 
     private:
         const Formula &formula;
