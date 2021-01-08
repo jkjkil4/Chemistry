@@ -123,8 +123,3 @@ void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRec
     }
     SET_PTR(pRect, QRect(xStart, y, x - xStart, fmHeight));
 }
-
-void FormulaGroup::elementCount(QMap<QString, Frac> &map, const Frac &mul) const {
-    for(const Formula &formula : lFormulas)
-        formula.elementCount(map, mul);
-}

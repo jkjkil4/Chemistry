@@ -200,16 +200,6 @@ void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets)
     }
 }
 
-void Formula::elementCount(QMap<QString, Frac> &map, const Frac &mul) const {
-    if(type == Element) {
-        map[elementData()] += count * mul;
-    } else {
-        Frac childMul = mul * count;
-        for(const Formula &child : groupData())
-            child.elementCount(map, childMul);
-    }
-}
-
 
 const QString& Formula::elementData() const {
     if(type != Element)

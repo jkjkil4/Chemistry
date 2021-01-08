@@ -1,4 +1,5 @@
 #include "widget.h"
+//#include <QDebug>
 
 
 QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
@@ -157,9 +158,9 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
                      QMap<FormulaGroup, UnkNum> &mapUnkNums, QList<Error> &lErrors)
 {
     int unkNumCount = 0;
-    auto fnGetUnkNums = [&mapUnkNums, &unkNumCount]
+    auto fnGetBase = [&mapUnkNums, &unkNumCount]
             (const QList<FormulaGroup> &list, Part &part)
-    {//lambda，用于 设置未知数 得到原子数
+    {//lambda，用于 设置未知数 得到原子数 得到电荷数
         for(auto iter = list.begin(); iter != list.end(); ++iter) {
             //未知数
             UnkNum &unkNum = mapUnkNums[*iter] = unkNumCount == 0 ? "" : 'v' + QString::number(unkNumCount);
@@ -167,16 +168,23 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
                 unkNum.value = 1;
             const FormulaGroup &formula = *iter;
             Frac mul = Frac(1, unkNum.name);
-            //得到原子数
-            formula.elementCount(part.mapElemCount, mul);
+
+            //遍历该化学式的所有元素
+            FormulaGroup::Iter fIter(formula);
+            while(fIter.hasNext()) {
+                int count = fIter.currentCount();
+                Formula::Data data = fIter.next();
+                //得到原子数
+                part.mapElemCount[data.name()] += count * mul;
+            }
             //得到电荷数
             part.elec += formula.elec() * mul;
 
             unkNumCount++;
         }
     };
-    fnGetUnkNums(lReactants, left);
-    fnGetUnkNums(lProducts, right);
+    fnGetBase(lReactants, left);
+    fnGetBase(lProducts, right);
 
     //检查
     for(auto iter = left.mapElemCount.begin(); iter != left.mapElemCount.end(); ++iter)

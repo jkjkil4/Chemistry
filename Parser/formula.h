@@ -74,8 +74,6 @@ public:
     QString format(bool useBrackets = false) const;
     //绘制化学式
     void paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets = false) const;
-    //得到元素数量
-    void elementCount(QMap<QString, Frac> &map, const Frac &mul = 1) const;
 
     //解析字符串(分离数字和数据)
     static bool ParseStr(Type type, const QString &str, QString &inner, int &count);
