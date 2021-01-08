@@ -262,10 +262,10 @@ void Widget::onAnalysis() {
                 goto Jump;
             }
 
-            //判断结果是否存在负数
+            //判断结果是否存在负数或零
             for(Frac &res : lRes) {
-                if(res.toPlain() < 0) {
-                    lErrors << Error(Error::Any, QStringList() << "无法成功配平，化学式有误(结果出现负数)");
+                if(res.toPlain() <= 0) {
+                    lErrors << Error(Error::Any, QStringList() << "无法成功配平，化学式有误(结果出现负数或零)");
                     goto Jump;
                 }
             }
