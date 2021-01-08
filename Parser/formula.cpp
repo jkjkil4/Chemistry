@@ -11,8 +11,10 @@ Formula::Iter::Iter(const Formula &formula) : formula(formula) {
 }
 
 Formula::Iter::Iter(const Iter &other) : formula(other.formula) {
+    listIter = other.listIter;
     if(other.childIter)
         childIter = new Iter(*other.childIter);
+    mHasNext = other.mHasNext;
 }
 
 Formula::Data Formula::Iter::next() {

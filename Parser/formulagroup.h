@@ -14,12 +14,12 @@ public:
         bool hasNext() const { return mHasNext; }
         Formula::Data next();
 
-        int currentCount() { return mHasNext ? childIter.currentCount() : 0; }
+        int currentCount() { return childIter ? childIter->currentCount() : 0; }
 
     private:
         const FormulaGroup &formula;
-        QList<Formula>::const_iterator listIter;
-        Formula::Iter childIter;
+        QList<Formula>::const_iterator listIter = nullptr;
+        Formula::Iter *childIter = nullptr;
         bool mHasNext = true;
     };
 

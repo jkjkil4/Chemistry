@@ -2,18 +2,18 @@
 
 
 FormulaGroup::Iter::Iter(const FormulaGroup &formula)
-    : formula(formula), listIter(formula.lFormulas.begin()), childIter(*formula.lFormulas.begin()) {}
+    : formula(formula), listIter(formula.lFormulas.begin()), childIter(new Formula::Iter(*listIter)) {}
 
 Formula::Data FormulaGroup::Iter::next() {
     if(!hasNext())
         return Formula::Data();
-    Formula::Data data = childIter.next();
-    listIter++;
-    if(!childIter.hasNext()) {
+    Formula::Data data = childIter->next();
+    if(!childIter->hasNext()) {
         listIter++;
+        j::SafeDelete(childIter);
         if(listIter == formula.lFormulas.end())
             mHasNext = false;
-        else childIter = Formula::Iter(*listIter);
+        else childIter = new Formula::Iter(*listIter);
     }
     return data;
 }

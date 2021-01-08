@@ -16,9 +16,9 @@ int main(int argc, char *argv[])
     //读取字体
     fontSourceCodePro.load(":/rc/rc/SourceCodePro-Medium.ttf");
 
-    Formula f(Formula::Group, "Ba2(SO4)2Cu[+2:a,b]Na2O[-2:c]H");
+    FormulaGroup f("Ba2(SO4)2Cu[+2:a,b]Na2O[-2:c]H_5H2O");
     qDebug() << f.isVaild();
-    Formula::Iter iter(f);
+    FormulaGroup::Iter iter(f);
     while(iter.hasNext()) {
         int count = iter.currentCount();
         Formula::Data data = iter.next();
