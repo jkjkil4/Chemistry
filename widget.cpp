@@ -215,6 +215,7 @@ void Widget::onAnalysis() {
     {//配平
         QMap<FormulaGroup, UnkNum> mapUnkNums;   //用于FormulaKey和未知数对应
         QList<Frac> lFracs;     //配平的关系式
+        //QList<GLPair> lGLPair;  //得失电子对应关系
         Part left, right;
 
         //获得用于配平的东西
@@ -227,6 +228,9 @@ void Widget::onAnalysis() {
 
         //电荷守恒
         lFracs << left.elec - right.elec;
+
+        //得失电子守恒
+
 
         {//解方程，得出结果
             QList<UnkNum*> lPUnkNum;
@@ -242,11 +246,12 @@ void Widget::onAnalysis() {
             }
             Frac::SolvingError err;
             QList<Frac> lRes = Frac::SolvingEquations(lFracs, lUnkNumbers, &err);
-            if(err.type == Frac::SolvingError::Unsolvable) {
-                lErrors << Error(Error::Any, QStringList() << "无法成功配平，化学式有误(各守恒冲突)");
+            if(err.hasError()) {
+                lErrors << Error(Error::Any, QStringList() <<
+                                 (err.type == Frac::SolvingError::Insufficient
+                                  ? "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒、电荷守恒)"
+                                  : "无法成功配平，化学式有误(各守恒冲突)"));
                 goto Jump;
-            } else if(err.type == Frac::SolvingError::Insufficient) {
-                //TODO: 得失电子守恒
             }
 
             //判断结果是否存在负数

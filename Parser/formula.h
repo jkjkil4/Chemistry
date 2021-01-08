@@ -21,7 +21,45 @@ public:
     struct Elec
     {
         PlainFrac value;
-        QSet<QString> sKeys;
+        QSet<QString> keys;
+    };
+
+    struct Data
+    {
+    public:
+        Data() {}
+        Data(const Formula &formula) : formula(&formula) {}
+
+        bool isVaild() const { return formula; }
+
+        int count() const { return formula->count; }
+        const QString& name() const { return formula->elementData(); }
+
+        bool hasGL() const { return formula->pElec; }
+        PlainFrac glValue() const { return formula->pElec->value; }
+        const QSet<QString>& glKeys() const { return formula->pElec->keys; }
+
+    private:
+        const Formula *formula = nullptr;
+    };
+
+    class Iter
+    {
+    public:
+
+
+        Iter(const Formula &formula);
+        Iter(const Iter &other);
+        ~Iter();
+
+        bool hasNext() { return mHasNext; }
+        Data next();
+
+    private:
+        const Formula &formula;
+        QList<Formula>::const_iterator listIter = nullptr;
+        Iter *childIter = nullptr;
+        bool mHasNext = true;
     };
 
     explicit Formula(Type type, const QString &str, int count = 1);

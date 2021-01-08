@@ -1,6 +1,44 @@
 #include "formula.h"
 #include <QRegularExpression>
-#include <QDebug>
+//#include <QDebug>
+
+
+Formula::Iter::Iter(const Formula &formula) : formula(formula) {
+    if(formula.type == Group) {
+        listIter = formula.groupData().begin();
+        childIter = new Iter(*listIter);
+    }
+}
+
+Formula::Iter::Iter(const Iter &other) : formula(other.formula) {
+    if(other.childIter)
+        childIter = new Iter(*other.childIter);
+}
+
+Formula::Data Formula::Iter::next() {
+    if(!mHasNext)
+        return Data();
+
+    if(formula.type == Element) {
+        mHasNext = false;
+        return Data(formula);
+    } else {
+        Data data = childIter->next();
+        if(!childIter->hasNext()) {
+            listIter++;
+            j::SafeDelete(childIter);
+            if(listIter == formula.groupData().end())
+                mHasNext = false;
+            else childIter = new Iter(*listIter);
+        }
+        return data;
+    }
+}
+
+Formula::Iter::~Iter() {
+    j::SafeDelete(childIter);
+}
+
 
 static QRegularExpression ruleElement = QRegularExpression("([A-Z]{1}[a-z]*)(?:\\[([+-]{0,1}\\d+)(?:\\:([,a-z0-9]*)){0,1}\\]){0,1}");
 
@@ -20,7 +58,7 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
             pElec = new Elec;
             pElec->value = PlainFrac(list[2]);
             if(list.size() > 3)
-                pElec->sKeys = list[3].split(",", QString::SkipEmptyParts).toSet();
+                pElec->keys = list[3].split(",", QString::SkipEmptyParts).toSet();
         }
 
         data = new QString(list[1]);
@@ -86,7 +124,8 @@ Formula::Formula(const Formula &other) {
     vaild = other.vaild;
     if(other.pElec)
         pElec = new Elec(*other.pElec);
-    data = (type == Element ? (void*)new QString(*(QString*)other.data) : (void*)new QList<Formula>(*(QList<Formula>*)other.data));
+    if(other.data)
+        data = (type == Element ? (void*)new QString(other.elementData()) : (void*)new QList<Formula>(other.groupData()));
 }
 
 Formula::~Formula() {

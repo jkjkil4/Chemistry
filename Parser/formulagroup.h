@@ -6,6 +6,15 @@
 class FormulaGroup
 {
 public:
+//    class Iter
+//    {
+//    public:
+//        Iter(FormulaGroup &data) : data(data) {}
+
+//    private:
+//        FormulaGroup &data;
+//    };
+
     FormulaGroup() = default;
     explicit FormulaGroup(const QString &str);
     ~FormulaGroup() = default;

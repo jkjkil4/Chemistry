@@ -63,6 +63,17 @@ private:
         QMap<QString, Frac> mapElemCount;
         Frac elec;
     };
+//    struct GL
+//    {
+//        QString strUnkNum;
+//        PlainFrac elec;
+//        int count;
+//    };
+//    struct GLPair
+//    {
+//        QString strUnkNum;
+//        GL a, b;
+//    };
 
 
     void getReactantsAndProducts(QList<FormulaGroup> &lReactants, QList<FormulaGroup> &lProducts, QList<Error> &lErrors);
