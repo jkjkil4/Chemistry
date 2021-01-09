@@ -37,25 +37,7 @@ Widget::Widget(QWidget *parent)
     QAction *actHelp = new QAction("帮助");
     menuOther->addAction(actHelp);
     connect(actHelp, &QAction::triggered, [&](){
-        QFile file(":/rc/rc/explain1.txt");
-        if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream in(&file);
-            in.setCodec("utf-8");
-            QMessageBox::information(this, "帮助", in.readAll());
-            file.close();
-        }
-    });
-
-    QAction *actExample = new QAction("例子");
-    menuOther->addAction(actExample);
-    connect(actExample, &QAction::triggered, [&](){
-        QFile file(":/rc/rc/explain2.txt");
-        if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream in(&file);
-            in.setCodec("utf-8");
-            QMessageBox::information(this, "例子", in.readAll());
-            file.close();
-        }
+        QMessageBox::information(this, "帮助", "<a href=\"https://github.com/jkjkil4/Chemistry/blob/main/README.md\">在github上的说明文档</a>");
     });
 
     menuOther->addSeparator();
@@ -347,7 +329,7 @@ void Widget::onAnalysis() {
             if(err.hasError()) {
                 lErrors << Error(Error::Any, QStringList() <<
                                  (err.type == Frac::SolvingError::Insufficient
-                                  ? "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒、电荷守恒)"
+                                  ? "无法成功配平，可能是化学式有误或条件(得失电子守恒)不足"
                                   : "无法成功配平，化学式有误(各守恒冲突)"));
                 goto Jump;
             }
