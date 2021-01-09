@@ -357,6 +357,8 @@ void Widget::onAnalysis() {
 
                 {//约分
                     QVector<int> vValues;
+                    for(int mono : firstUnkNum->value.top())
+                        vValues << mono;
                     for(Frac &frac : lRes)
                         for(int mono : frac.top())
                             vValues << mono;
