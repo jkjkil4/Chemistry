@@ -29,23 +29,23 @@ public:
 
     bool isVaild() const { return vaild; }
 
-    //将化学式格式化为字符串
-    QString format() const;
+    //化学式的字符串
+    QString str() const { return formatStr; }
     //绘制化学式
     void paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRect *pRect = nullptr) const;
 
     const PlainFrac& elec() const { return mElec; }
 
     bool operator<(const FormulaGroup& other) const {
-        if(str != other.str)
-            return str < other.str;
+        if(formatStr != other.formatStr)
+            return formatStr < other.formatStr;
         return mElec < other.mElec;
     }
-    bool operator==(const FormulaGroup& other) const { return mElec == other.mElec && str == other.str; }
+    bool operator==(const FormulaGroup& other) const { return mElec == other.mElec && formatStr == other.formatStr; }
 
 private:
     bool vaild = true;
-    QString str;
+    QString formatStr;
     QList<Formula> lFormulas;
     PlainFrac mElec;
 };

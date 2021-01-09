@@ -19,7 +19,7 @@ public:
     PlainFrac() = default;
     PlainFrac(int value);
     PlainFrac(int a, int b);    //如果b为0，会抛出FracError错误
-    PlainFrac(QString str, bool *ok = nullptr);
+    explicit PlainFrac(QString str, bool *ok = nullptr);
 
     void reduct();
 

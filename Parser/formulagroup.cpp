@@ -19,7 +19,7 @@ Formula::Data FormulaGroup::Iter::next() {
 }
 
 
-FormulaGroup::FormulaGroup(const QString &str) : str(str)
+FormulaGroup::FormulaGroup(const QString &str)
 {
     //得到大括号的位置
     int indexOfLeft = str.indexOf("{");
@@ -77,18 +77,14 @@ FormulaGroup::FormulaGroup(const QString &str) : str(str)
         lFormulas.clear();
         return;
     }
-}
 
-QString FormulaGroup::format() const {
-    QString res;
     bool hasPrev = false;
     for(const Formula &formula : lFormulas) {
         if(hasPrev) {
-            res += '_';
+            formatStr += '_';
         } else hasPrev = true;
-        res += formula.format();
+        formatStr += formula.format();
     }
-    return res;
 }
 
 void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRect *pRect) const {
@@ -123,3 +119,4 @@ void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRec
     }
     SET_PTR(pRect, QRect(xStart, y, x - xStart, fmHeight));
 }
+

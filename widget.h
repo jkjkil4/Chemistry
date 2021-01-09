@@ -31,7 +31,7 @@ class Widget : public QWidget
 public:
     struct Error
     {
-        enum Type { Any, FormulaError, FormulaMultiDefined, IsEmpty, ElementNotExists } type;
+        enum Type { Any, FormulaError, FormulaMultiDefined, GLMultiDefined, IsEmpty, ElementNotExists, GLNotExists } type;
         QStringList args;
         static QMap<Type, QString> mapText;
 
@@ -60,25 +60,34 @@ private:
     };
     struct Part
     {
-        QMap<QString, Frac> mapElemCount;
-        Frac elec;
+        QString name;   //该部分的名称
+        QMap<QString, Frac> mapElemCount;   //各原子数
+        Frac elec;  //总电荷数
     };
-//    struct GL
-//    {
-//        QString strUnkNum;
-//        PlainFrac elec;
-//        int count;
-//    };
-//    struct GLPair
-//    {
-//        QString strUnkNum;
-//        GL a, b;
-//    };
-
+    struct GLKey
+    {
+        QString strElem, strRel;
+        inline bool operator<(const GLKey &other) const {
+            if(strElem != other.strElem)
+                return strElem < other.strElem;
+            return strRel < other.strRel;
+        }
+    };
+    struct GL
+    {
+        bool isVaild = false;
+        Frac count;
+        PlainFrac elec;
+    };
+    struct GLPair
+    {
+        GL a, b;
+        QString strUnkNum;
+    };
 
     void getReactantsAndProducts(QList<FormulaGroup> &lReactants, QList<FormulaGroup> &lProducts, QList<Error> &lErrors);
     void getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaGroup> &lProducts,
-                 Part &left, Part &right,
+                 Part &left, Part &right, QMap<GLKey, GLPair> &mapGlPairs,
                  QMap<FormulaGroup, UnkNum> &mapUnkNums, QList<Error> &lErrors);
 
     QStackedWidget *stackedWidget = new QStackedWidget;
