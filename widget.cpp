@@ -326,7 +326,8 @@ void Widget::onAnalysis() {
                 lRemoveLetters << pair.strUnkNum;
             }
             lFracs << glTotal;
-            //qDebug() << 1;
+            for(Frac &frac : mapBetweenUnkNums)
+                lFracs << frac;
         }
 
         {//解方程，得出结果
