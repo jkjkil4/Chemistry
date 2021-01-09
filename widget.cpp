@@ -183,6 +183,7 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
                 for(const QString &strRel : data.glKeys()) {
                     GLPair &pair = mapGlPairs[{ data.name(), strRel }];
                     if(pair.strUnkNum.isEmpty()) {
+                        pair.strElem = data.name();
                         pair.strUnkNum = "gl" + QString::number(unkNumCount);
                         unkNumCount++;
                     }
@@ -193,7 +194,7 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
                     pair.a.isVaild = true;
                     pair.a.count = count;
                     pair.a.strUnkNum = unkNum.name;
-                    pair.a.elec = data.glValue();
+                    pair.a.data = data;
                 }
             }
         }
@@ -217,7 +218,7 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
                     pair.b.isVaild = true;
                     pair.b.count = count;
                     pair.b.strUnkNum = unkNum.name;
-                    pair.b.elec = data.glValue();
+                    pair.b.data = data;
                 }
             }
         }
@@ -288,29 +289,29 @@ void Widget::onAnalysis() {
         lFracs << left.elec - right.elec;
 
         //得失电子守恒
-        if(!mapGlPairs.isEmpty()) {
-            Frac glTotal;
-            QMap<QString, Frac> mapBetweenUnkNums;
-            for(GLPair &pair : mapGlPairs) {
-                Frac frac(1, pair.strUnkNum);
-                glTotal += (pair.b.elec - pair.a.elec) * frac;
+//        if(!mapGlPairs.isEmpty()) {
+//            Frac glTotal;
+//            QMap<Formula::Data, Frac> mapBetweenUnkNums;
+//            for(GLPair &pair : mapGlPairs) {
+//                Frac frac(1, pair.strUnkNum);
+//                glTotal += (pair.b.data.glValue() - pair.a.data.glValue()) * frac;
 
-                auto iter = mapBetweenUnkNums.find(pair.a.strUnkNum);
-                if(iter == mapBetweenUnkNums.end())
-                    iter = mapBetweenUnkNums.insert(pair.a.strUnkNum, Frac(pair.a.count, pair.a.strUnkNum));
-                *iter -= frac;
+//                auto iter = mapBetweenUnkNums.find(pair.a.data);
+//                if(iter == mapBetweenUnkNums.end())
+//                    iter = mapBetweenUnkNums.insert(pair.a.data, Frac(pair.a.count, pair.a.strUnkNum));
+//                *iter -= frac;
 
-                iter = mapBetweenUnkNums.find(pair.b.strUnkNum);
-                if(iter == mapBetweenUnkNums.end())
-                    iter = mapBetweenUnkNums.insert(pair.b.strUnkNum, Frac(pair.b.count, pair.b.strUnkNum));
-                *iter -= frac;
+//                iter = mapBetweenUnkNums.find(pair.b.data);
+//                if(iter == mapBetweenUnkNums.end())
+//                    iter = mapBetweenUnkNums.insert(pair.b.data, Frac(pair.b.count, pair.b.strUnkNum));
+//                *iter -= frac;
 
-                lRemoveLetters << pair.strUnkNum;
-            }
-            lFracs << glTotal;
-            for(Frac &frac : mapBetweenUnkNums)
-                lFracs << frac;
-        }
+//                lRemoveLetters << pair.strUnkNum;
+//            }
+//            lFracs << glTotal;
+//            for(Frac &frac : mapBetweenUnkNums)
+//                lFracs << frac;
+//        }
 
         {//解方程，得出结果
             QList<UnkNum*> lPUnkNum;
@@ -334,13 +335,13 @@ void Widget::onAnalysis() {
                 goto Jump;
             }
 
-            //判断结果是否存在负数或零
-            for(Frac &res : lRes) {
-                if(res.toPlain() <= 0) {
-                    lErrors << Error(Error::Any, QStringList() << "无法成功配平，化学式有误(结果出现负数或零)");
-                    goto Jump;
-                }
-            }
+//            //判断结果是否存在负数或零
+//            for(Frac &res : lRes) {
+//                if(res.toPlain() <= 0) {
+//                    lErrors << Error(Error::Any, QStringList() << "无法成功配平，化学式有误(结果出现负数或零)");
+//                    goto Jump;
+//                }
+//            }
 
             {//进行一些处理后 输出最终结果
                 {//通分

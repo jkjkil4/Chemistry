@@ -39,6 +39,8 @@ public:
         PlainFrac glValue() const { return formula->pElec->value; }
         const QSet<QString>& glKeys() const { return formula->pElec->keys; }
 
+        inline bool operator<(const Data &other) const { return formula < other.formula; }
+
     private:
         const Formula *formula = nullptr;
     };

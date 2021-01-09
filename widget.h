@@ -78,11 +78,12 @@ private:
         bool isVaild = false;
         int count;
         QString strUnkNum;
-        PlainFrac elec;
+        Formula::Data data;
     };
     struct GLPair
     {
         GL a, b;
+        QString strElem;
         QString strUnkNum;
     };
 

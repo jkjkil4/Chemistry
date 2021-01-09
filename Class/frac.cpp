@@ -71,7 +71,7 @@ PlainFrac Frac::toPlain() {
 //}
 
 
-//#define DEBUG_FRAC_SOLVINGRQUATIONS
+#define DEBUG_FRAC_SOLVINGRQUATIONS
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
 #include <QDebug>
 #endif
@@ -96,7 +96,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
     qDebug().noquote() << "\033[35m初始:\033[0m";
     for(Frac &frac : lFracs)
-        qDebug().noquote() << frac.format() << "= 0";
+        qDebug().noquote() << frac.format(true, true) << "= 0";
 #endif
 
     for(const QString &remove : lRemoveLetters) {
@@ -119,8 +119,17 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         Frac paramFrac = (*iter).paramSep(remove);  //分离该字母
         lFracs.erase(iter); //从lFracs中移除该iter
 
-        for(Frac &otherFrac : lFracs)   //将分离的结果代入到其他式子中
+#ifdef DEBUG_FRAC_SOLVINGRQUATIONS
+        qDebug().noquote() << "\n\033[35m将\033[0m " + remove + " = " + paramFrac.format(true, true) + " \033[35m代入得:\033[0m";
+#endif
+
+        for(Frac &otherFrac : lFracs) {   //将分离的结果代入到其他式子中
+#ifdef DEBUG_FRAC_SOLVINGRQUATIONS
+            qDebug().noquote() << otherFrac.substitute(remove, paramFrac).format(true, true) << "= 0";
+#else
             otherFrac.substitute(remove, paramFrac);
+#endif
+        }
     }
 
     QList<Frac> lRes;
@@ -143,12 +152,12 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         lFracs.erase(iter);     //从lFracs中移除该iter
 
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
-        qDebug().noquote() << "\n\033[35m将\033[0m " + unkNumber + " = " + paramFrac.format() + " \033[35m代入得:\033[0m";
+        qDebug().noquote() << "\n\033[35m将\033[0m " + unkNumber + " = " + paramFrac.format(true, true) + " \033[35m代入得:\033[0m";
 #endif
 
         for(Frac &otherFrac : lFracs) {   //将分离的结果代入到其他式子中
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
-            qDebug().noquote() << otherFrac.substitute(unkNumber, paramFrac).format() << "= 0";
+            qDebug().noquote() << otherFrac.substitute(unkNumber, paramFrac).format(true, true) << "= 0";
 #else
             otherFrac.substitute(unkNumber, paramFrac);
 #endif
@@ -158,7 +167,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
     qDebug() << "\n\033[35m多余项:\033[0m";
     for(Frac &frac : lFracs) {
-        qDebug().noquote() << frac.format() << "= 0";
+        qDebug().noquote() << frac.format(true, true) << "= 0";
     }
 #endif
 
@@ -187,7 +196,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
     {
         auto iterUnkNum = lUnkNumbers.begin();
         for(auto iter = lRes.begin(); iter != lRes.end(); ++iter) {
-            qDebug().noquote() << *iterUnkNum << "=" << (*iter).format();
+            qDebug().noquote() << *iterUnkNum << "=" << (*iter).format(true, true);
             ++iterUnkNum;
         }
     }
