@@ -76,7 +76,8 @@ private:
     struct GL
     {
         bool isVaild = false;
-        Frac count;
+        int count;
+        QString strUnkNum;
         PlainFrac elec;
     };
     struct GLPair

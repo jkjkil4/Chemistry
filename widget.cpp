@@ -191,7 +191,6 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
     //反应物的对应关系
     for(const FormulaGroup &formula : lReactants) {
         UnkNum &unkNum = mapUnkNums[formula];   //得到未知数
-        Frac mul(1, unkNum.name);
 
         //遍历该化学式的所有元素
         FormulaGroup::Iter fIter(formula);
@@ -210,7 +209,8 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
                         continue;
                     }
                     pair.a.isVaild = true;
-                    pair.a.count = count * mul;
+                    pair.a.count = count;
+                    pair.a.strUnkNum = unkNum.name;
                     pair.a.elec = data.glValue();
                 }
             }
@@ -219,7 +219,6 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
     //生成物的对应关系
     for(const FormulaGroup &formula : lProducts) {
         UnkNum &unkNum = mapUnkNums[formula];   //得到未知数
-        Frac mul(1, unkNum.name);
 
         //遍历该化学式的所有元素
         FormulaGroup::Iter fIter(formula);
@@ -234,7 +233,8 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
                         continue;
                     }
                     pair.b.isVaild = true;
-                    pair.b.count = count * mul;
+                    pair.b.count = count;
+                    pair.b.strUnkNum = unkNum.name;
                     pair.b.elec = data.glValue();
                 }
             }
@@ -273,7 +273,7 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
         stackedWidget->setCurrentWidget(viewError);\
         goto End;                           \
     }
-
+//#include <QDebug>
 void Widget::onAnalysis() {
     stackedWidget->setCurrentWidget(viewNone);
 
@@ -288,6 +288,7 @@ void Widget::onAnalysis() {
     {//配平
         QMap<FormulaGroup, UnkNum> mapUnkNums;   //用于FormulaKey和未知数对应
         QList<Frac> lFracs;     //配平的关系式
+        QStringList lRemoveLetters;
         QMap<GLKey, GLPair> mapGlPairs; //得失电子守恒的对应关系
         Part left, right;
         left.name = "反应物";
@@ -305,8 +306,27 @@ void Widget::onAnalysis() {
         lFracs << left.elec - right.elec;
 
         //得失电子守恒
-        {
+        if(!mapGlPairs.isEmpty()) {
+            Frac glTotal;
+            QMap<QString, Frac> mapBetweenUnkNums;
+            for(GLPair &pair : mapGlPairs) {
+                Frac frac(1, pair.strUnkNum);
+                glTotal += (pair.b.elec - pair.a.elec) * frac;
 
+                auto iter = mapBetweenUnkNums.find(pair.a.strUnkNum);
+                if(iter == mapBetweenUnkNums.end())
+                    iter = mapBetweenUnkNums.insert(pair.a.strUnkNum, Frac(pair.a.count, pair.a.strUnkNum));
+                *iter -= frac;
+
+                iter = mapBetweenUnkNums.find(pair.b.strUnkNum);
+                if(iter == mapBetweenUnkNums.end())
+                    iter = mapBetweenUnkNums.insert(pair.b.strUnkNum, Frac(pair.b.count, pair.b.strUnkNum));
+                *iter -= frac;
+
+                lRemoveLetters << pair.strUnkNum;
+            }
+            lFracs << glTotal;
+            //qDebug() << 1;
         }
 
         {//解方程，得出结果
@@ -322,7 +342,7 @@ void Widget::onAnalysis() {
                 }
             }
             Frac::SolvingError err;
-            QList<Frac> lRes = Frac::SolvingEquations(lFracs, lUnkNumbers, &err);
+            QList<Frac> lRes = Frac::SolvingEquations(lFracs, lUnkNumbers, lRemoveLetters, &err);
             if(err.hasError()) {
                 lErrors << Error(Error::Any, QStringList() <<
                                  (err.type == Frac::SolvingError::Insufficient
