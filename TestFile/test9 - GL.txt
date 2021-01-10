@@ -1,0 +1,5 @@
+HClO3
+$HClO4
+$Cl2
+$O2
+$H2O

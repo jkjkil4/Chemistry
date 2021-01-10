@@ -35,11 +35,11 @@ public:
         int count() const { return formula->count; }
         const QString& name() const { return formula->elementData(); }
 
-        bool hasGL() const { return formula->pElec; }
-        PlainFrac glValue() const { return formula->pElec->value; }
-        const QSet<QString>& glKeys() const { return formula->pElec->keys; }
+//        bool hasGL() const { return formula->pElec; }
+//        PlainFrac glValue() const { return formula->pElec->value; }
+//        const QSet<QString>& glKeys() const { return formula->pElec->keys; }
 
-        inline bool operator<(const Data &other) const { return formula < other.formula; }
+//        inline bool operator<(const Data &other) const { return formula < other.formula; }
 
     private:
         const Formula *formula = nullptr;
@@ -90,8 +90,8 @@ private:
     void *data = nullptr;   //数据(type == Element -> QString, type == Group -> QList<Formula>)
     bool vaild = true;      //是否有效
 
-    //用于得失电子守恒的数据
-    Elec *pElec = nullptr;
+//    //用于得失电子守恒的数据
+//    Elec *pElec = nullptr;
 };
 
 #endif // FORMULA_H

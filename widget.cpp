@@ -6,12 +6,12 @@ QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
     { Any, "%1" },
     { FormulaError, "(E0-1) 解析化学式出错，在 \"%1\" 输入框的 第%2行 第%3个化学式 \"%4\"" },
     { FormulaMultiDefined, "(E0-3) 化学式 \"%1\" 重复出现" },
-    { GLMultiDefined, "(E0-4) 元素 \"%1\" 的得失电子对应关系 \"%2\" 在 %3 中重复出现" },
+//    { GLMultiDefined, "(E0-4) 元素 \"%1\" 的得失电子对应关系 \"%2\" 在 %3 中重复出现" },
 
     { IsEmpty, "(E1-0) %1为空" },
 
     { ElementNotExists, "(E2-0) \"%1\" 元素在 %2 中存在，却无法在 %3 中找到" },
-    { GLNotExists, "(E2-1) \"%1\" 元素的得失电子对应关系 \"%2\" 在 %3 中存在，却无法在 %4 中找到" }
+//    { GLNotExists, "(E2-1) \"%1\" 元素的得失电子对应关系 \"%2\" 在 %3 中存在，却无法在 %4 中找到" }
 };
 
 
@@ -138,7 +138,7 @@ void Widget::getReactantsAndProducts(QList<FormulaGroup> &lReactants, QList<Form
 }
 
 void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaGroup> &lProducts,
-                     Part &left, Part &right, QMap<GLKey, GLPair> &mapGlPairs,
+                     Part &left, Part &right, /*QMap<GLKey, GLPair> &mapGlPairs,*/
                      QMap<FormulaGroup, UnkNum> &mapUnkNums, QList<Error> &lErrors)
 {
     int unkNumCount = 0;
@@ -169,60 +169,60 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
     fnGetBase(lReactants, left);
     fnGetBase(lProducts, right);
 
-    unkNumCount = 1;
-    //反应物的对应关系
-    for(const FormulaGroup &formula : lReactants) {
-        UnkNum &unkNum = mapUnkNums[formula];   //得到未知数
+//    unkNumCount = 1;
+//    //反应物的对应关系
+//    for(const FormulaGroup &formula : lReactants) {
+//        UnkNum &unkNum = mapUnkNums[formula];   //得到未知数
 
-        //遍历该化学式的所有元素
-        FormulaGroup::Iter fIter(formula);
-        while(fIter.hasNext()) {
-            int count = fIter.currentCount();
-            Formula::Data data = fIter.next();
-            if(data.hasGL()) {
-                for(const QString &strRel : data.glKeys()) {
-                    GLPair &pair = mapGlPairs[{ data.name(), strRel }];
-                    if(pair.strUnkNum.isEmpty()) {
-                        pair.strElem = data.name();
-                        pair.strUnkNum = "gl" + QString::number(unkNumCount);
-                        unkNumCount++;
-                    }
-                    if(pair.a.isVaild) {
-                        lErrors << Error(Error::GLMultiDefined, QStringList() << data.name() << strRel << "反应物");
-                        continue;
-                    }
-                    pair.a.isVaild = true;
-                    pair.a.count = count;
-                    pair.a.strUnkNum = unkNum.name;
-                    pair.a.data = data;
-                }
-            }
-        }
-    }
-    //生成物的对应关系
-    for(const FormulaGroup &formula : lProducts) {
-        UnkNum &unkNum = mapUnkNums[formula];   //得到未知数
+//        //遍历该化学式的所有元素
+//        FormulaGroup::Iter fIter(formula);
+//        while(fIter.hasNext()) {
+//            int count = fIter.currentCount();
+//            Formula::Data data = fIter.next();
+//            if(data.hasGL()) {
+//                for(const QString &strRel : data.glKeys()) {
+//                    GLPair &pair = mapGlPairs[{ data.name(), strRel }];
+//                    if(pair.strUnkNum.isEmpty()) {
+//                        pair.strElem = data.name();
+//                        pair.strUnkNum = "gl" + QString::number(unkNumCount);
+//                        unkNumCount++;
+//                    }
+//                    if(pair.a.isVaild) {
+//                        lErrors << Error(Error::GLMultiDefined, QStringList() << data.name() << strRel << "反应物");
+//                        continue;
+//                    }
+//                    pair.a.isVaild = true;
+//                    pair.a.count = count;
+//                    pair.a.strUnkNum = unkNum.name;
+//                    pair.a.data = data;
+//                }
+//            }
+//        }
+//    }
+//    //生成物的对应关系
+//    for(const FormulaGroup &formula : lProducts) {
+//        UnkNum &unkNum = mapUnkNums[formula];   //得到未知数
 
-        //遍历该化学式的所有元素
-        FormulaGroup::Iter fIter(formula);
-        while(fIter.hasNext()) {
-            int count = fIter.currentCount();
-            Formula::Data data = fIter.next();
-            if(data.hasGL()) {
-                for(const QString &strRel : data.glKeys()) {
-                    GLPair &pair = mapGlPairs[{ data.name(), strRel }];
-                    if(pair.b.isVaild) {
-                        lErrors << Error(Error::GLMultiDefined, QStringList() << data.name() << strRel << "生成物");
-                        continue;
-                    }
-                    pair.b.isVaild = true;
-                    pair.b.count = count;
-                    pair.b.strUnkNum = unkNum.name;
-                    pair.b.data = data;
-                }
-            }
-        }
-    }
+//        //遍历该化学式的所有元素
+//        FormulaGroup::Iter fIter(formula);
+//        while(fIter.hasNext()) {
+//            int count = fIter.currentCount();
+//            Formula::Data data = fIter.next();
+//            if(data.hasGL()) {
+//                for(const QString &strRel : data.glKeys()) {
+//                    GLPair &pair = mapGlPairs[{ data.name(), strRel }];
+//                    if(pair.b.isVaild) {
+//                        lErrors << Error(Error::GLMultiDefined, QStringList() << data.name() << strRel << "生成物");
+//                        continue;
+//                    }
+//                    pair.b.isVaild = true;
+//                    pair.b.count = count;
+//                    pair.b.strUnkNum = unkNum.name;
+//                    pair.b.data = data;
+//                }
+//            }
+//        }
+//    }
 
     //检查原子
     for(auto iter = left.mapElemCount.begin(); iter != left.mapElemCount.end(); ++iter)
@@ -232,15 +232,15 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
         if(!left.mapElemCount.contains(iter.key()))
             lErrors << Error(Error::ElementNotExists, QStringList() << iter.key() << "生成物" << "反应物");
 
-    //检查得失电子对应关系
-    for(auto iter = mapGlPairs.begin(); iter != mapGlPairs.end(); ++iter) {
-        const GLKey &key = iter.key();
-        const GLPair &pair = iter.value();
-        if(!pair.a.isVaild || !pair.b.isVaild)
-            lErrors << Error(Error::GLNotExists, QStringList() << key.strElem << key.strRel
-                             << (pair.a.isVaild ? "反应物" : "生成物")
-                             << (pair.b.isVaild ? "生成物" : "反应物"));
-    }
+//    //检查得失电子对应关系
+//    for(auto iter = mapGlPairs.begin(); iter != mapGlPairs.end(); ++iter) {
+//        const GLKey &key = iter.key();
+//        const GLPair &pair = iter.value();
+//        if(!pair.a.isVaild || !pair.b.isVaild)
+//            lErrors << Error(Error::GLNotExists, QStringList() << key.strElem << key.strRel
+//                             << (pair.a.isVaild ? "反应物" : "生成物")
+//                             << (pair.b.isVaild ? "生成物" : "反应物"));
+//    }
 }
 
 
@@ -272,13 +272,13 @@ void Widget::onAnalysis() {
         QMap<FormulaGroup, UnkNum> mapUnkNums;   //用于FormulaKey和未知数对应
         QList<Frac> lFracs;     //配平的关系式
         QStringList lRemoveLetters;
-        QMap<GLKey, GLPair> mapGlPairs; //得失电子守恒的对应关系
+//        QMap<GLKey, GLPair> mapGlPairs; //得失电子守恒的对应关系
         Part left, right;
         left.name = "反应物";
         right.name = "生成物";
 
         //获得用于配平的东西
-        getBase(lReactants, lProducts, left, right, mapGlPairs, mapUnkNums, lErrors);
+        getBase(lReactants, lProducts, left, right,/* mapGlPairs,*/ mapUnkNums, lErrors);
         if(!lErrors.isEmpty()) goto Jump;
 
         //原子守恒
@@ -288,7 +288,7 @@ void Widget::onAnalysis() {
         //电荷守恒
         lFracs << left.elec - right.elec;
 
-        //得失电子守恒
+//        //得失电子守恒
 //        if(!mapGlPairs.isEmpty()) {
 //            Frac glTotal;
 //            QMap<Formula::Data, Frac> mapBetweenUnkNums;
@@ -330,18 +330,19 @@ void Widget::onAnalysis() {
             if(err.hasError()) {
                 lErrors << Error(Error::Any, QStringList() <<
                                  (err.type == Frac::SolvingError::Insufficient
-                                  ? "无法成功配平，可能是化学式有误或条件(得失电子守恒)不足"
+//                                  ? "无法成功配平，可能是化学式有误或条件(得失电子守恒)不足"
+                                  ? "无法成功配平，可能是化学式有误或本程序能力有限(目前有的守恒关系: 原子守恒、电荷守恒)"
                                   : "无法成功配平，化学式有误(各守恒冲突)"));
                 goto Jump;
             }
 
-//            //判断结果是否存在负数或零
-//            for(Frac &res : lRes) {
-//                if(res.toPlain() <= 0) {
-//                    lErrors << Error(Error::Any, QStringList() << "无法成功配平，化学式有误(结果出现负数或零)");
-//                    goto Jump;
-//                }
-//            }
+            //判断结果是否存在负数或零
+            for(Frac &res : lRes) {
+                if(res.toPlain() <= 0) {
+                    lErrors << Error(Error::Any, QStringList() << "无法成功配平，化学式有误(结果出现负数或零)");
+                    goto Jump;
+                }
+            }
 
             {//进行一些处理后 输出最终结果
                 {//通分

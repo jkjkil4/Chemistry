@@ -42,7 +42,8 @@ Formula::Iter::~Iter() {
 }
 
 
-static QRegularExpression ruleElement = QRegularExpression("([A-Z]{1}[a-z]*)(?:\\[([+-]{0,1}\\d+)(?:\\:([,a-z0-9]*)){0,1}\\]){0,1}");
+//static QRegularExpression ruleElement = QRegularExpression("([A-Z]{1}[a-z]*)(?:\\[([+-]{0,1}\\d+)(?:\\:([,a-z0-9]*)){0,1}\\]){0,1}");
+static QRegularExpression ruleElement = QRegularExpression("[A-Z]{1}[a-z]*");
 
 Formula::Formula(Type type, const QString &str, int count) : type(type), count(count)
 {
@@ -54,16 +55,17 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
             return;
         }
 
-        //得到结果
-        QStringList list = match.capturedTexts();
-        if(list.size() > 2) {
-            pElec = new Elec;
-            pElec->value = PlainFrac(list[2]);
-            if(list.size() > 3)
-                pElec->keys = list[3].split(",", QString::SkipEmptyParts).toSet();
-        }
+//        //得到结果
+//        QStringList list = match.capturedTexts();
+//        if(list.size() > 2) {
+//            pElec = new Elec;
+//            pElec->value = PlainFrac(list[2]);
+//            if(list.size() > 3)
+//                pElec->keys = list[3].split(",", QString::SkipEmptyParts).toSet();
+//        }
 
-        data = new QString(list[1]);
+//        data = new QString(list[1]);
+        data = new QString(str);
     } else {
         QList<Formula> *pLChildren = new QList<Formula>;  //new 临时的list
         int bracketCount = 0;   //统计括号数量
@@ -124,14 +126,14 @@ Formula::Formula(const Formula &other) {
     type = other.type;
     count = other.count;
     vaild = other.vaild;
-    if(other.pElec)
-        pElec = new Elec(*other.pElec);
+//    if(other.pElec)
+//        pElec = new Elec(*other.pElec);
     if(other.data)
         data = (type == Element ? (void*)new QString(other.elementData()) : (void*)new QList<Formula>(other.groupData()));
 }
 
 Formula::~Formula() {
-    j::SafeDelete(pElec);
+//    j::SafeDelete(pElec);
     type == Element ? delete (QString*)data : delete (QList<Formula>*)data;
 }
 
