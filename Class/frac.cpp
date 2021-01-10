@@ -71,7 +71,7 @@ PlainFrac Frac::toPlain() {
 //}
 
 
-#define DEBUG_FRAC_SOLVINGRQUATIONS
+//#define DEBUG_FRAC_SOLVINGRQUATIONS
 #ifdef DEBUG_FRAC_SOLVINGRQUATIONS
 #include <QDebug>
 #endif
