@@ -104,7 +104,7 @@ Widget::~Widget()
 void Widget::getReactantsAndProducts(QList<FormulaGroup> &lReactants, QList<FormulaGroup> &lProducts, QList<Error> &lErrors) {
     QTextDocument *doc = editRel->document();
     int count = doc->lineCount();
-    repeat(i, count) {
+    repeat(int, i, count) {
         QString line = doc->findBlockByLineNumber(i).text();
         QStringList list = line.simplified().split(' ', QString::SplitBehavior::SkipEmptyParts);
         int index = 0;

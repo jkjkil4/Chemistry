@@ -32,7 +32,7 @@ public:
     //化学式的字符串
     QString str() const { return formatStr; }
     //绘制化学式
-    void paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRect *pRect = nullptr) const;
+    void paint(QPainter *p, int x, int y, Formula::PaintAlign pa, QRect *pRect = nullptr) const;
 
     const PlainFrac& elec() const { return mElec; }
 

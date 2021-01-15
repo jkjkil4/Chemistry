@@ -87,10 +87,10 @@ FormulaGroup::FormulaGroup(const QString &str)
     }
 }
 
-void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRect *pRect) const {
+void FormulaGroup::paint(QPainter *p, int x, int y, Formula::PaintAlign pa, QRect *pRect) const {
     int xStart = x;
     QRect rect;
-    int fmHeight = QFontMetrics(p.font()).height();
+    int fmHeight = QFontMetrics(p->font()).height();
     int yy = pa == Formula::PA_Top ? y + fmHeight : y;
     bool hasPrev = false;
     for(const Formula &formula : lFormulas) {
@@ -110,10 +110,10 @@ void FormulaGroup::paint(QPainter &p, int x, int y, Formula::PaintAlign pa, QRec
             strElec += (mElec < 0 ? "-" : "+");
 
             x += 1;
-            int pointSize = p.font().pointSize();
-            j::SetPointSize(&p, qMax(1, pointSize / 2));
+            int pointSize = p->font().pointSize();
+            j::SetPointSize(p, qMax(1, pointSize / 2));
             j::DrawText(p, x, yy - fmHeight, Qt::AlignLeft | Qt::AlignTop, strElec, -1, -1, &rect);
-            j::SetPointSize(&p, pointSize);
+            j::SetPointSize(p, pointSize);
             x += rect.width();
         }
     }

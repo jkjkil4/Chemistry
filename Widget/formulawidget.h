@@ -30,7 +30,7 @@ public:
 
 private:
     void add(QList<Pair> &list, const Frac &frac, const FormulaGroup &formula) { list << Pair{ frac, formula }; }
-    void paint(QPainter &p, const QList<Pair> &list, int &x, int y);
+    void paint(QPainter *p, const QList<Pair> &list, int &x, int y);
     QList<Pair> lReactants, lProducts;
 };
 

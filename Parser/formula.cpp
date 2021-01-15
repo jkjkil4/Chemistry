@@ -151,8 +151,8 @@ QString Formula::format(bool useBrackets) const {
     }
 }
 
-void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets) const {
-    int yy = pa == PA_Top ? y + QFontMetrics(p.font()).height() : y;
+void Formula::paint(QPainter *p, int &x, int y, PaintAlign pa, bool useBrackets) const {
+    int yy = pa == PA_Top ? y + QFontMetrics(p->font()).height() : y;
     QRect rect;
 
     if(type == Element) {
@@ -162,10 +162,10 @@ void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets)
 
         //绘制数量
         if(count != 1) {
-            int pointSize = p.font().pointSize();
-            j::SetPointSize(&p, qMax(1, pointSize / 2));
+            int pointSize = p->font().pointSize();
+            j::SetPointSize(p, qMax(1, pointSize / 2));
             j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
-            j::SetPointSize(&p, pointSize);
+            j::SetPointSize(p, pointSize);
             x += rect.width();
         }
     } else {
@@ -193,10 +193,10 @@ void Formula::paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets)
 
         if(count != 1 && useBrackets) {
             //绘制数量
-            int pointSize = p.font().pointSize();
-            j::SetPointSize(&p, qMax(1, pointSize / 2));
+            int pointSize = p->font().pointSize();
+            j::SetPointSize(p, qMax(1, pointSize / 2));
             j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
-            j::SetPointSize(&p, pointSize);
+            j::SetPointSize(p, pointSize);
             x += rect.width();
         }
     }

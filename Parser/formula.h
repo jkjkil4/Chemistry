@@ -75,7 +75,7 @@ public:
     //化学式格式化为字符串
     QString format(bool useBrackets = false) const;
     //绘制化学式
-    void paint(QPainter &p, int &x, int y, PaintAlign pa, bool useBrackets = false) const;
+    void paint(QPainter *p, int &x, int y, PaintAlign pa, bool useBrackets = false) const;
 
     //解析字符串(分离数字和数据)
     static bool ParseStr(Type type, const QString &str, QString &inner, int &count);
