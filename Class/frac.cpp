@@ -2,14 +2,14 @@
 
 Frac::Frac(int value, const QString &key) {
     if(value != 0)
-        mapPoly[key] = value;
+        mMapPoly[key] = value;
 }
 
 Frac::Frac(int a, int b) {
     if(b == 0)
         throw FracError("cannot div 0");
     if(a != 0)
-        mapPoly[""] = a;
+        mMapPoly[""] = a;
     this->b = b;
     reduct();
 }
@@ -21,7 +21,7 @@ Frac::Frac(QString str, bool *ok) {
         bool ok2;
         int value = str.toInt(&ok2);
         if(ok2) {
-            mapPoly[""] = value;
+            mMapPoly[""] = value;
         } else {
             SET_PTR(ok, false);
             return;
@@ -38,7 +38,7 @@ Frac::Frac(QString str, bool *ok) {
             SET_PTR(ok, false);
             return;
         }
-        mapPoly[""] = top;
+        mMapPoly[""] = top;
         b = bottom;
     }
 
@@ -49,12 +49,12 @@ Frac::Frac(QString str, bool *ok) {
 Frac::Frac(const PlainFrac &plain) {
     if(plain.a == 0)
         return;
-    mapPoly[""] = plain.a;
+    mMapPoly[""] = plain.a;
     b = plain.b;
 }
 
 PlainFrac Frac::toPlain() {
-    int a = mapPoly.value("", 0);
+    int a = mMapPoly.value("", 0);
     return PlainFrac(a, b);
 }
 
@@ -107,7 +107,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         auto iter = lFracs.end();
         //查找第一个该字母出现的位置
         for(auto listIter = lFracs.begin(); listIter != lFracs.end(); ++listIter) {
-            if((*listIter).mapPoly.contains(remove)) {
+            if((*listIter).mMapPoly.contains(remove)) {
                 iter = listIter;
                 break;
             }
@@ -137,7 +137,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
         auto iter = lFracs.end();
         //查找第一个该未知数出现的式子
         for(auto listIter = lFracs.begin(); listIter != lFracs.end(); ++listIter) {
-            if((*listIter).mapPoly.contains(unkNumber)) {
+            if((*listIter).mMapPoly.contains(unkNumber)) {
                 iter = listIter;
                 break;
             }
@@ -172,7 +172,7 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
 #endif
 
     for(Frac &frac : lFracs) {  //判断是否无解(若有任何一个多余项不为0，就无解)
-        if(!frac.mapPoly.isEmpty()) {
+        if(!frac.mMapPoly.isEmpty()) {
             SET_PTR(err, SolvingError::Unsolvable);
             return QList<Frac>();
         }
@@ -208,18 +208,18 @@ QList<Frac> Frac::SolvingEquations(QList<Frac> lFracs, const QStringList &lUnkNu
 
 void Frac::reduct() {
 //    checkZero();
-    if(mapPoly.isEmpty()) {
+    if(mMapPoly.isEmpty()) {
         b = 1;
         return;
     }
     while(true) {
         QVector<int> vValues { b };
-        for(int value : mapPoly)
+        for(int value : mMapPoly)
             vValues << value;
         int divNum = j::Gcd(vValues);
         if(divNum == 1 || divNum == 0)
             break;
-        for(int &value : mapPoly)
+        for(int &value : mMapPoly)
             value /= divNum;
         b /= divNum;
     }
@@ -227,10 +227,10 @@ void Frac::reduct() {
 
 Frac& Frac::changeMono(const QString &before, const QString &now) {
     if(before != now) {
-        auto iter = mapPoly.find(before);
-        if(iter != mapPoly.end()) {
-            mapPoly[now] += *iter;
-            mapPoly.erase(iter);
+        auto iter = mMapPoly.find(before);
+        if(iter != mMapPoly.end()) {
+            mMapPoly[now] += *iter;
+            mMapPoly.erase(iter);
         }
     }
     return *this;
@@ -238,15 +238,15 @@ Frac& Frac::changeMono(const QString &before, const QString &now) {
 
 Frac Frac::paramSep(const QString &param, bool *ok) {
 //    checkZero();
-    if(!mapPoly.contains(param)) {
+    if(!mMapPoly.contains(param)) {
         SET_PTR(ok, false);
         return Frac();
     }
 
     Frac res = *this;
     res.b = 1;
-    res.mapPoly.remove(param);
-    res.div(-mapPoly[param]);
+    res.mMapPoly.remove(param);
+    res.div(-mMapPoly[param]);
     res.reduct();
 
     SET_PTR(ok, true);
@@ -254,28 +254,28 @@ Frac Frac::paramSep(const QString &param, bool *ok) {
 }
 
 Frac& Frac::substitute(const QString &param, int digit) {
-    auto iter = mapPoly.find(param);
-    if(iter != mapPoly.end()) {
+    auto iter = mMapPoly.find(param);
+    if(iter != mMapPoly.end()) {
         int value = iter.value();
-        if((mapPoly[""] += value * digit) == 0)
-            mapPoly.remove("");
-        mapPoly.erase(iter);
+        if((mMapPoly[""] += value * digit) == 0)
+            mMapPoly.remove("");
+        mMapPoly.erase(iter);
         reduct();
     }
     return *this;
 }
 
 Frac& Frac::substitute(const QString &param, const Frac &other) {
-    auto iter = mapPoly.find(param);
-    if(iter != mapPoly.end()) {
+    auto iter = mMapPoly.find(param);
+    if(iter != mMapPoly.end()) {
         int valueMul = iter.value();
-        mapPoly.erase(iter);
+        mMapPoly.erase(iter);
         b *= other.b;
-        for(int &mono : mapPoly)
+        for(int &mono : mMapPoly)
             mono *= other.b;
-        for(auto otherIter = other.mapPoly.begin(); otherIter != other.mapPoly.end(); ++otherIter)
-            if((mapPoly[otherIter.key()] += otherIter.value() * valueMul) == 0)
-                mapPoly.remove(otherIter.key());
+        for(auto otherIter = other.mMapPoly.begin(); otherIter != other.mMapPoly.end(); ++otherIter)
+            if((mMapPoly[otherIter.key()] += otherIter.value() * valueMul) == 0)
+                mMapPoly.remove(otherIter.key());
         reduct();
     }
     return *this;
@@ -284,7 +284,7 @@ Frac& Frac::substitute(const QString &param, const Frac &other) {
 Frac& Frac::moveNegativeToTop() {
     if(b < 0) {
         b = -b;
-        for(int &mono : mapPoly)
+        for(int &mono : mMapPoly)
             mono = -mono;
     }
     return *this;
@@ -293,7 +293,7 @@ Frac& Frac::moveNegativeToTop() {
 QString Frac::format(bool autoSpace, bool useColor) const {
     QString res;
 
-    int size = mapPoly.size();
+    int size = mMapPoly.size();
     if(size == 0) {
         res = "0";
         return res;
@@ -303,7 +303,7 @@ QString Frac::format(bool autoSpace, bool useColor) const {
         res += "(";
 
     bool hasPrev = false;
-    for(auto iter = mapPoly.begin(); iter != mapPoly.end(); ++iter) {
+    for(auto iter = mMapPoly.begin(); iter != mMapPoly.end(); ++iter) {
         const QString& key = iter.key();
         int value = iter.value();
 
@@ -332,8 +332,8 @@ QString Frac::format(bool autoSpace, bool useColor) const {
 Frac& Frac::sum(int digit, const QString &key) {
     if(digit != 0) {
         digit *= b;
-        if((mapPoly[key] += digit ) == 0)
-            mapPoly.remove(key);
+        if((mMapPoly[key] += digit ) == 0)
+            mMapPoly.remove(key);
         reduct();
     }
     return *this;
@@ -341,18 +341,18 @@ Frac& Frac::sum(int digit, const QString &key) {
 Frac& Frac::sub(int digit, const QString &key) {
     if(digit != 0) {
         digit *= b;
-        if((mapPoly[key] -= digit) == 0)
-            mapPoly.remove(key);
+        if((mMapPoly[key] -= digit) == 0)
+            mMapPoly.remove(key);
         reduct();
     }
     return *this;
 }
 Frac& Frac::mul(int digit) {
     if(digit == 0) {
-        mapPoly.clear();
+        mMapPoly.clear();
         b = 1;
     } else {
-        for(int &mono : mapPoly)
+        for(int &mono : mMapPoly)
             mono *= digit;
         reduct();
     }
@@ -361,7 +361,7 @@ Frac& Frac::mul(int digit) {
 Frac& Frac::div(int digit) {
     if(digit == 0)
         throw FracError("cannot div 0");
-    if(!mapPoly.isEmpty()) {
+    if(!mMapPoly.isEmpty()) {
         b *= digit;
         reduct();
     }
@@ -369,33 +369,33 @@ Frac& Frac::div(int digit) {
 }
 
 Frac& Frac::sum(const Frac &other) {
-    if(!other.mapPoly.isEmpty()) {
+    if(!other.mMapPoly.isEmpty()) {
         int commonMulti = j::Lcm(b, other.b);
         int selfMulti = commonMulti / b;
         int otherMulti = commonMulti / other.b;
         b = commonMulti;
 
-        for(int &mono : mapPoly)
+        for(int &mono : mMapPoly)
             mono *= selfMulti;
-        for(QMap<QString, int>::const_iterator iter = other.mapPoly.begin(); iter != other.mapPoly.end(); ++iter)
-            if((mapPoly[iter.key()] += iter.value() * otherMulti) == 0)
-                mapPoly.remove(iter.key());
+        for(QMap<QString, int>::const_iterator iter = other.mMapPoly.begin(); iter != other.mMapPoly.end(); ++iter)
+            if((mMapPoly[iter.key()] += iter.value() * otherMulti) == 0)
+                mMapPoly.remove(iter.key());
         reduct();
     }
     return *this;
 }
 Frac& Frac::sub(const Frac &other) {
-    if(!other.mapPoly.isEmpty()) {
+    if(!other.mMapPoly.isEmpty()) {
         int CommonMulti = j::Lcm(b, other.b);
         int selfMulti = CommonMulti / b;
         int otherMulti = CommonMulti / other.b;
         b = CommonMulti;
 
-        for(int &mono : mapPoly)
+        for(int &mono : mMapPoly)
             mono *= selfMulti;
-        for(QMap<QString, int>::const_iterator iter = other.mapPoly.begin(); iter != other.mapPoly.end(); ++iter)
-            if((mapPoly[iter.key()] -= iter.value() * otherMulti) == 0)
-                mapPoly.remove(iter.key());
+        for(QMap<QString, int>::const_iterator iter = other.mMapPoly.begin(); iter != other.mMapPoly.end(); ++iter)
+            if((mMapPoly[iter.key()] -= iter.value() * otherMulti) == 0)
+                mMapPoly.remove(iter.key());
         reduct();
     }
     return *this;
@@ -403,10 +403,10 @@ Frac& Frac::sub(const Frac &other) {
 
 Frac& Frac::mul(const PlainFrac &other) {
     if(other.a == 0) {
-        mapPoly.clear();
+        mMapPoly.clear();
         b = 1;
     } else {
-        for(int &mono : mapPoly)
+        for(int &mono : mMapPoly)
             mono *= other.a;
         b *= other.b;
         reduct();
@@ -416,7 +416,7 @@ Frac& Frac::mul(const PlainFrac &other) {
 Frac& Frac::div(const PlainFrac &other) {
     if(other.a == 0)
         throw FracError("cannot div 0");
-    for(int &mono : mapPoly)
+    for(int &mono : mMapPoly)
         mono *= other.b;
     b *= other.a;
     reduct();

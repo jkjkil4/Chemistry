@@ -17,15 +17,15 @@ protected:
 private:
 //    QRegularExpression ruleGL = QRegularExpression("\\[([+-]{0,1}\\d+)(?:\\:([,a-z0-9]*)){0,1}\\]");
 //    QRegularExpression ruleGLInner = QRegularExpression(",");
-    QRegularExpression ruleDigit = QRegularExpression("\\d+");
-    QRegularExpression ruleElec = QRegularExpression("\\{[+-]{0,1}\\d*\\}");
-    QRegularExpression ruleProduct = QRegularExpression("\\$");
+    QRegularExpression mRuleDigit = QRegularExpression("\\d+");
+    QRegularExpression mRuleElec = QRegularExpression("\\{[+-]{0,1}\\d*\\}");
+    QRegularExpression mRuleProduct = QRegularExpression("\\$");
 
-    QTextCharFormat formatBracket;
+    QTextCharFormat mFormatBracket;
 //    QTextCharFormat formatRel;
-    QTextCharFormat formatDigit;
-    QTextCharFormat formatElec;
-    QTextCharFormat formatProduct;
+    QTextCharFormat mFormatDigit;
+    QTextCharFormat mFormatElec;
+    QTextCharFormat mFormatProduct;
 };
 
 #endif // HIGHLIGHTER_H

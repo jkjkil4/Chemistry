@@ -5,7 +5,7 @@ FormulaWidget::FormulaWidget(QWidget *parent)
     : QWidget(parent) {}
 
 void FormulaWidget::paintEvent(QPaintEvent *) {
-    if(lReactants.isEmpty() && lProducts.isEmpty())
+    if(mReactants.isEmpty() && mProducts.isEmpty())
         return;
 
     QRect rect;
@@ -18,7 +18,7 @@ void FormulaWidget::paintEvent(QPaintEvent *) {
 
     j::DrawText(&p, x, y + fmHeight, Qt::AlignLeft | Qt::AlignBottom, "反应物:", -1, -1, &rect);
     x += rect.width() + 20;
-    paint(&p, lReactants, x, y);
+    paint(&p, mReactants, x, y);
     //x += 20;
     //j::DrawText(p, x, y + fmHeight, Qt::AlignLeft | Qt::AlignBottom, "=", -1, -1, &rect);
     //x += rect.width() + 20;
@@ -26,12 +26,12 @@ void FormulaWidget::paintEvent(QPaintEvent *) {
     x = 20;
     j::DrawText(&p, x, y + 2 * fmHeight + 10, Qt::AlignLeft | Qt::AlignBottom, "生成物:", -1, -1, &rect);
     x += rect.width() + 20;
-    paint(&p, lProducts, x, y + fmHeight + 10);
+    paint(&p, mProducts, x, y + fmHeight + 10);
 }
 
 void FormulaWidget::clear() {
-    lReactants.clear();
-    lProducts.clear();
+    mReactants.clear();
+    mProducts.clear();
 }
 
 void FormulaWidget::paint(QPainter *p, const QList<Pair> &list, int &x, int y) {

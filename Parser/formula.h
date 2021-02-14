@@ -32,7 +32,7 @@ public:
 
         bool isVaild() const { return formula; }
 
-        int count() const { return formula->count; }
+        int count() const { return formula->mCount; }
         const QString& name() const { return formula->elementData(); }
 
 //        bool hasGL() const { return formula->pElec; }
@@ -55,7 +55,7 @@ public:
         bool hasNext() const { return mHasNext; }
         Data next();
 
-        int currentCount() const { return childIter ? childIter->currentCount() * formula.count : formula.count; }
+        int currentCount() const { return childIter ? childIter->currentCount() * formula.mCount : formula.mCount; }
 
     private:
         const Formula &formula;
@@ -64,13 +64,13 @@ public:
         bool mHasNext = true;
     };
 
-    explicit Formula(Type type, const QString &str, int count = 1);
+    explicit Formula(Type mType, const QString &str, int mCount = 1);
     Formula(const Formula &other);
     ~Formula();
 
-    VAR_GET_FUNC(Type, type, Type)
-    VAR_GET_FUNC(Count, count, int)
-    bool isVaild() const { return vaild; }
+    VAR_GET_FUNC(type, mType, Type)
+    VAR_GET_FUNC(count, mCount, int)
+    bool isVaild() const { return mVaild; }
 
     //化学式格式化为字符串
     QString format(bool useBrackets = false) const;
@@ -78,17 +78,17 @@ public:
     void paint(QPainter *p, int &x, int y, PaintAlign pa, bool useBrackets = false) const;
 
     //解析字符串(分离数字和数据)
-    static bool ParseStr(Type type, const QString &str, QString &inner, int &count);
+    static bool ParseStr(Type mType, const QString &str, QString &inner, int &mCount);
 
     const QString& elementData() const;
     const QList<Formula>& groupData() const;
 
 private:
-    Type type;      //类型
-    int count = 1;  //数量
+    Type mType;      //类型
+    int mCount = 1;  //数量
 
-    void *data = nullptr;   //数据(type == Element -> QString, type == Group -> QList<Formula>)
-    bool vaild = true;      //是否有效
+    void *mData = nullptr;   //数据(type == Element -> QString, type == Group -> QList<Formula>)
+    bool mVaild = true;      //是否有效
 
 //    //用于得失电子守恒的数据
 //    Elec *pElec = nullptr;

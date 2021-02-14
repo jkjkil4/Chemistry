@@ -2,7 +2,7 @@
 
 
 FormulaGroup::Iter::Iter(const FormulaGroup &formula)
-    : formula(formula), listIter(formula.lFormulas.begin()), childIter(new Formula::Iter(*listIter)) {}
+    : formula(formula), listIter(formula.mFormulas.begin()), childIter(new Formula::Iter(*listIter)) {}
 
 Formula::Data FormulaGroup::Iter::next() {
     if(!hasNext())
@@ -11,7 +11,7 @@ Formula::Data FormulaGroup::Iter::next() {
     if(!childIter->hasNext()) {
         listIter++;
         j::SafeDelete(childIter);
-        if(listIter == formula.lFormulas.end())
+        if(listIter == formula.mFormulas.end())
             mHasNext = false;
         else childIter = new Formula::Iter(*listIter);
     }
@@ -27,12 +27,12 @@ FormulaGroup::FormulaGroup(const QString &str)
 
     //对特定情况进行判断
     if((indexOfLeft == -1) != (indexOfRight == -1)) {
-        vaild = false;
+        mVaild = false;
         return;
     }
     bool hasBrackets = (indexOfLeft != -1 && indexOfRight != -1);
     if(hasBrackets && (indexOfRight != str.length() - 1 || indexOfLeft >= indexOfRight)) {
-        vaild = false;
+        mVaild = false;
         return;
     }
 
@@ -52,8 +52,8 @@ FormulaGroup::FormulaGroup(const QString &str)
         bool ok = true;
         int count = leftLen == 0 ? 1 : str.left(leftLen).toInt(&ok);
         if(!ok || count <= 0) {
-            vaild = false;
-            lFormulas.clear();
+            mVaild = false;
+            mFormulas.clear();
             return;
         }
 
@@ -61,11 +61,11 @@ FormulaGroup::FormulaGroup(const QString &str)
         QString strFormula = str.right(str.length() - leftLen);
         Formula formula(Formula::Group, strFormula, count);
         if(!formula.isVaild()) {
-            vaild = false;
-            lFormulas.clear();
+            mVaild = false;
+            mFormulas.clear();
             return;
         }
-        lFormulas << formula;
+        mFormulas << formula;
     }
 
     //得到电荷总数
@@ -73,17 +73,17 @@ FormulaGroup::FormulaGroup(const QString &str)
     bool ok;
     mElec = PlainFrac(strElec, &ok);
     if(!ok) {
-        vaild = false;
-        lFormulas.clear();
+        mVaild = false;
+        mFormulas.clear();
         return;
     }
 
     bool hasPrev = false;
-    for(const Formula &formula : lFormulas) {
+    for(const Formula &formula : mFormulas) {
         if(hasPrev) {
-            formatStr += '_';
+            mFormatStr += '_';
         } else hasPrev = true;
-        formatStr += formula.format();
+        mFormatStr += formula.format();
     }
 }
 
@@ -93,7 +93,7 @@ void FormulaGroup::paint(QPainter *p, int x, int y, Formula::PaintAlign pa, QRec
     int fmHeight = QFontMetrics(p->font()).height();
     int yy = pa == Formula::PA_Top ? y + fmHeight : y;
     bool hasPrev = false;
-    for(const Formula &formula : lFormulas) {
+    for(const Formula &formula : mFormulas) {
         if(hasPrev) {
             j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, "·", -1, -1, &rect);
             x += rect.width();

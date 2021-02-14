@@ -92,16 +92,16 @@ private:
                  Part &left, Part &right, /*QMap<GLKey, GLPair> &mapGlPairs,*/
                  QMap<FormulaGroup, UnkNum> &mapUnkNums, QList<Error> &lErrors);
 
-    QStackedWidget *stackedWidget = new QStackedWidget;
-    QWidget *viewNone = new QWidget;
-    QListWidget *viewError = new QListWidget;
-    FormulaWidget *viewResult = new FormulaWidget;
+    QStackedWidget *mStackedWidget = new QStackedWidget;
+    QWidget *mViewNone = new QWidget;
+    QListWidget *mViewError = new QListWidget;
+    FormulaWidget *mViewResult = new FormulaWidget;
 
-    QPlainTextEdit *editRel = new QPlainTextEdit;
+    QPlainTextEdit *mEditRel = new QPlainTextEdit;
 
-    QPushButton *btnAnalysis = new QPushButton("配平");
+    QPushButton *mBtnAnalysis = new QPushButton("配平");
 
-    Highlighter *highter = new Highlighter(editRel->document());
+    Highlighter *mHighter = new Highlighter(mEditRel->document());
 };
 
 #endif // WIDGET_H

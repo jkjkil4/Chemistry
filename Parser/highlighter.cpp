@@ -4,26 +4,26 @@
 Highlighter::Highlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)
 {
-    formatBracket.setForeground(Qt::darkRed);
+    mFormatBracket.setForeground(Qt::darkRed);
 //    formatRel.setForeground(QColor(200, 40, 200));
-    formatDigit.setForeground(QColor(100, 100, 220));
-    formatElec.setForeground(QColor(220, 100, 0));
-    formatProduct.setForeground(Qt::darkGreen);
+    mFormatDigit.setForeground(QColor(100, 100, 220));
+    mFormatElec.setForeground(QColor(220, 100, 0));
+    mFormatProduct.setForeground(Qt::darkGreen);
 }
 
 void Highlighter::highlightBlock(const QString &text) {
     //匹配"$"
-    QRegularExpressionMatchIterator matchIterator = ruleProduct.globalMatch(text);
+    QRegularExpressionMatchIterator matchIterator = mRuleProduct.globalMatch(text);
     while(matchIterator.hasNext()) {
         QRegularExpressionMatch match = matchIterator.next();
-        setFormat(match.capturedStart(), match.capturedLength(), formatProduct);
+        setFormat(match.capturedStart(), match.capturedLength(), mFormatProduct);
     }
 
     //匹配数字
-    matchIterator = ruleDigit.globalMatch(text);
+    matchIterator = mRuleDigit.globalMatch(text);
     while(matchIterator.hasNext()) {
         QRegularExpressionMatch match = matchIterator.next();
-        setFormat(match.capturedStart(), match.capturedLength(), formatDigit);
+        setFormat(match.capturedStart(), match.capturedLength(), mFormatDigit);
     }
 
 //    //匹配得失电子
@@ -54,12 +54,12 @@ void Highlighter::highlightBlock(const QString &text) {
 //    }
 
     //匹配电荷总数
-    matchIterator = ruleElec.globalMatch(text);
+    matchIterator = mRuleElec.globalMatch(text);
     while(matchIterator.hasNext()) {
         QRegularExpressionMatch match = matchIterator.next();
 
-        setFormat(match.capturedStart(), 1, formatBracket);
-        setFormat(match.capturedStart() + 1, match.capturedLength() - 2, formatElec);
-        setFormat(match.capturedEnd() - 1, 1, formatBracket);
+        setFormat(match.capturedStart(), 1, mFormatBracket);
+        setFormat(match.capturedStart() + 1, match.capturedLength() - 2, mFormatElec);
+        setFormat(match.capturedEnd() - 1, 1, mFormatBracket);
     }
 }

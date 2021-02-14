@@ -18,16 +18,16 @@ QMap<Widget::Error::Type, QString> Widget::Error::mapText = {
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
-    editRel->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-    j::SetFamily(editRel, fontSourceCodePro.mFamily);
-    j::SetPointSize(editRel, 13);
-    connect(btnAnalysis, SIGNAL(clicked()), this, SLOT(onAnalysis()));
+    mEditRel->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
+    j::SetFamily(mEditRel, fontSourceCodePro.mFamily);
+    j::SetPointSize(mEditRel, 13);
+    connect(mBtnAnalysis, SIGNAL(clicked()), this, SLOT(onAnalysis()));
 
-    stackedWidget->setObjectName("StackedWidget");
-    stackedWidget->setStyleSheet("#StackedWidget{background-color:rgb(225, 225, 225)}");
-    stackedWidget->addWidget(viewNone);
-    stackedWidget->addWidget(viewError);
-    stackedWidget->addWidget(viewResult);
+    mStackedWidget->setObjectName("StackedWidget");
+    mStackedWidget->setStyleSheet("#StackedWidget{background-color:rgb(225, 225, 225)}");
+    mStackedWidget->addWidget(mViewNone);
+    mStackedWidget->addWidget(mViewError);
+    mStackedWidget->addWidget(mViewResult);
 
     QMenuBar *menuBar = new QMenuBar;
 
@@ -58,13 +58,13 @@ Widget::Widget(QWidget *parent)
 
     //创建布局
     QHBoxLayout *layEditRel = new QHBoxLayout;
-    layEditRel->addWidget(editRel);
+    layEditRel->addWidget(mEditRel);
     QGroupBox *gbEditRel = new QGroupBox("反应物与生成物");
     gbEditRel->setLayout(layEditRel);
 
     QHBoxLayout *layBottom = new QHBoxLayout;
     layBottom->addStretch();
-    layBottom->addWidget(btnAnalysis);
+    layBottom->addWidget(mBtnAnalysis);
 
     QVBoxLayout *layEdit = new QVBoxLayout;
     layEdit->addWidget(gbEditRel);
@@ -75,7 +75,7 @@ Widget::Widget(QWidget *parent)
 
     QSplitter *splitter = new QSplitter(Qt::Vertical);
     splitter->addWidget(widgetEdit);
-    splitter->addWidget(stackedWidget);
+    splitter->addWidget(mStackedWidget);
     splitter->setSizes(QList<int>() << 400 << 100);
 
     QHBoxLayout *layCentral = new QHBoxLayout;
@@ -102,7 +102,7 @@ Widget::~Widget()
 
 
 void Widget::getReactantsAndProducts(QList<FormulaGroup> &lReactants, QList<FormulaGroup> &lProducts, QList<Error> &lErrors) {
-    QTextDocument *doc = editRel->document();
+    QTextDocument *doc = mEditRel->document();
     int count = doc->lineCount();
     repeat(int, i, count) {
         QString line = doc->findBlockByLineNumber(i).text();
@@ -247,18 +247,18 @@ void Widget::getBase(const QList<FormulaGroup> &lReactants, const QList<FormulaG
 //如果有错误，对错误内容进行提示 并跳至结尾
 #define CHECK_ERR \
     if(!lErrors.isEmpty()) {                \
-        viewError->clear();                 \
+        mViewError->clear();                 \
         for(Error &err : lErrors) {         \
             QListWidgetItem *item = new QListWidgetItem(err.text());\
             item->setIcon(QApplication::style()->standardIcon(QStyle::StandardPixmap::SP_MessageBoxCritical));\
-            viewError->addItem(item);       \
+            mViewError->addItem(item);       \
         }                                   \
-        stackedWidget->setCurrentWidget(viewError);\
+        mStackedWidget->setCurrentWidget(mViewError);\
         goto End;                           \
     }
 //#include <QDebug>
 void Widget::onAnalysis() {
-    stackedWidget->setCurrentWidget(viewNone);
+    mStackedWidget->setCurrentWidget(mViewNone);
 
     QList<Error> lErrors;   //错误列表
 
@@ -378,12 +378,12 @@ void Widget::onAnalysis() {
                     lPUnkNumIter++;
                 }
 
-                viewResult->clear();
+                mViewResult->clear();
                 for(FormulaGroup &formula : lReactants)
-                    viewResult->addReactant(mapUnkNums[formula].value, formula);
+                    mViewResult->addReactant(mapUnkNums[formula].value, formula);
                 for(FormulaGroup &formula : lProducts)
-                    viewResult->addProduct(mapUnkNums[formula].value, formula);
-                stackedWidget->setCurrentWidget(viewResult);
+                    mViewResult->addProduct(mapUnkNums[formula].value, formula);
+                mStackedWidget->setCurrentWidget(mViewResult);
             }
         }
         Jump:

@@ -55,7 +55,7 @@ public:
     Frac& mul(const PlainFrac &other);
     Frac& div(const PlainFrac &other);  //如果other为0，会抛出FracError错误
 
-    const QMap<QString, int> top() const { return mapPoly; }
+    const QMap<QString, int> top() const { return mMapPoly; }
     int bottom() const { return b; }
 
     //下列重载的运算符会发生拷贝(在某些时候可能降低效率)
@@ -78,7 +78,7 @@ public:
 #endif
 
 private:
-    QMap<QString, int> mapPoly;
+    QMap<QString, int> mMapPoly;
     int b = 1;
 };
 

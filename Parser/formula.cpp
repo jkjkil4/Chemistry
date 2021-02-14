@@ -4,7 +4,7 @@
 
 
 Formula::Iter::Iter(const Formula &formula) : formula(formula) {
-    if(formula.type == Group) {
+    if(formula.mType == Group) {
         listIter = formula.groupData().begin();
         childIter = new Iter(*listIter);
     }
@@ -21,7 +21,7 @@ Formula::Data Formula::Iter::next() {
     if(!mHasNext)
         return Data();
 
-    if(formula.type == Element) {
+    if(formula.mType == Element) {
         mHasNext = false;
         return Data(formula);
     } else {
@@ -45,13 +45,13 @@ Formula::Iter::~Iter() {
 //static QRegularExpression ruleElement = QRegularExpression("([A-Z]{1}[a-z]*)(?:\\[([+-]{0,1}\\d+)(?:\\:([,a-z0-9]*)){0,1}\\]){0,1}");
 static QRegularExpression ruleElement = QRegularExpression("[A-Z]{1}[a-z]*");
 
-Formula::Formula(Type type, const QString &str, int count) : type(type), count(count)
+Formula::Formula(Type type, const QString &str, int count) : mType(type), mCount(count)
 {
     if(type == Element) {
         //使用正则表达式
         QRegularExpressionMatch match = ruleElement.match(str);
         if(match.capturedStart() != 0 || match.capturedLength() != str.length()) {
-            vaild = false;
+            mVaild = false;
             return;
         }
 
@@ -65,7 +65,7 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
 //        }
 
 //        data = new QString(list[1]);
-        data = new QString(str);
+        mData = new QString(str);
     } else {
         QList<Formula> *pLChildren = new QList<Formula>;  //new 临时的list
         int bracketCount = 0;   //统计括号数量
@@ -82,13 +82,13 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
                     int childCount;
                     if(!ParseStr(Group, divide, inner, childCount)) {   //解析字符串，如果失败则结束
                         delete pLChildren;
-                        vaild = false;
+                        mVaild = false;
                         return;
                     }
                     Formula child(Group, inner, childCount); //子内容(组)
                     if(!child.isVaild()) {  //如果 子内容 解析失败则结束
                         delete pLChildren;
-                        vaild = false;
+                        mVaild = false;
                         return;
                     }
                     pLChildren->insert(0, child); //将该 子内容 插入到 pLChildren 的第一个
@@ -99,13 +99,13 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
                 int childCount;
                 if(!ParseStr(Element, divide, inner, childCount)) {   //解析字符串，如果失败则结束
                     delete pLChildren;
-                    vaild = false;
+                    mVaild = false;
                     return;
                 }
                 Formula child(Element, inner, childCount);   //子内容(单个元素)
                 if(!child.isVaild()) {  //如果 子内容 解析失败则结束
                     delete pLChildren;
-                    vaild = false;
+                    mVaild = false;
                     return;
                 }
                 pLChildren->insert(0, child); //将该 子内容 插入到 pLChildren 的第一个
@@ -114,39 +114,39 @@ Formula::Formula(Type type, const QString &str, int count) : type(type), count(c
         }
         if(pLChildren->isEmpty() || bracketCount != 0) {    //如果没有 子内容 或者 括号数量不为0，则结束
             delete pLChildren;
-            vaild = false;
+            mVaild = false;
             return;
         }
 
-        data = pLChildren;
+        mData = pLChildren;
     }
 }
 
 Formula::Formula(const Formula &other) {
-    type = other.type;
-    count = other.count;
-    vaild = other.vaild;
+    mType = other.mType;
+    mCount = other.mCount;
+    mVaild = other.mVaild;
 //    if(other.pElec)
 //        pElec = new Elec(*other.pElec);
-    if(other.data)
-        data = (type == Element ? (void*)new QString(other.elementData()) : (void*)new QList<Formula>(other.groupData()));
+    if(other.mData)
+        mData = (mType == Element ? (void*)new QString(other.elementData()) : (void*)new QList<Formula>(other.groupData()));
 }
 
 Formula::~Formula() {
 //    j::SafeDelete(pElec);
-    type == Element ? delete (QString*)data : delete (QList<Formula>*)data;
+    mType == Element ? delete (QString*)mData : delete (QList<Formula>*)mData;
 }
 
 
 QString Formula::format(bool useBrackets) const {
-    if(type == Element) {
-        return count == 1 ? elementData() : elementData() + QString::number(count);
+    if(mType == Element) {
+        return mCount == 1 ? elementData() : elementData() + QString::number(mCount);
     } else {
         QString inner;
         const QList<Formula>& lChildren = groupData();
         for(const Formula& child : lChildren)
             inner += child.format(true);
-        QString strCount = count == 1 ? "" : QString::number(count);
+        QString strCount = mCount == 1 ? "" : QString::number(mCount);
         return useBrackets ? '(' + inner + ')' + strCount : strCount + inner;
     }
 }
@@ -155,23 +155,23 @@ void Formula::paint(QPainter *p, int &x, int y, PaintAlign pa, bool useBrackets)
     int yy = pa == PA_Top ? y + QFontMetrics(p->font()).height() : y;
     QRect rect;
 
-    if(type == Element) {
+    if(mType == Element) {
         //绘制元素
         j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, elementData(), -1, -1, &rect);
         x += rect.width();
 
         //绘制数量
-        if(count != 1) {
+        if(mCount != 1) {
             int pointSize = p->font().pointSize();
             j::SetPointSize(p, qMax(1, pointSize / 2));
-            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(mCount), -1, -1, &rect);
             j::SetPointSize(p, pointSize);
             x += rect.width();
         }
     } else {
-        if(count != 1 && !useBrackets) {
+        if(mCount != 1 && !useBrackets) {
             //绘制数量
-            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(mCount), -1, -1, &rect);
             x += rect.width();
         }
 
@@ -191,11 +191,11 @@ void Formula::paint(QPainter *p, int &x, int y, PaintAlign pa, bool useBrackets)
             x += rect.width();
         }
 
-        if(count != 1 && useBrackets) {
+        if(mCount != 1 && useBrackets) {
             //绘制数量
             int pointSize = p->font().pointSize();
             j::SetPointSize(p, qMax(1, pointSize / 2));
-            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(count), -1, -1, &rect);
+            j::DrawText(p, x, yy, Qt::AlignLeft | Qt::AlignBottom, QString::number(mCount), -1, -1, &rect);
             j::SetPointSize(p, pointSize);
             x += rect.width();
         }
@@ -204,15 +204,15 @@ void Formula::paint(QPainter *p, int &x, int y, PaintAlign pa, bool useBrackets)
 
 
 const QString& Formula::elementData() const {
-    if(type != Element)
+    if(mType != Element)
         throw;
-    return *(QString*)data;
+    return *(QString*)mData;
 }
 
 const QList<Formula>& Formula::groupData() const {
-    if(type != Group)
+    if(mType != Group)
         throw;
-    return *(QList<Formula>*)data;
+    return *(QList<Formula>*)mData;
 }
 
 

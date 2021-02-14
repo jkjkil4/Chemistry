@@ -27,26 +27,26 @@ public:
     explicit FormulaGroup(const QString &str);
     ~FormulaGroup() = default;
 
-    bool isVaild() const { return vaild; }
+    bool isVaild() const { return mVaild; }
 
     //化学式的字符串
-    QString str() const { return formatStr; }
+    QString str() const { return mFormatStr; }
     //绘制化学式
     void paint(QPainter *p, int x, int y, Formula::PaintAlign pa, QRect *pRect = nullptr) const;
 
     const PlainFrac& elec() const { return mElec; }
 
     bool operator<(const FormulaGroup& other) const {
-        if(formatStr != other.formatStr)
-            return formatStr < other.formatStr;
+        if(mFormatStr != other.mFormatStr)
+            return mFormatStr < other.mFormatStr;
         return mElec < other.mElec;
     }
-    bool operator==(const FormulaGroup& other) const { return mElec == other.mElec && formatStr == other.formatStr; }
+    bool operator==(const FormulaGroup& other) const { return mElec == other.mElec && mFormatStr == other.mFormatStr; }
 
 private:
-    bool vaild = true;
-    QString formatStr;
-    QList<Formula> lFormulas;
+    bool mVaild = true;
+    QString mFormatStr;
+    QList<Formula> mFormulas;
     PlainFrac mElec;
 };
 
