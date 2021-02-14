@@ -19,7 +19,7 @@ Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
     editRel->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-    j::SetFamily(editRel, fontSourceCodePro.family);
+    j::SetFamily(editRel, fontSourceCodePro.mFamily);
     j::SetPointSize(editRel, 13);
     connect(btnAnalysis, SIGNAL(clicked()), this, SLOT(onAnalysis()));
 
